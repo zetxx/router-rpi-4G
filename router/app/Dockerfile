@@ -6,13 +6,6 @@ RUN cat /etc/alpine-release
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
     && apk add --no-cache --virtual .build-deps \
-        binutils-gold \
-        libstdc++ \
-        g++ \
-        gcc \
-        gnupg \
-        libgcc \
-        linux-headers \
         python \
         build-base \
         make \
