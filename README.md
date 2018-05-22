@@ -1,6 +1,6 @@
 # 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux
 
-![alt text](https://image.ibb.co/dZSVFo/33073610_10216815452644331_2563215703201021952_n.jpg)
+![alt text](https://github.com/zetxx/router-rpi-4G/blob/master/tmp/in-action.png?raw=true)
 
 ## isnpired by https://esther.codes/post-pi_router_story/
 
