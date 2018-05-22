@@ -7,7 +7,7 @@ const height = 64;
 const address = 0x3C;
 var oled;
 
-const drawCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUssed, graph}) => {
+const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUssed, graph}) => {
     var d = draw(width, height, '1_8x8');
     d.addText(`NET:${gsmNetwork} ${gsmNetworkStatus === 'connected' ? '✓' : '✗'} | VPN:${vpnStatus === 'connected' ? '✓' : '✗'}`, 0);
     d.addText(`ping -> google: ${ping}`, 8);
@@ -34,13 +34,13 @@ const redraw = () => {
         .then(isReady)
         .then(() => oled.clearDisplay(true))
         .then(isReady)
-        .then(() => oled.drawPixel(drawCoords({
+        .then(() => oled.drawPixel(getPixelCoords({
             gsmNetwork: '4G',
             gsmNetworkStatus: 'connected',
             ping: '1024ms',
             trafficUp: '1024Mb',
             trafficDown: '800Mb',
-            traffic: '800%',
+            traffic: '80%',
             graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
         }), true))
         .then(isReady)
