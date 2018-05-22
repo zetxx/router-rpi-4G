@@ -1,0 +1,20 @@
+[Unit]
+Description=Display details on the OLED screen 
+After=network-online.target
+ 
+[Service]
+Type=simple
+ 
+User=zetxx
+Group=zetxx
+UMask=007
+ 
+ExecStart=/usr/bin/python /usr/bin/screen.py
+RestartSec=5s
+Restart=always
+ 
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=300
+ 
+[Install]
+WantedBy=multi-user.target

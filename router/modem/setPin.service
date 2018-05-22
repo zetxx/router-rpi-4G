@@ -1,0 +1,11 @@
+[Unit]
+Description=Enter PIN code
+After=network-online.target
+
+[Service]
+Type=oneshot
+
+ExecStart=/usr/bin/setPin.sh
+
+[Install]
+WantedBy=default.target
