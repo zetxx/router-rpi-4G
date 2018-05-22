@@ -1,4 +1,6 @@
-# isnpired by https://esther.codes/post-pi_router_story/
+# 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux
+
+## isnpired by https://esther.codes/post-pi_router_story/
 
 ## Resources
   ### 4G modem
