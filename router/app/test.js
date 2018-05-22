@@ -53,6 +53,5 @@ const redraw = () => {
 };
 
 i2cInit()
-    .then((o) => oled = o);
-
-redraw();
+    .then((o) => oled = o)
+    .then(redraw);
