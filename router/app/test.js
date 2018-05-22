@@ -37,10 +37,10 @@ const redraw = () => {
         .then(() => oled.drawPixel(getPixelCoords({
             gsmNetwork: '4G',
             gsmNetworkStatus: 'connected',
-            ping: '1024ms',
-            trafficUp: '1024Mb',
-            trafficDown: '800Mb',
-            traffic: '80%',
+            ping: (Math.random() * 100000).toString().slice(0, 4) + 'ms',
+            trafficUp: (Math.random() * 100000).toString().slice(0, 4) + 'Mb',
+            trafficDown: (Math.random() * 100000).toString().slice(0, 6) + 'Mb',
+            traffic: (Math.random() * 100000).toString().slice(0, 2) + '%',
             graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
         }), true))
         .then(isReady)
