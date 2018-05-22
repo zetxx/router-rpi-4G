@@ -1,9 +1,3 @@
-home/.emacs.d/**/*
-!home/.emacs.d/init.el
-!home/.emacs.d/customizations
-!home/.emacs.d/customizations/*
-!home/.emacs.d/customizations/**/*
-home/.lein/**/*
-!home/.lein/profiles.clj
-home/.config/ranger/**/*
-!home/.config/ranger/rc.conf
+.history/**/*
+.git/**/*
+node_modules/**/*

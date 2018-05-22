@@ -77,7 +77,7 @@ const getPoints = (plate) => {
     var byteTmpl = (new Array(8)).fill(0).map((digit, idx) => (1 << idx)).reverse();
     return plate.reduce((lineArray, line, lineIdx) =>
         lineArray.concat(line.reduce((byteArray, byte, byteIdx) =>
-            byteArray.concat(byteTmpl.map((tmpl, tmplIdx) => [(byteIdx * 8) + tmplIdx + 1, lineIdx + 1, ((byte & tmpl) === tmpl) && 1 || 0])),
+            byteArray.concat(byteTmpl.map((tmpl, tmplIdx) => [(byteIdx * 8) + tmplIdx, lineIdx, ((byte & tmpl) === tmpl) && 1 || 0])),
             []
         ))
         ,

@@ -10,7 +10,7 @@ var oled;
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
     var d = draw(width, height, '1_8x8');
     d.addText(`NET:${gsmNetwork} ${gsmNetworkStatus === 'connected' ? '✓' : '✗'} | VPN:${vpnStatus === 'connected' ? '✓' : '✗'}`, 0);
-    d.addText(`ping -> google: ${ping}`, 8);
+    d.addText(`google: ${ping}`, 8);
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}`, 25);
     d.addGraph(graph, 0, 34, 64);
