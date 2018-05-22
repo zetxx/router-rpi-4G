@@ -5,12 +5,7 @@ const draw = require('./lcd/draw');
 const width = 128;
 const height = 64;
 const address = 0x3C;
-
-const i2cInit = () => {
-    return new Promise((resolve, reject) => {
-        const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})))
-    });
-};
+var oled;
 
 const drawCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUssed, graph}) => {
     var d = draw(width, height, '1_8x8');
@@ -22,35 +17,42 @@ const drawCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, t
     return d.getPoints();
 };
 
-const isReady = (oled) => {
+const i2cInit = () => {
+    return new Promise((resolve, reject) => {
+        const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})))
+    });
+};
+
+const isReady = () => {
     return new Promise((resolve, reject) => oled._waitUntilReady(() => resolve(oled)));
 };
 
-const oled = i2cInit();
-const redraw = (oled) => {
-    oled.then(isReady)
-    .then((o) => o.turnOffDisplay() || o)
-    .then(isReady)
-    .then((o) => o.clearDisplay(true) || o)
-    .then(isReady)
-    .then((o) => o.clearDisplay(true) || o)
-    .then(isReady)
-    .then((o) => o.drawPixel(drawCoords({
-        gsmNetwork: '4G',
-        gsmNetworkStatus: 'connected',
-        ping: '1024ms',
-        trafficUp: '1024Mb',
-        trafficDown: '800Mb',
-        traffic: '800%',
-        graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
-    }), true) || o)
-    .then(isReady)
-    .then((o) => o.update() || o)
-    .then(isReady)
-    .then((o) => o.turnOnDisplay() || o)
-    .then(isReady)
-    .then(() => console.log('done'))
-    .then(() => setTimeout(() => redraw(oled), 10000))
+const redraw = () => {
+    Promise.resolve()
+        .then(isReady)
+        .then(() => oled.turnOffDisplay())
+        .then(isReady)
+        .then(() => oled.clearDisplay(true))
+        .then(isReady)
+        .then(() => oled.drawPixel(drawCoords({
+            gsmNetwork: '4G',
+            gsmNetworkStatus: 'connected',
+            ping: '1024ms',
+            trafficUp: '1024Mb',
+            trafficDown: '800Mb',
+            traffic: '800%',
+            graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
+        }), true))
+        .then(isReady)
+        .then(() => oled.update())
+        .then(isReady)
+        .then(() => oled.turnOnDisplay())
+        .then(isReady)
+        .then(() => console.log('done'))
+        .then(() => setTimeout(() => redraw(), 10000))
 };
 
-redraw(oled);
+i2cInit()
+    .then((o) => oled = o);
+
+redraw();
