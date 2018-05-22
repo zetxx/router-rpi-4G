@@ -8,6 +8,7 @@ RUN addgroup -g 1000 node \
     && apk add --no-cache --virtual .build-deps \
         python \
         build-base \
+        linux-headers \
         make \
         nodejs
 
