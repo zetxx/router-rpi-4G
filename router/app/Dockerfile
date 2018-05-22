@@ -5,23 +5,17 @@ RUN cat /etc/alpine-release
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
-    && apk add --no-cache \
-        libstdc++ \
     && apk add --no-cache --virtual .build-deps \
         binutils-gold \
-        curl \
+        libstdc++ \
         g++ \
-        git \
         gcc \
         gnupg \
         libgcc \
         linux-headers \
         python \
-        python-dev \
-        py-pip \
         build-base \
         make \
-        python \
         nodejs
 
 RUN mkdir "/db"
