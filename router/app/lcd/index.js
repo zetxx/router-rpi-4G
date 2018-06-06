@@ -2,6 +2,7 @@
 const draw = require('./draw');
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
+const getTrafficStatsModel = require('../db/models/traficStats');
 
 const width = 128;
 const height = 64;
@@ -29,15 +30,19 @@ const isReady = () => {
 };
 
 const pullData = (sequelize) => {
-    return Promise.resolve({
+    return Promise.all([
+        getTrafficStatsModel(sequelize).find({order: [['id', 'DESC']]}).then(({download, upload}) => ({trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)}))
+    ])
+    .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
+    .then(({trafficUp, trafficDown}) => Promise.resolve({
         gsmNetwork: '4',
         gsmNetworkStatus: 'connected',
         ping: (Math.random() * 100000).toString().slice(0, 4) + 'ms',
-        trafficUp: (Math.random() * 100000).toString().slice(0, 4) + 'Mb',
-        trafficDown: (Math.random() * 100000).toString().slice(0, 6) + 'Mb',
+        trafficUp,
+        trafficDown,
         trafficUsed: (Math.random() * 100000).toString().slice(0, 2),
         graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
-    });
+    }));
 };
 
 const redraw = (sequelize) => {
@@ -57,13 +62,23 @@ const redraw = (sequelize) => {
         .then(() => console.log('done'));
 };
 
+const getTrafficMetrics = (num) => {
+    if (num <= 1024) {
+        return `${num}b`;
+    } else if ((num / 1024) <= 1024) {
+        return `${Math.round(num / 1024)}Kb`;
+    } else if ((num / (1024 * 1024)) <= 1024) {
+        return `${Math.round(num / (1024 * 1024))}Mb`;
+    } else {
+        return `${Math.round(num / (1024 * 1024 * 1024))}Gb`;
+    }
+};
+
 i2cInit()
     .then((o) => (oled = o));
 
 module.exports = (sequelize) => {
-    pullData(sequelize).then((data) => {
-
-    });
+    pullData(sequelize).then((data) => {debugger})
     // setInterval(() => {
     //     return oled && redraw(sequelize);
     // }, 10000);

@@ -17,13 +17,13 @@ module.exports = (env) => {
                     .then((r) => !r.length && Promise.all([
                         VpnStatus.create({isActive: true}),
                         TrafficStats.bulkCreate([
-                            {in: 10, out: 5, initial: true},
-                            {in: 12, out: 6, initial: false},
-                            {in: 30, out: 8, initial: false},
-                            {in: 50, out: 9, initial: false},
-                            {in: 1, out: 1, initial: true},
-                            {in: 12, out: 6, initial: false},
-                            {in: 30, out: 8, initial: false}
+                            {download: 10000, upload: 590, initial: true},
+                            {download: 1992, upload: 600, initial: false},
+                            {download: 32320, upload: 8, initial: false},
+                            {download: 5430, upload: 9009, initial: false},
+                            {download: 1663, upload: 1234, initial: true},
+                            {download: 1352, upload: 6423, initial: false},
+                            {download: 32342340, upload: 8423, initial: false}
                         ])
                     ]));
             }

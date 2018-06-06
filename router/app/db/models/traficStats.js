@@ -4,8 +4,8 @@ var table;
 module.exports = (sequelize) => (
     table ||
     (table = sequelize.define('trafic.stats', {
-        in: Sequelize.INTEGER,
-        out: Sequelize.INTEGER,
+        download: Sequelize.INTEGER,
+        upload: Sequelize.INTEGER,
         initial: Sequelize.BOOLEAN
     })) &&
     table
