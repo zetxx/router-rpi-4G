@@ -10,8 +10,8 @@ module.exports = (server, sequelize) => (server.route({
         const initial = init;
         init = false;
         return getTrafficStatsModel()
-            .create({in: request.payload.in, out: request.payload.out, initial})
-            .then(() => `traffic [in: ${request.payload.in}, out: ${request.payload.out}]`);
+            .create({download: request.payload.in, upload: request.payload.out, initial})
+            .then(() => `traffic [download: ${request.payload.in}, upload: ${request.payload.out}]`);
     },
     options: {
         validate: {

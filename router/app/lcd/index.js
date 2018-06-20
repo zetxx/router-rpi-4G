@@ -3,6 +3,8 @@ const draw = require('./draw');
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
 const getTrafficStatsModel = require('../db/models/traficStats');
+const getVpnStatus = require('../db/models/vpnStatus');
+const getGsmStatsModel = require('../db/models/gsmStatus');
 
 const width = 128;
 const height = 64;
@@ -31,12 +33,18 @@ const isReady = () => {
 
 const pullData = (sequelize) => {
     return Promise.all([
-        getTrafficStatsModel(sequelize).find({order: [['id', 'DESC']]}).then(({download, upload}) => ({trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)}))
+        getTrafficStatsModel(sequelize).find({order: [['id', 'DESC']]}).then((r) => (r || {}))
+            .then(({download = 0, upload = 0}) => ({trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)})),
+        getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+            .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || false})),
+        getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+            .then(({connected = false, network = '0'}) => ({gsmNetworkStatus: (connected && 'connected') || false, gsmNetwork: network}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-    .then(({trafficUp, trafficDown}) => Promise.resolve({
-        gsmNetwork: '4',
-        gsmNetworkStatus: 'connected',
+    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork}) => Promise.resolve({
+        gsmNetwork,
+        gsmNetworkStatus,
+        vpnStatus,
         ping: (Math.random() * 100000).toString().slice(0, 4) + 'ms',
         trafficUp,
         trafficDown,
@@ -78,7 +86,8 @@ i2cInit()
     .then((o) => (oled = o));
 
 module.exports = (sequelize) => {
-    pullData(sequelize).then((data) => {debugger})
+    setInterval(() => pullData(sequelize)
+        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus})).then(console.log), 5000);
     // setInterval(() => {
     //     return oled && redraw(sequelize);
     // }, 10000);

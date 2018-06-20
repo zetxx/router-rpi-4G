@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
     require('./routes/main')(server);
     require('./routes/traffic/stats')(server, sequelize);
     require('./routes/vpn/status')(server, sequelize);
+    require('./routes/gsm/status')(server, sequelize);
 
     const init = async () => {
         await server.start();
