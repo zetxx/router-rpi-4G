@@ -8,7 +8,6 @@ const getGsmStatsModel = require('../db/models/gsmStatus');
 
 const width = 128;
 const height = 64;
-const address = 0x3C;
 var oled;
 
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
@@ -21,7 +20,7 @@ const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficU
     return d.getPoints();
 };
 
-const i2cInit = () => {
+const i2cInit = (address) => {
     return new Promise((resolve, reject) => {
         const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})));
     });
@@ -82,10 +81,9 @@ const getTrafficMetrics = (num) => {
     }
 };
 
-i2cInit()
-    .then((o) => (oled = o));
+module.exports = (sequelize, lcdAddress) => {
+    !o && i2cInit(lcdAddress).then((o) => (oled = o));
 
-module.exports = (sequelize) => {
     setInterval(() => pullData(sequelize)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus})).then(console.log), 5000);
     // setInterval(() => {
