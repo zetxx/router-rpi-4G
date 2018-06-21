@@ -27,7 +27,7 @@ db(process.env.NODE_ENV || 'dev')
     ))
     .then((sequelize) => (
         Promise.resolve()
-            .then(() => ping(sequelize, 'www.google.com)) // will write everything in sqlite
+            .then(() => ping(sequelize, 'www.google.com')) // will write everything in sqlite
             .then(() => sequelize)
     ))
     .catch(console.error);
