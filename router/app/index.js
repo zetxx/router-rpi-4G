@@ -13,8 +13,14 @@ if (lcdAddress === 0 || isNaN(lcdAddress)) {
 
 db(process.env.NODE_ENV || 'dev')
     .then((sequelize) => (
-        http(sequelize) | // will write everything in sqlite
-        lcd(sequelize, process.env.LCD_ADDR) // will read everything from sqlite
+        Promise.resolve(sequelize)
+            .then(http)// will write everything in sqlite
+            .then(() => sequelize)
+    ))
+    .then((sequelize) => (
+        Promise.resolve()
+            .then(() => lcd(sequelize, process.env.LCD_ADDR)) // will read everything from sqlite
+            .then(() => sequelize)
     ))
     .catch(console.error);
 
