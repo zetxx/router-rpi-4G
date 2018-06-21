@@ -1,6 +1,6 @@
 const ping = require('net-ping');
 const getPingStatusModel = require('../../../db/models/pingStatus');
-const update = (host, status) => getPingStatusModel().create(request.payload);
+const update = (host, time) => getPingStatusModel().create({host, time});
 
 module.exports = (sequelize, host) => {
   setInterval(() => {
@@ -8,7 +8,7 @@ module.exports = (sequelize, host) => {
       .then((session) => new Promise((resolve, reject) => (
         session.pingHost(host, (err, res, sent, rcvd) => (err && reject(err)) || resolve(rcvd - sent))
       )))
-      .then((res) => update(host, res.ms))
+      .then((t) => update(host, t))
       .catch((res) => update(host, 0));
-  }, 10000);
+  }, 600000);
 };
