@@ -10,7 +10,7 @@
     "hapi": "^17.3.1",
     "joi": "^13.1.2",
     "sqlite3": "^4.0.0",
-    "ping": "*"
+    "net-ping": "*"
   },
   "scripts": {
     "server": "node ./index"
