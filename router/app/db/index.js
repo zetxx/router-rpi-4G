@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const getVpnStatusModel = require('./models/vpnStatus');
 const getTrafficStatsModel = require('./models/traficStats');
 const getGsmStatsModel = require('./models/gsmStatus');
+const getPingStatsModel = require('./models/pingStatus');
 
 module.exports = (env) => {
     const isDev = env === 'dev';
@@ -10,6 +11,7 @@ module.exports = (env) => {
     const VpnStatus = getVpnStatusModel(sequelize);
     const TrafficStats = getTrafficStatsModel(sequelize);
     const GsmStats = getGsmStatsModel(sequelize);
+    const PingStatus = getPingStatsModel(sequelize);
 
     return sequelize.sync()
         .then(() => {
