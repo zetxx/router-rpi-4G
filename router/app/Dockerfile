@@ -13,13 +13,16 @@ RUN addgroup -g 1000 node \
         nodejs
 
 RUN mkdir "/db"
-RUN mkdir "/usr/src"
-RUN mkdir "/usr/src/app"
-WORKDIR "/usr/src/app"
-COPY . .
+RUN mkdir -p "/usr/src/app/modules"
+RUN mkdir "/usr/src/app/runtime"
+WORKDIR "/usr/src/app/modules"
+COPY ./package.json .
 
 RUN npm i yarn -g
 RUN yarn install --ignore-engines
+
+WORKDIR "/usr/src/app/runtime"
+ENV NODE_PATH "/usr/src/app/modules/node_modules"
 
 CMD ["npm", "run", "server"]
 #build
