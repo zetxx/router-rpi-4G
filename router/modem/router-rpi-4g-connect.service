@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 Type=oneshot
 
-ExecStart=/usr/bin/setPin.sh
+ExecStart=/usr/bin/router-rpi-4g-connect.sh
 
 [Install]
 WantedBy=default.target
