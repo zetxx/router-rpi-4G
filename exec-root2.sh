@@ -1,5 +1,5 @@
 #!/bin/sh
-
+cp /root /etc/
 user="zetxx"
 #add user
 useradd -m -s /bin/zsh -d /home/$user $user
