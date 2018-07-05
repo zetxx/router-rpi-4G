@@ -1,11 +1,12 @@
 [Unit]
-Description=Enter PIN code
+Description=Get and push statuses
 After=network-online.target
 
 [Service]
-Type=oneshot
+OnBootSec=5min
+OnCalendar=*:0/5
 
 ExecStart=/usr/bin/router-rpi-4g-status.sh
 
 [Install]
-WantedBy=default.target
+WantedBy=timers.target
