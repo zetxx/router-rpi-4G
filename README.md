@@ -17,3 +17,7 @@
   
   ### Jail it
   https://stackoverflow.com/questions/40265984/i2c-inside-a-docker-container
+
+  #### back up
+  - make: `sudo dd bs=4M if=/dev/mmcblk0 status=progress | gzip > /home/your_username/today.gz`
+  - unmake: `sudo gzip -dc /home/your_username/image.gz | dd bs=4M of=/dev/mmcblk0 status=progress`
