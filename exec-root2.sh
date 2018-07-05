@@ -1,5 +1,5 @@
 #!/bin/sh
-cp /root /etc/
+cp /root/router-rpi-4G/etc/fstab /etc/
 user="zetxx"
 #add user
 useradd -m -s /bin/zsh -d /home/$user $user
