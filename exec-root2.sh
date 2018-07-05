@@ -1,4 +1,5 @@
 #!/bin/sh
+
 cp /root/router-rpi-4G/etc/fstab /etc/
 user="zetxx"
 #add user
