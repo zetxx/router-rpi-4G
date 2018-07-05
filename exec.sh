@@ -10,10 +10,15 @@ ln -s /home/zetxx/router-rpi-4G/home/zetxx/.zshrc /home/zetxx/.zshrc
 sudo timedatectl set-timezone Europe/Sofia
 sudo systemctl enable ntpd.service && sudo systemctl start ntpd.service
 
-sudo cp /home/zetxx/router-rpi-4G/router/modem/setPin.service /etc/systemd/system/setPin.service
-sudo cp /home/zetxx/router-rpi-4G/router/modem/setPin.sh /usr/bin/setPin.sh
-sudo chmod +x /usr/bin/setPin.sh
-sudo systemctl enable setPin.service
+sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.service /etc/systemd/system/router-rpi-4g-connect.service
+sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.sh /usr/bin/router-rpi-4g-connect.sh
+sudo chmod +x /usr/bin/router-rpi-4g-connect.sh
+sudo systemctl enable router-rpi-4g-connect.service
+
+sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-status.service /etc/systemd/system/router-rpi-4g-status.service
+sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-status.sh /usr/bin/router-rpi-4g-status.sh
+sudo chmod +x /usr/bin/router-rpi-4g-status.sh
+sudo systemctl enable router-rpi-4g-status.service
 
 #copy ssh keys
 mkdir /home/zetxx/.ssh
