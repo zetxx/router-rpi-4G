@@ -1,6 +1,7 @@
 FROM alpine:edge
 
 ENV NODE_VERSION 10.1.0
+ENV NODE_ENV prod
 RUN cat /etc/alpine-release
 
 RUN addgroup -g 1000 node \
