@@ -15,12 +15,6 @@ sudo cp /home/zetxx/router-rpi-4G/router/modem/setPin.sh /usr/bin/setPin.sh
 sudo chmod +x /usr/bin/setPin.sh
 sudo systemctl enable setPin.service
 
-sudo cp /home/zetxx/router-rpi-4G/router/lcd/lcdScreen.service /etc/systemd/system/lcdScreen.service
-sudo cp /home/zetxx/router-rpi-4G/router/lcd/lcdScreen.py /usr/bin/lcdScreen.py
-sudo chmod +x /usr/bin/lcdScreen.py
-sudo systemctl enable lcdScreen.service
-
-
 #copy ssh keys
 mkdir /home/zetxx/.ssh
 #chmod 0644 /home/zetxx/.ssh
