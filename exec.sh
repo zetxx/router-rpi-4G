@@ -4,6 +4,7 @@ cd /tmp/trizen && makepkg -si
 trizen -S --noedit --noconfirm raspi-config
 #zsh
 git clone git://github.com/robbyrussell/oh-my-zsh.git /home/zetxx/.oh-my-zsh
+rm /home/zetxx/.zshrc
 ln -s /home/zetxx/router-rpi-4G/home/zetxx/.zshrc /home/zetxx/.zshrc
 
 sudo timedatectl set-timezone Europe/Sofia
