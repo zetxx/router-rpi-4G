@@ -8,7 +8,7 @@ const getGsmStatsModel = require('../db/models/gsmStatus');
 
 const width = 128;
 const height = 64;
-var oled;
+var oled, o;
 
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
     var d = draw(width, height, '1_8x8');

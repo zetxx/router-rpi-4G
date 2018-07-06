@@ -13,7 +13,6 @@ const lcd = require('./lcd');
 const db = require('./db');
 const ping = require('./ping');
 
-
 db(process.env.NODE_ENV || 'dev')
     .then((sequelize) => (
         Promise.resolve(sequelize)
@@ -22,7 +21,7 @@ db(process.env.NODE_ENV || 'dev')
     ))
     .then((sequelize) => (
         Promise.resolve()
-            .then(() => lcd(sequelize, process.env.LCD_ADDR)) // will read everything from sqlite
+            .then(() => lcd(sequelize, lcdAddress)) // will read everything from sqlite
             .then(() => sequelize)
     ))
     .then((sequelize) => (
