@@ -12,6 +12,12 @@
   - https://www.rbit.at/wordpress/modem-router/zte-mf831-auf-modembetrieb-umstellen/
   - https://archlinuxarm.org/platforms/armv6/raspberry-pi
   
+  ### telnet it
+  
+  - telnet 192.168.0.1
+  - Login: root
+  - Pwd: zte9x15
+  
   ### Jail it
   https://stackoverflow.com/questions/40265984/i2c-inside-a-docker-container
 
