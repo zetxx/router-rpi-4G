@@ -5,6 +5,7 @@ const Oled = require('oled-i2c-bus');
 const getTrafficStatsModel = require('../db/models/traficStats');
 const getVpnStatus = require('../db/models/vpnStatus');
 const getGsmStatsModel = require('../db/models/gsmStatus');
+const getPingStatsModel = require('../db/models/pingStatus');
 
 const width = 128;
 const height = 64;
@@ -13,7 +14,7 @@ var oled, o;
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
     var d = draw(width, height, '1_8x8');
     d.addText(`NET:${gsmNetwork}G ${gsmNetworkStatus === 'connected' ? '✓' : '✗'} | VPN:${vpnStatus === 'connected' ? '✓' : '✗'}`, 0);
-    d.addText(`google: ${ping}`, 8);
+    d.addText(ping, 8);
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}%`, 25);
     d.addGraph(graph, 0, 34, 64);
@@ -35,16 +36,18 @@ const pullData = (sequelize) => {
         getTrafficStatsModel(sequelize).find({order: [['id', 'DESC']]}).then((r) => (r || {}))
             .then(({download = 0, upload = 0}) => ({trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)})),
         getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
-            .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || false})),
+            .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
         getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
-            .then(({connected = false, network = '0'}) => ({gsmNetworkStatus: (connected && 'connected') || false, gsmNetwork: network}))
+            .then(({connected = false, network = '?'}) => ({gsmNetworkStatus: (connected && 'connected') || '?', gsmNetwork: network})),
+        getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+            .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork}) => Promise.resolve({
+    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime}) => Promise.resolve({
         gsmNetwork,
         gsmNetworkStatus,
         vpnStatus,
-        ping: (Math.random() * 100000).toString().slice(0, 4) + 'ms',
+        ping: `${pingHost}:${pingTime}`,
         trafficUp,
         trafficDown,
         trafficUsed: (Math.random() * 100000).toString().slice(0, 2),
@@ -85,7 +88,7 @@ module.exports = (sequelize, lcdAddress) => {
     !o && i2cInit(lcdAddress).then((o) => (oled = o));
 
     setInterval(() => pullData(sequelize)
-        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus})).then(console.log), 5000);
+        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping})).then(console.log), 5000);
     // setInterval(() => {
     //     return oled && redraw(sequelize);
     // }, 10000);
