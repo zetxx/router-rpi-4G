@@ -1,4 +1,4 @@
-# 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux
+# 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux and some magic :)
 
 ![alt text](https://github.com/zetxx/router-rpi-4G/blob/master/tmp/in-action.png?raw=true)
 
