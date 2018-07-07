@@ -1,4 +1,8 @@
 #!/bin/sh
+
+mkdir /store && \
+chmod 0777 -R /store
+
 #install neceraly software
 pacman-key --init
 pacman-key --populate archlinuxarm
