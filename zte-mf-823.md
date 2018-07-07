@@ -156,3 +156,30 @@ datausage_data_left
 datausage_data_total  
 datausage_unit  
 datausage_current_status  
+
+## lock lte band
+
+http://192.168.0.1/goform/goform_set_cmd_process?goformId=SET_LTE_BAND_LOCK&lte_band_lock=VAL
+
+- VAL = 1800M
+- VAL = 2600M
+- VAL = 900M
+- VAL = 800M
+- VAL = all
+
+## web modeswitch
+
+http://192...../goform/goform_set_cmd_process?goformId=USB_MODE_SWITCH&usb_mode=N  
+
+MSD - USB Mass Storage Device
+
+- N=0 - PID = 0016: ZTE download mode. AT +ZCDRUN=E.
+- N=1 - PID = 1125: MSD AT +ZCDRUN=9
+- N=2 - PID = 2004: ?.
+- N=3 - PID = 1403: RNDIS + MSD AT +ZCDRUN=8
+- N=4 - PID = 1403: > N=3.
+- N=5 - PID = 1405: > N=3, +CDC/ECM -RNDIS
+- N=6 - PID = 1404: RNDIS + diagnostic port + 2 command ports + MSD + ADB (MF8230ZTED010000).
+- N=7 - PID = 1244: CDC + diagnostic port + 2 command ports + MSD + ADB (MF8230ZTED010000).
+- N=8 - PID = 1402: diagnostic port + 2 command ports + WWAN + MSD + ADB (1234567890ABCDEF).
+- N=9 - PID = 9994: MBIM + diagnostic port + 2 command ports + ADB (1234567890ABCDEF).
