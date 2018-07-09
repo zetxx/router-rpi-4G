@@ -5,7 +5,7 @@ docker run -it -d \
 --restart=unless-stopped \
 -e LCD_ADDR=60 \
 -v <host_dir>:/usr/src/app/runtime \
--v <host_db_dir>/db.sqlite:/db/db.sqlite \
+-v <host_db_dir>/:/db/ \
 --device /dev/i2c-1 \
 -p 3000:3000 \
 i2c
@@ -18,7 +18,7 @@ docker run -it -d \
 --restart=unless-stopped \
 -e LCD_ADDR=60 \
 -v /store/31.0GB/projects/router-rpi-4G/router/app:/usr/src/app/runtime \
--v /store/db.sqlite:/db/db.sqlite \
+-v /store/db.sqlite/:/db/ \
 --device /dev/i2c-1 \
--p 3000:3000 \
+-p 127.0.0.1:9999:3000 \
 i2c
