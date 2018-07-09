@@ -6,7 +6,7 @@ const Hapi = require('hapi');
 module.exports = (sequelize) => {
     const server = Hapi.server({
         port: 3000,
-        host: 'localhost'
+        host: '0.0.0.0'
     });
 
     require('./routes/main')(server);
