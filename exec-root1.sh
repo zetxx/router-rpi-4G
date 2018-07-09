@@ -1,7 +1,7 @@
 #!/bin/sh
 
-mkdir /store && \
-chmod 0777 -R /store
+mkdir -p /store/76a465fd-bbd7-4582-854c-697187ba897a && \
+chmod 0777 -R /store/76a465fd-bbd7-4582-854c-697187ba897a
 
 #install neceraly software
 pacman-key --init
