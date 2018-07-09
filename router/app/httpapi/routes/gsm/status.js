@@ -4,12 +4,15 @@ const getGsmStatusModel = require('../../../db/models/gsmStatus');
 module.exports = (server, sequelize) => (server.route({
     method: 'PUT',
     path: '/gsm/status',
-    handler: (request, h) => {
-        return getGsmStatusModel()
-            .create(request.payload)
-            .then(() => request.payload);
-    },
-    options: {
+    config: {
+        description: 'populate modem setting',
+        notes: 'populate modem setting',
+        tags: ['api'], // ADD THIS TAG
+        handler: (request, h) => {
+            return getGsmStatusModel()
+                .create(request.payload)
+                .then(() => request.payload);
+        },
         validate: {
             payload: {
                 pin_manage_result: Joi.any(),
@@ -150,24 +153,8 @@ module.exports = (server, sequelize) => (server.route({
                 fota_upgrade_result: Joi.any(),
                 dm_update_control_result: Joi.any(),
                 pbm_cur_index: Joi.any(),
-                pbm_load_complete: Joi.any(),
-                sms_current_db_id: Joi.any(),
-                sms_init: Joi.any(),
-                systime_mode: Joi.any(),
-                product_type: Joi.any(),
-                wan_auto_conn_prompt_flag: Joi.any(),
-                lan_netmask_for_current: Joi.any(),
-                sim_card_type: Joi.any(),
-                need_hard_reboot: Joi.any(),
-                wan_auto_reconnecting: Joi.any(),
-                ota_user_select: Joi.any(),
-                ota_manual_check_roam_state: Joi.any(),
-                ota_new_version_state_remind: Joi.any(),
-                datausage_sim_number: Joi.any(),
-                datausage_data_left: Joi.any(),
-                datausage_data_total: Joi.any(),
-                datausage_unit: Joi.any(),
-                datausage_current_status: Joi.any()
+                pbm_load: Joi.any(),
+                pbm_load_compl: Joi.any()
             }
         }
     }

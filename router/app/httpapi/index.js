@@ -1,6 +1,10 @@
 /* eslint-disable no-process-exit */
 /* eslint-disable no-console */
 'use strict';
+const Inert = require('inert');
+const Vision = require('vision');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('../package');
 const Hapi = require('hapi');
 
 module.exports = (sequelize) => {
@@ -15,6 +19,19 @@ module.exports = (sequelize) => {
     require('./routes/ping/status')(server, sequelize);
 
     const init = async () => {
+        await server.register([
+            Inert,
+            Vision,
+            {
+                plugin: HapiSwagger,
+                options: {
+                    info: {
+                        title: 'Test API Documentation',
+                        version: Pack.version
+                    }
+                }
+            }
+        ]);
         await server.start();
         console.info(`Server running at: ${server.info.uri}`);
     };
