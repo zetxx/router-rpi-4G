@@ -7,7 +7,7 @@ module.exports = (server, sequelize) => (server.route({
     config: {
         description: 'populate modem setting',
         notes: 'populate modem setting',
-        tags: ['api'], // ADD THIS TAG
+        tags: ['api'],
         handler: (request, h) => {
             return getGsmStatusModel()
                 .create(request.payload)
