@@ -2,7 +2,6 @@
 const draw = require('./draw');
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
-const getTrafficStatsModel = require('../db/models/traficStats');
 const getVpnStatus = require('../db/models/vpnStatus');
 const getGsmStatsModel = require('../db/models/gsmStatus');
 const getPingStatsModel = require('../db/models/pingStatus');
@@ -33,12 +32,10 @@ const isReady = () => {
 
 const pullData = (sequelize) => {
     return Promise.all([
-        getTrafficStatsModel(sequelize).find({order: [['id', 'DESC']]}).then((r) => (r || {}))
-            .then(({download = 0, upload = 0}) => ({trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)})),
         getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
         getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
-            .then(({connected = false, network = '?'}) => ({gsmNetworkStatus: (connected && 'connected') || '?', gsmNetwork: network})),
+            .then(({connected = false, network = '?', download = 0, upload = 0}) => ({gsmNetworkStatus: (connected && 'connected') || '?', gsmNetwork: network, trafficUp: getTrafficMetrics(upload), trafficDown: getTrafficMetrics(download)})),
         getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
