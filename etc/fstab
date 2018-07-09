@@ -1,4 +1,4 @@
 # <file system> <dir> <type>  <options> <dump>  <pass>
 /dev/mmcblk0p1  /boot           vfat   defaults                  0 0
 /dev/mmcblk0p3  /home           ext4   defaults,noatime,discard  0 1
-UUID=76a465fd-bbd7-4582-854c-697187ba897a  /store           ext4   defaults,noatime,discard  0 1
+UUID=76a465fd-bbd7-4582-854c-697187ba897a  /store/76a465fd-bbd7-4582-854c-697187ba897a           ext4   defaults,noatime,discard  0 1
