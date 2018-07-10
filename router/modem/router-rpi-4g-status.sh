@@ -16,3 +16,4 @@ printf "\nvpn status\n"
 #) | telnet)"
 #echo $zz
 curl -X PUT -d 'active=true' http://localhost:3000/vpn/status
+printf "\n"
