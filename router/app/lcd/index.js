@@ -8,6 +8,7 @@ const getPingStatsModel = require('../db/models/pingStatus');
 
 const width = 128;
 const height = 64;
+const traficMounthly = 1024 * 1024 * 1024 * 20;
 var oled, o;
 
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
@@ -30,35 +31,53 @@ const isReady = () => {
     return new Promise((resolve, reject) => oled._waitUntilReady(() => resolve(oled)));
 };
 
+const getTraficUsedPercentage = (up, down) => {
+    var total = up + down;
+    return Math.floor((total / traficMounthly) * 100);
+};
+
+const dashToCamelCase = (c) => {
+    if (c.dataValues) {
+        var o = c.dataValues;
+        return Object.keys(o).reduce((a, f) => {
+            var newField = f.split('_').map((v, idx) => ((idx && v.split('').map((v2, idx2) => ((!idx2 && v2.toUpperCase()) || v2)).join('')) || v)).join('');
+            a[newField] = o[f];
+            return a;
+        }, {});
+    }
+    return c;
+};
+
 const pullData = (sequelize) => {
     return Promise.all([
         getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
-            getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
-                .then(({
-                    network_type = '',
-                    network = '?',
-                    realtime_rx_bytes = 0,
-                    realtime_tx_bytes = 0,
-                    ppp_status = ''
-                }) => ({
-                    gsmNetworkStatus: (ppp_status === 'ppp_connected' && 'connected') || '?',
-                    gsmNetwork: network_type.slice(-5),
-                    trafficUp: getTrafficMetrics(realtime_tx_bytes),
-                    trafficDown: getTrafficMetrics(realtime_rx_bytes)
-                })),
+        getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => dashToCamelCase(r || {}))
+            .then(({
+                networkType = '',
+                network = '?',
+                realtimeRxBytes = 0,
+                realtimeTxBytes = 0,
+                pppStatus = ''
+            }) => ({
+                gsmNetworkStatus: (pppStatus === 'ppp_connected' && 'connected') || '?',
+                gsmNetwork: networkType.slice(-5),
+                trafficUp: getTrafficMetrics(realtimeTxBytes),
+                trafficDown: getTrafficMetrics(realtimeRxBytes),
+                trafficUsed: getTraficUsedPercentage(realtimeRxBytes, realtimeTxBytes)
+            })),
         getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime}) => Promise.resolve({
+    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed}) => Promise.resolve({
         gsmNetwork,
         gsmNetworkStatus,
         vpnStatus,
         ping: `${pingHost}:${pingTime}`,
         trafficUp,
         trafficDown,
-        trafficUsed: (Math.random() * 100000).toString().slice(0, 2),
+        trafficUsed,
         graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
     }));
 };
