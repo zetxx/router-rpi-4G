@@ -2,6 +2,7 @@
 Name=eth0
 
 [Network]
+IPForward=1
 DNS=8.8.8.8
 DHCP=no
 Address=10.11.12.1/24
