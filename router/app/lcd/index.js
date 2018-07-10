@@ -115,7 +115,7 @@ module.exports = (sequelize, lcdAddress) => {
     !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
 
     setInterval(() => pullData(sequelize)
-        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping})).then(console.log), 5000);
+        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed})).then(console.log), 5000);
     // setInterval(() => {
     //     return oled && redraw(sequelize);
     // }, 10000);
