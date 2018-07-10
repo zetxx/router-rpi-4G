@@ -9,8 +9,9 @@ module.exports = (server, sequelize) => (server.route({
         notes: 'populate ping times',
         tags: ['api'],
         handler: (request, h) => {
-            return getPingStatusModel().create(request.payload)
-                .then(() => request.payload);
+            return getPingStatusModel()
+                .create(request.payload)
+                .then(() => 'ok');
         },
         validate: {
             payload: Joi.object({

@@ -11,7 +11,7 @@ module.exports = (server, sequelize) => (server.route({
         handler: (request, h) => {
             return getGsmStatusModel()
                 .create(request.payload)
-                .then(() => request.payload);
+                .then(() => 'ok');
         },
         validate: {
             payload: {

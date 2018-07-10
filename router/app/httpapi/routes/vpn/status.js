@@ -11,7 +11,7 @@ module.exports = (server, sequelize) => (server.route({
         handler: (request, h) => {
             return getVpnStatusModel()
                 .create({isActive: request.payload.active})
-                .then(() => `vpn: active: ${request.payload.active}`);
+                .then(() => 'ok');
         },
         validate: {
             payload: {
