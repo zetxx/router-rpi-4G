@@ -35,7 +35,18 @@ const pullData = (sequelize) => {
         getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
             getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
-                .then(({network_type = '', network = '?', realtime_rx_bytes = 0, realtime_tx_bytes = 0, ppp_status = ''}) => ({gsmNetworkStatus: (ppp_status === 'ppp_connected' && 'connected') || '?', gsmNetwork: network_type.slice(-5), trafficUp: getTrafficMetrics(realtime_tx_bytes), trafficDown: getTrafficMetrics(realtime_rx_bytes)})),
+                .then(({
+                    network_type = '',
+                    network = '?',
+                    realtime_rx_bytes = 0,
+                    realtime_tx_bytes = 0,
+                    ppp_status = ''
+                }) => ({
+                    gsmNetworkStatus: (ppp_status === 'ppp_connected' && 'connected') || '?',
+                    gsmNetwork: network_type.slice(-5),
+                    trafficUp: getTrafficMetrics(realtime_tx_bytes),
+                    trafficDown: getTrafficMetrics(realtime_rx_bytes)
+                })),
         getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
