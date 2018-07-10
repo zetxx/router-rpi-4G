@@ -32,7 +32,7 @@ const isReady = () => {
 };
 
 const getTraficUsedPercentage = (up, down) => {
-    var total = up + down;
+    var total = parseInt(up) + parseInt(down);
     return Math.floor((total / traficMounthly) * 100);
 };
 
