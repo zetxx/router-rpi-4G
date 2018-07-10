@@ -10,6 +10,9 @@ ln -s /home/zetxx/router-rpi-4G/home/zetxx/.zshrc /home/zetxx/.zshrc
 sudo timedatectl set-timezone Europe/Sofia
 sudo systemctl enable ntpd.service && sudo systemctl start ntpd.service
 
+#interface
+sudo cp /home/zetxx/router-rpi-4G/etc/systemd/network/* /etc/systemd/network/
+
 sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.service /etc/systemd/system/router-rpi-4g-connect.service
 sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.sh /usr/bin/router-rpi-4g-connect.sh
 sudo chmod +x /usr/bin/router-rpi-4g-connect.sh
@@ -25,17 +28,8 @@ sudo systemctl enable iptables.service && sudo systemctl start iptables.service
 
 #copy ssh keys
 mkdir /home/zetxx/.ssh
-#chmod 0644 /home/zetxx/.ssh
 ln -s /home/zetxx/router-rpi-4G/home/zetxx/.ssh/authorized_keys /home/zetxx/.ssh/authorized_keys
 #copy openvpn config
 sudo mkdir -p /etc/openvpn/client/home/ && sudo cp /home/zetxx/router-rpi-4G/etc/openvpn/client/* /etc/openvpn/client/home/
 #copy openvpn keys
 #????
-
-#ip_forward
-sudo cp /home/zetxx/router-rpi-4G/etc/sysctl.d/* /etc/sysctl.d/
-#interface
-sudo cp /home/zetxx/router-rpi-4G/etc/systemd/network/* /etc/systemd/network/
-
-#install python adafruit-ssd1306 ... maybe
-#sudo pip install adafruit-ssd1306
