@@ -20,10 +20,8 @@ sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.sh /usr/bin
 sudo chmod +x /usr/bin/router-rpi-4g-connect.sh
 sudo systemctl enable router-rpi-4g-connect.service
 
-sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-status.service /etc/systemd/system/router-rpi-4g-status.service
-sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-status.sh /usr/bin/router-rpi-4g-status.sh
-sudo chmod +x /usr/bin/router-rpi-4g-status.sh
-sudo systemctl enable router-rpi-4g-status.service
+crontab /home/zetxx/router-rpi-4G/home/zetxx/crontab
+sudo systemctl enable cronie.service && sudo systemctl start cronie.service
 
 sudo cp /home/zetxx/router-rpi-4G/etc/iptables/iptables.rules /etc/iptables/iptables.rules
 sudo systemctl enable iptables.service && sudo systemctl start iptables.service
