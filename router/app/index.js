@@ -4,7 +4,7 @@ if (!process.env.LCD_ADDR) {
     throw new Error('LCD_ADDR env var should be set');
 }
 var lcdAddress = parseInt(process.env.LCD_ADDR);
-if (lcdAddress === 0 || isNaN(lcdAddress)) {
+if (isNaN(lcdAddress)) {
     throw new Error('LCD_ADDR env should contain hex value');
 }
 

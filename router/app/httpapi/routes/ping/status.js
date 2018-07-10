@@ -13,10 +13,11 @@ module.exports = (server, sequelize) => (server.route({
                 .then(() => request.payload);
         },
         validate: {
-            payload: {
+            payload: Joi.object({
                 host: Joi.string().required(),
                 time: Joi.string().required()
-            }
+            }),
+            failAction: (request, h, err) => ((err.isJoi && h.response(JSON.stringify(err && err.details)).code(400).takeover()) || h.response(err).takeover())
         }
     }
 }));

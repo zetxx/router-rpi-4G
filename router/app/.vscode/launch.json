@@ -13,7 +13,7 @@
             "protocol": "inspector",
             "env": {
                 "NODE_ENV": "dev",
-                "LCD_ADDR": "60"
+                "LCD_ADDR": "00"
             }
         },
         {

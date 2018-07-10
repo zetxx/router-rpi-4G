@@ -93,7 +93,7 @@ const getTrafficMetrics = (num) => {
 };
 
 module.exports = (sequelize, lcdAddress) => {
-    !o && i2cInit(lcdAddress).then((o) => (oled = o));
+    !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
 
     setInterval(() => pullData(sequelize)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping}) => ({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping})).then(console.log), 5000);
