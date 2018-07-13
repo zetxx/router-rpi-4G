@@ -1,5 +1,5 @@
 # <file system> <dir> <type>  <options> <dump>  <pass>
 UUID=EB95-D510  /boot           vfat   defaults                  0 0
-UUID=61f00197-570a-4a43-8458-218a77192452  /home           ext4   defaults,noatime,discard  0 1
-UUID=6a134946-de0c-40ce-af0e-70a8040383ae  /mounts/docker           ext4   defaults,noatime,discard  0 1
-UUID=348983b7-d66b-42dc-a8c3-8be6b7483ad9  /mounts/store1           ext4   defaults,noatime,discard  0 1
+UUID=61f00197-570a-4a43-8458-218a77192452  /home           ext4   defaults,noatime  0 1
+UUID=6a134946-de0c-40ce-af0e-70a8040383ae  /mounts/docker           ext4   defaults,noatime  0 1
+UUID=348983b7-d66b-42dc-a8c3-8be6b7483ad9  /mounts/store1           ext4   defaults,noatime  0 1
