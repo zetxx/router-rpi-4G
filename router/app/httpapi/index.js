@@ -14,6 +14,7 @@ module.exports = (sequelize) => {
     });
 
     require('./routes/main')(server);
+    require('./routes/lastRecords')(server);
     require('./routes/vpn/status')(server, sequelize);
     require('./routes/gsm/status')(server, sequelize);
     require('./routes/ping/status')(server, sequelize);
