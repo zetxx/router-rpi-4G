@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mkdir -p /mounts/docker && \
-mkdir -p /mounts/store && \
+mkdir -p /mounts/store1 && \
 chmod 0777 -R /mounts/docker && \
 chmod 0777 -R /mounts/store1
 
