@@ -2,4 +2,4 @@
 UUID=155D-ACCA  /boot           vfat   defaults                  0 0
 UUID=4065c594-b49a-4abc-91f0-eaff6252e395  /home           ext4   defaults,noatime,discard  0 1
 UUID=5ee270cb-8b20-4ec7-be19-92af709b2f87  /mounts/docker           ext4   defaults,noatime,discard  0 1
-UUID=a05065ae-1753-447a-a984-f88b24fa1878  /mounts/store           ext4   defaults,noatime,discard  0 1
+UUID=a05065ae-1753-447a-a984-f88b24fa1878  /mounts/store1           ext4   defaults,noatime,discard  0 1
