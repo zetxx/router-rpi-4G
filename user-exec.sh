@@ -17,7 +17,6 @@ sudo cp /home/zetxx/router-rpi-4G/etc/systemd/network/* /etc/systemd/network/
 
 sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.service /etc/systemd/system/router-rpi-4g-connect.service
 sudo cp /home/zetxx/router-rpi-4G/router/modem/router-rpi-4g-connect.sh /usr/bin/router-rpi-4g-connect.sh
-sudo chmod +x /usr/bin/router-rpi-4g-connect.sh
 sudo systemctl enable router-rpi-4g-connect.service
 
 crontab /home/zetxx/router-rpi-4G/home/zetxx/crontab
