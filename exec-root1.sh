@@ -3,7 +3,7 @@
 mkdir -p /mounts/docker && \
 mkdir -p /mounts/store && \
 chmod 0777 -R /mounts/docker && \
-chmod 0777 -R /mounts/store
+chmod 0777 -R /mounts/store1
 
 #install neceraly software
 pacman-key --init
