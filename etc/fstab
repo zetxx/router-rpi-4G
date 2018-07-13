@@ -1,4 +1,5 @@
 # <file system> <dir> <type>  <options> <dump>  <pass>
 /dev/mmcblk0p1  /boot           vfat   defaults                  0 0
 /dev/mmcblk0p3  /home           ext4   defaults,noatime,discard  0 1
-UUID=76a465fd-bbd7-4582-854c-697187ba897a  /store/76a465fd-bbd7-4582-854c-697187ba897a           ext4   defaults,noatime,discard  0 1
+UUID=5ee270cb-8b20-4ec7-be19-92af709b2f87  /mounts/docker           ext4   defaults,noatime,discard  0 1
+UUID=a05065ae-1753-447a-a984-f88b24fa1878  /mounts/store           ext4   defaults,noatime,discard  0 1

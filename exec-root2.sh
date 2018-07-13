@@ -4,6 +4,10 @@ cp /root/router-rpi-4G/etc/fstab /etc/
 userdel -f -r alarm
 mount -a
 
+systemctl enable docker.service && systemctl start docker.service && systemctl stop docker.service
+mv /var/lib/docker /mounts/docker
+ln -s /mounts/docker /var/lib/docker
+
 user="zetxx"
 echo "$user  ALL=(ALL:ALL) ALL" >> /etc/sudoers
 #add user
