@@ -4,8 +4,8 @@ docker run -it -d \
 --name app \
 --restart=unless-stopped \
 -e LCD_ADDR=60 \
--v <host_dir>:/usr/src/app/runtime \
--v <host_db_dir>/:/db/ \
+-v /home/zetxx/router-rpi-4G/router/app:/usr/src/app/runtime \
+-v /mounts/store1/router-rpi-4G/db/:/db/ \
 --device /dev/i2c-1 \
 -p 3000:3000 \
 i2c
