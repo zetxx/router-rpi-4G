@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cp /root/router-rpi-4G/boot/config.txt /boot/
 cp /root/router-rpi-4G/etc/fstab /etc/
 userdel -f -r alarm
 mount -a
