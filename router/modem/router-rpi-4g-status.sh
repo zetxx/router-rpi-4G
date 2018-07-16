@@ -16,5 +16,5 @@ echo exit
 ) | telnet)"
 echo $vpnStat
 
-curl -X POST -d "raw=$vpnStat" http://localhost:3000/vpn/status
+curl -X PUT -d "raw=$vpnStat" http://localhost:3000/vpn/status
 printf "\n"
