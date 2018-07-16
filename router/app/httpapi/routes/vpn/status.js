@@ -15,7 +15,8 @@ module.exports = (server, sequelize) => (server.route({
         },
         validate: {
             payload: {
-                active: Joi.bool().required()
+                active: Joi.bool(),
+                string: Joi.bool()
             },
             failAction: (request, h, err) => ((err.isJoi && h.response(JSON.stringify(err && err.details)).code(400).takeover()) || h.response(err).takeover())
         }
