@@ -1,9 +1,11 @@
 const Joi = require('joi');
 const getDataUsageModel = require('../../../db/models/dataUsage');
+const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
+
 const convertToBytes = (content) => {
     var arr = content.toLowerCase().split(',').join('').split(' ') || [];
     var dataUsedRaw = arr.shift();
-    var dataType = ['b', 'kb', 'mb', 'gb', 'tb'].indexOf(arr.pop());
+    var dataType = dataTypeList.indexOf(arr.pop());
     var dataUsed = 0;
     if (dataType >= 0) {
         dataUsed = ((!isNaN(parseFloat(dataUsedRaw)) && parseFloat(dataUsedRaw)) || 0) * Math.pow(1024, dataType);
