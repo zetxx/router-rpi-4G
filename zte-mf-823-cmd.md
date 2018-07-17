@@ -154,6 +154,8 @@ datausage_data_left
 datausage_data_total  
 datausage_unit  
 datausage_current_status  
+total_tx_bytes  
+total_rx_bytes  
 
 ## lock lte band
 
