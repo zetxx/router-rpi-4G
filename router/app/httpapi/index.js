@@ -18,6 +18,7 @@ module.exports = (sequelize) => {
     require('./routes/vpn/status')(server, sequelize);
     require('./routes/gsm/status')(server, sequelize);
     require('./routes/ping/status')(server, sequelize);
+    require('./routes/data/usage')(server, sequelize);
 
     const init = async () => {
         await server.register([

@@ -2,6 +2,7 @@ const Joi = require('joi');
 const getGsmStatusModel = require('../../db/models/gsmStatus');
 const getVpnStatusModel = require('../../db/models/vpnStatus');
 const getPingStatusModel = require('../../db/models/pingStatus');
+const getDataUsageModel = require('../../db/models/dataUsage');
 
 module.exports = (server, sequelize) => (server.route({
     method: 'GET',
@@ -16,7 +17,8 @@ module.exports = (server, sequelize) => (server.route({
             return Promise.all([
                 getVpnStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({vpn: r})),
                 getGsmStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({gsm: r})),
-                getPingStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({ping: r}))
+                getPingStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({ping: r})),
+                getDataUsageModel(sequelize).findAll(orderAndLimit).then((r) => ({dataUsage: r}))
             ])
             .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}));
         },
