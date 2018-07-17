@@ -1,7 +1,5 @@
-## goform_get_cmd_process?multi_data
-
 pin_manage_result  
-pinnumber 
+pinnumber  
 puknumber  
 pin_status  
 domain_stat  
