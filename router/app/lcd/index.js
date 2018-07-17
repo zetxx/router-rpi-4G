@@ -64,7 +64,9 @@ const pullData = (sequelize) => {
                 gsmNetworkStatus: (pppStatus === 'ppp_connected' && 'connected') || '?',
                 gsmNetwork: networkType.slice(-5),
                 trafficUp: getTrafficMetrics(realtimeTxBytes),
-                trafficDown: getTrafficMetrics(realtimeRxBytes)
+                realtimeTxBytes,
+                trafficDown: getTrafficMetrics(realtimeRxBytes),
+                realtimeRxBytes
             })),
         getDataUsageModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({usedTotal = 0}) => ({trafficUsed: getTraficUsedPercentage(usedTotal, 0)})),
@@ -72,7 +74,7 @@ const pullData = (sequelize) => {
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed}) => Promise.resolve({
+    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => Promise.resolve({
         gsmNetwork,
         gsmNetworkStatus,
         vpnStatus,
