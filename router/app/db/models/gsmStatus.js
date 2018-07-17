@@ -4,8 +4,8 @@ var table;
 module.exports = (sequelize) => (
     table ||
     (table = sequelize.define('gsm.status', {
-        total_tx_bytes: Sequelize.STRING,
-        total_rx_bytes: Sequelize.STRING,
+        total_tx_bytes: Sequelize.BIGINT(18),
+        total_rx_bytes: Sequelize.BIGINT(18),
         pin_status: Sequelize.STRING,
         domain_stat: Sequelize.STRING,
         network_provider: Sequelize.STRING,
@@ -17,11 +17,11 @@ module.exports = (sequelize) => (
         lte_rsrq: Sequelize.STRING,
         lte_rsrp: Sequelize.STRING,
         lte_snr: Sequelize.STRING,
-        realtime_tx_bytes: Sequelize.STRING,
-        realtime_rx_bytes: Sequelize.STRING,
+        realtime_tx_bytes: Sequelize.BIGINT(18),
+        realtime_rx_bytes: Sequelize.BIGINT(18),
         realtime_time: Sequelize.STRING,
-        peak_tx_bytes: Sequelize.STRING,
-        peak_rx_bytes: Sequelize.STRING,
+        peak_tx_bytes: Sequelize.BIGINT(18),
+        peak_rx_bytes: Sequelize.BIGINT(18),
         psw_fail_num_str: Sequelize.STRING,
         tx_power: Sequelize.STRING,
         enodeb_id: Sequelize.STRING,

@@ -49,11 +49,16 @@ const dashToCamelCase = (c) => {
     return c;
 };
 
+const getGraph = (num) => {};
+
 const pullData = (sequelize) => {
     return Promise.all([
         getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
         getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => dashToCamelCase(r || {}))
+            .then((r) => {
+                return r;
+            })
             .then(({
                 networkType = '',
                 network = '?',
@@ -82,6 +87,8 @@ const pullData = (sequelize) => {
         trafficUp,
         trafficDown,
         trafficUsed,
+        realtimeTxBytes,
+        realtimeRxBytes,
         graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
     }));
 };
@@ -121,7 +128,7 @@ module.exports = (sequelize, lcdAddress) => {
     setInterval(() => pullData(sequelize)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
             {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
-        )).then(console.log), 30000);
+        )).then(console.log), 3000);
     // setInterval(() => {
     //     return oled && redraw(sequelize);
     // }, 10000);
