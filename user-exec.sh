@@ -30,6 +30,6 @@ sudo systemctl enable iptables.service && sudo systemctl start iptables.service
 mkdir /home/zetxx/.ssh
 ln -s /home/zetxx/router-rpi-4G/home/zetxx/.ssh/authorized_keys /home/zetxx/.ssh/authorized_keys
 #copy openvpn config
-sudo mkdir -p /etc/openvpn/client/home/ && sudo cp /home/zetxx/router-rpi-4G/etc/openvpn/client/* /etc/openvpn/client/home/
+sudo mkdir -p /etc/openvpn/client/home-cert && sudo cp /home/zetxx/router-rpi-4G/etc/openvpn/client/* /etc/openvpn/client/
 #copy openvpn keys
 #????
