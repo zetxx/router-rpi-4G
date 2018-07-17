@@ -5,6 +5,7 @@ const Oled = require('oled-i2c-bus');
 const getVpnStatus = require('../db/models/vpnStatus');
 const getGsmStatsModel = require('../db/models/gsmStatus');
 const getPingStatsModel = require('../db/models/pingStatus');
+const getDataUsageModel = require('../db/models/dataUsage');
 
 const width = 128;
 const height = 64;
@@ -63,9 +64,10 @@ const pullData = (sequelize) => {
                 gsmNetworkStatus: (pppStatus === 'ppp_connected' && 'connected') || '?',
                 gsmNetwork: networkType.slice(-5),
                 trafficUp: getTrafficMetrics(realtimeTxBytes),
-                trafficDown: getTrafficMetrics(realtimeRxBytes),
-                trafficUsed: getTraficUsedPercentage(realtimeRxBytes, realtimeTxBytes)
+                trafficDown: getTrafficMetrics(realtimeRxBytes)
             })),
+        getDataUsageModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+            .then(({usedTotal = 0}) => ({trafficUsed: getTraficUsedPercentage(usedTotal, 0)})),
         getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])

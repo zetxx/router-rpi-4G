@@ -22,7 +22,7 @@ module.exports = (server, sequelize) => (server.route({
         tags: ['api'],
         handler: ({payload: {raw}}, h) => {
             return getDataUsageModel()
-                .create({used: convertToBytes(raw)})
+                .create({usedTotal: convertToBytes(raw)})
                 .then(() => 'ok');
         },
         validate: {
