@@ -5,6 +5,8 @@ curl -m 3 'http://192.168.0.1/goform/goform_get_cmd_process?multi_data=1&isTest=
 printf "\nping status\n"
 PR="$(ping -c 2 www.google.com | tail -1| awk -F '/' '{print $5}' | cut -f1 -d'.')"
 curl -X PUT -d 'host=google&time='"$PR"'ms' http://localhost:3000/ping/status
+#printf "\ndata usage\n"
+#curl http://data.vivacom.bg | grep 'loader-bar' | grep 'percentage' | egrep -o '>[0-9]+[^(]+' | cut -d '>' -f 2
 printf "\nvpn status\n"
 #VPN Status
 vpnStat="$((
