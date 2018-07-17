@@ -25,4 +25,4 @@
   - make: `sudo dd bs=4M if=/dev/mmcblk0 status=progress | gzip > /home/your_username/today.gz`
   - unmake: `sudo gzip -dc /home/your_username/image.gz | dd bs=4M of=/dev/mmcblk0 status=progress`
 
-@todo rm +x from services, add +x to /boot/config.txt
+@todo add +x to /boot/config.txt
