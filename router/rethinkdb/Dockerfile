@@ -10,8 +10,7 @@ RUN apk --no-cache upgrade &&\
 	mkdir -p /tmp/rethinkdb &&\
 	curl -L -o /tmp/rethinkdb.tgz https://download.rethinkdb.com/dist/rethinkdb-latest.tgz
 
-#RUN curl -L -o /tmp/rethinkdb.tgz https://download.rethinkdb.com/dist/rethinkdb-latest.tgz
-#RUN tar xf /tmp/rethinkdb.tgz -C /tmp/rethinkdb
+RUN tar xf /tmp/rethinkdb.tgz -C /tmp/rethinkdb
 
 #WORKDIR /tmp/rethinkdb
 #RUN configure --with-system-malloc --allow-fetch
