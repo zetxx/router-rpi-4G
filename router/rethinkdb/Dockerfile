@@ -8,15 +8,16 @@ RUN apk --no-cache upgrade &&\
 	mkdir /data &&\
 	chown daemon:daemon /data
 RUN mkdir -p /tmp && cd /tmp
+WORKDIR /tmp
 RUN wget https://download.rethinkdb.com/dist/rethinkdb-2.3.6.tgz
-RUN tar xf rethinkdb-2.3.6.tgz
-RUN cd rethinkdb-2.3.6
-RUN ./configure --with-system-malloc --allow-fetch
+#RUN tar xf rethinkdb-2.3.6.tgz
+#RUN cd rethinkdb-2.3.6
+#RUN ./configure --with-system-malloc --allow-fetch
 #RUN make ALLOW_WARNINGS=1
 #RUN make install ALLOW_WARNINGS=1
 
-VOLUME ["/data"]
+#VOLUME ["/data"]
 
-WORKDIR /data
+#WORKDIR /data
 
-CMD ["rethinkdb"]
+#CMD ["rethinkdb"]
