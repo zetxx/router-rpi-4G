@@ -4,7 +4,7 @@ FROM alpine:edge
 LABEL maintainer=""
 
 RUN apk --no-cache upgrade &&\
-	apk --no-cache add build-base bash python2 linux-headers bsd-compat-headers m4 paxmark protobuf-dev icu-dev libressl-dev curl-dev boost-dev libexecinfo-dev &&\
+	apk --no-cache add curl build-base bash python2 linux-headers bsd-compat-headers m4 paxmark protobuf-dev icu-dev libressl-dev curl-dev boost-dev libexecinfo-dev &&\
 	mkdir /data &&\
 	chown daemon:daemon /data &&\
 	mkdir -p /tmp &&\
