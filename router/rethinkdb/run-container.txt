@@ -1,1 +1,1 @@
-docker run -it --rm rethinkdb /bin/sh
+docker run -it --rm rethinkdb /bin/bash
