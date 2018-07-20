@@ -13,7 +13,7 @@ RUN apk --no-cache upgrade &&\
 WORKDIR /tmp
 RUN tar xf /tmp/rethinkdb.tgz
 
-#WORKDIR /tmp/rethinkdb
+WORKDIR /tmp/rethinkdb
 #RUN configure --with-system-malloc --allow-fetch
 #RUN make ALLOW_WARNINGS=1
 #RUN make install ALLOW_WARNINGS=1
