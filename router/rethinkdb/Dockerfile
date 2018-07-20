@@ -16,8 +16,8 @@ RUN configure --with-system-malloc --allow-fetch
 #RUN make ALLOW_WARNINGS=1
 #RUN make install ALLOW_WARNINGS=1
 
-VOLUME ["/data"]
+#VOLUME ["/data"]
 
-WORKDIR /data
+#WORKDIR /data
 
-CMD ["rethinkdb"]
+#CMD ["rethinkdb"]
