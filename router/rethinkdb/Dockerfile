@@ -8,4 +8,6 @@ VOLUME ["/data"]
 
 WORKDIR /data
 
+EXPOSE 8080/tcp
+
 CMD ["rethinkdb", "--bind", "all"]
