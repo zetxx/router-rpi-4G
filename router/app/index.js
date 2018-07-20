@@ -11,8 +11,9 @@ if (isNaN(lcdAddress)) {
 const http = require('./httpapi');
 const lcd = require('./lcd');
 const db = require('./db');
+const env = process.env.NODE_ENV || 'dev';
 
-db(process.env.NODE_ENV || 'dev')
+db(env)
     .then((sequelize) => (
         Promise.resolve(sequelize)
             .then(http) // will write everything in sqlite
@@ -20,7 +21,7 @@ db(process.env.NODE_ENV || 'dev')
     ))
     .then((sequelize) => (
         Promise.resolve()
-            .then(() => lcd(sequelize, lcdAddress)) // will read everything from sqlite
+            .then(() => lcd(sequelize, lcdAddress, env)) // will read everything from sqlite
             .then(() => sequelize)
     ))
     .catch(console.error);
