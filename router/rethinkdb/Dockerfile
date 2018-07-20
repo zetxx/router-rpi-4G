@@ -11,13 +11,13 @@ RUN apk --no-cache upgrade &&\
         wget https://download.rethinkdb.com/dist/rethinkdb-2.3.6.tgz --output-file=/tmp/rethinkdb.tgz &&\
         tar xf rethinkdb.tgz -C /tmp/rethinkdb
 
-#WORKDIR /tmp/rethinkdb
-#RUN ./configure --with-system-malloc --allow-fetch
+WORKDIR /tmp/rethinkdb
+RUN configure --with-system-malloc --allow-fetch
 #RUN make ALLOW_WARNINGS=1
 #RUN make install ALLOW_WARNINGS=1
 
-#VOLUME ["/data"]
+VOLUME ["/data"]
 
-#WORKDIR /data
+WORKDIR /data
 
-#CMD ["rethinkdb"]
+CMD ["rethinkdb"]
