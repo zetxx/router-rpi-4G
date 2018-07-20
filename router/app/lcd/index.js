@@ -122,14 +122,14 @@ const getTrafficMetrics = (num) => {
     }
 };
 
-module.exports = (sequelize, lcdAddress) => {
+module.exports = (sequelize, lcdAddress, env) => {
     !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
 
-    setInterval(() => pullData(sequelize)
+    env === 'dev' && setInterval(() => pullData(sequelize)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
             {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
         )).then(console.log), 3000);
-    // setInterval(() => {
-    //     return oled && redraw(sequelize);
-    // }, 10000);
+    env !== 'dev' && setInterval(() => {
+        return oled && redraw(sequelize);
+    }, 10000);
 };
