@@ -7,10 +7,11 @@ RUN apk --no-cache upgrade &&\
 	apk --no-cache add make g++ protobuf protobuf-dev boost-dev curl m4 wget openssl-dev build-base &&\
 	mkdir /data &&\
 	chown daemon:daemon /data &&\
-	mkdir -p /tmp/rethinkdb &&\
+	mkdir -p /tmp &&\
 	curl -L -o /tmp/rethinkdb.tgz https://download.rethinkdb.com/dist/rethinkdb-latest.tgz
 
-RUN tar xf /tmp/rethinkdb.tgz -C /tmp/rethinkdb
+WORKDIR /tmp
+RUN tar xf /tmp/rethinkdb.tgz
 
 #WORKDIR /tmp/rethinkdb
 #RUN configure --with-system-malloc --allow-fetch
