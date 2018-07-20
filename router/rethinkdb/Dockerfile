@@ -14,7 +14,7 @@ WORKDIR /tmp
 RUN tar xf /tmp/rethinkdb.tgz
 
 WORKDIR /tmp/rethinkdb-2.3.6
-#RUN configure --with-system-malloc --allow-fetch
+RUN ./configure --with-system-malloc --allow-fetch
 #RUN make ALLOW_WARNINGS=1
 #RUN make install ALLOW_WARNINGS=1
 
