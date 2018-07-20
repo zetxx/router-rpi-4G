@@ -2,8 +2,10 @@ FROM stephank/archlinux:armv7-latest
 
 LABEL maintainer="Elin Angelow"
 
-#VOLUME ["/data"]
+RUN pacman -Suy --noconfirm rethinkdb && pacman -Scc --noconfirm
 
-#WORKDIR /data
+VOLUME ["/data"]
 
-#CMD ["rethinkdb"]
+WORKDIR /data
+
+CMD ["rethinkdb"]
