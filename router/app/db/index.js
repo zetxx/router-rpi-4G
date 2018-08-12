@@ -4,7 +4,7 @@ module.exports = (env) => {
     const isDev = env === 'dev';
     var connOpts = {db: 'statuses'};
     if (!isDev) {
-        connOpts.host = '4g-db-rethink';
+        connOpts.host = 'rethink-4g';
     }
     return r
         .connect(connOpts)

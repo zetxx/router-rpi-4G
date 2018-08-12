@@ -2,14 +2,11 @@
 const draw = require('./draw');
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
-const getVpnStatus = require('../db/models/vpnStatus');
-const getGsmStatsModel = require('../db/models/gsmStatus');
-const getPingStatsModel = require('../db/models/pingStatus');
-const getDataUsageModel = require('../db/models/dataUsage');
+const r = require('rethinkdb');
 
 const width = 128;
 const height = 64;
-const traficMounthly = 1024 * 1024 * 1024 * 20;
+const trafficMonthly = 1024 * 1024 * 1024 * 20;
 var oled, o;
 
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
@@ -34,31 +31,16 @@ const isReady = () => {
 
 const getTraficUsedPercentage = (up, down) => {
     var total = parseInt(up) + parseInt(down);
-    return Math.floor((total / traficMounthly) * 100);
-};
-
-const dashToCamelCase = (c) => {
-    if (c.dataValues) {
-        var o = c.dataValues;
-        return Object.keys(o).reduce((a, f) => {
-            var newField = f.split('_').map((v, idx) => ((idx && v.split('').map((v2, idx2) => ((!idx2 && v2.toUpperCase()) || v2)).join('')) || v)).join('');
-            a[newField] = o[f];
-            return a;
-        }, {});
-    }
-    return c;
+    return Math.floor((total / trafficMonthly) * 100);
 };
 
 const getGraph = (num) => {};
 
-const pullData = (sequelize) => {
+const pullData = (dbInst) => {
     return Promise.all([
-        getVpnStatus(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+        r.table('vpn').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
-        getGsmStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => dashToCamelCase(r || {}))
-            .then((r) => {
-                return r;
-            })
+        r.table('gsm').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({
                 networkType = '',
                 network = '?',
@@ -73,9 +55,9 @@ const pullData = (sequelize) => {
                 trafficDown: getTrafficMetrics(realtimeRxBytes),
                 realtimeRxBytes
             })),
-        getDataUsageModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+        r.table('dataUsage').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({usedTotal = 0}) => ({trafficUsed: getTraficUsedPercentage(usedTotal, 0)})),
-        getPingStatsModel(sequelize).find({order: [['id', 'DESC']], limit: 1}).then((r) => (r || {}))
+        r.table('ping').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))

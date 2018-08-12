@@ -14,7 +14,7 @@ module.exports = (dbInst) => {
     });
 
     require('./routes/main')(server);
-    // require('./routes/lastRecords')(server);
+    require('./routes/lastRecords')(server, dbInst);
     require('./routes/vpn/status')(server, dbInst);
     require('./routes/gsm/status')(server, dbInst);
     require('./routes/ping/status')(server, dbInst);

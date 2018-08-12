@@ -1,11 +1,7 @@
 const Joi = require('joi');
-const getGsmStatusModel = require('../../db/models/gsmStatus');
-const getVpnStatusModel = require('../../db/models/vpnStatus');
-const getPingStatusModel = require('../../db/models/pingStatus');
-const getDataUsageModel = require('../../db/models/dataUsage');
 const r = require('rethinkdb');
 
-module.exports = (server, sequelize) => (server.route({
+module.exports = (server, dbInst) => (server.route({
     method: 'GET',
     path: '/lastRecords/{n}',
     config: {
@@ -13,13 +9,13 @@ module.exports = (server, sequelize) => (server.route({
         notes: 'get last N records',
         tags: ['api'],
         handler: (request, h) => {
-            const orderAndLimit = {order: [['id', 'DESC']], limit: parseInt(request.params.n)};
+            const orderAndLimit = parseInt(request.params.n);
 
             return Promise.all([
-                getVpnStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({vpn: r})),
-                getGsmStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({gsm: r})),
-                getPingStatusModel(sequelize).findAll(orderAndLimit).then((r) => ({ping: r})),
-                getDataUsageModel(sequelize).findAll(orderAndLimit).then((r) => ({dataUsage: r}))
+                r.table('vpn').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({vpn: r})),
+                r.table('gsm').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({gsm: r})),,
+                r.table('ping').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({ping: r})),,
+                r.table('dataUsage').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({dataUsage: r}))
             ])
             .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}));
         },

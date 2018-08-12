@@ -1,6 +1,18 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
 
+const dashToCamelCase = (c) => {
+    if (c.dataValues) {
+        var o = c.dataValues;
+        return Object.keys(o).reduce((a, f) => {
+            var newField = f.split('_').map((v, idx) => ((idx && v.split('').map((v2, idx2) => ((!idx2 && v2.toUpperCase()) || v2)).join('')) || v)).join('');
+            a[newField] = o[f];
+            return a;
+        }, {});
+    }
+    return c;
+};
+
 module.exports = (server, dbInst) => (server.route({
     method: 'PUT',
     path: '/gsm/status',
@@ -10,7 +22,7 @@ module.exports = (server, dbInst) => (server.route({
         tags: ['api'],
         handler: (request, h) => (r
             .table('gsm')
-            .insert(request.payload)
+            .insert(dashToCamelCase(request.payload || {}))
             .run(dbInst)
         ),
         validate: {
