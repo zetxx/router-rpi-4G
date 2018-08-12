@@ -1,7 +1,7 @@
 const Joi = require('joi');
-const getVpnStatusModel = require('../../../db/models/vpnStatus');
+const r = require('rethinkdb');
 
-module.exports = (server, sequelize) => (server.route({
+module.exports = (server, dbInst) => (server.route({
     method: 'PUT',
     path: '/vpn/status',
     config: {
@@ -14,9 +14,10 @@ module.exports = (server, sequelize) => (server.route({
                 var tmpStrArr = (request.payload.raw.split('for more info ').pop() || '').split(',').slice(0, -2);
                 update.isActive = tmpStrArr.indexOf('CONNECTED') >= 0;
             }
-            return getVpnStatusModel()
-                .create(update)
-                .then(() => 'ok');
+            return r
+                .table('vpn')
+                .insert(request.payload)
+                .run(dbInst);
         },
         validate: {
             payload: Joi.object().keys({

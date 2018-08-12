@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const getDataUsageModel = require('../../../db/models/dataUsage');
+const r = require('rethinkdb');
 const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
 
 const convertToBytes = (content) => {
@@ -13,18 +13,18 @@ const convertToBytes = (content) => {
     return dataUsed;
 };
 
-module.exports = (server, sequelize) => (server.route({
+module.exports = (server, dbInst) => (server.route({
     method: 'PUT',
     path: '/data/usage',
     config: {
         description: 'data usage',
         notes: 'data usage',
         tags: ['api'],
-        handler: ({payload: {raw}}, h) => {
-            return getDataUsageModel()
-                .create({usedTotal: convertToBytes(raw)})
-                .then(() => 'ok');
-        },
+        handler: ({payload: {raw}}, h) => (r
+            .table('dataUsage')
+            .insert({usedTotal: convertToBytes(raw)})
+            .run(dbInst)
+        ),
         validate: {
             payload: Joi.object({
                 raw: Joi.string().min(2).required().example('1,817.54 MB')

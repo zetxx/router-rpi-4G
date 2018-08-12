@@ -1,5 +1,5 @@
 #https://stackoverflow.com/questions/40265984/i2c-inside-a-docker-container
-
+# prod
 docker run -it -d \
 --name app \
 --restart=unless-stopped \
@@ -18,7 +18,7 @@ docker run -it -d \
 --name rethink-4g \
 rethinkdb
 
-## TMP
+## dev
     ### APP
 docker run -it -d \
 --name app \
@@ -36,6 +36,8 @@ docker run -it -d \
 --restart=unless-stopped \
 -v "/store/data/rethink/4g-router:/data" \
 -p 8080:8080 \
+-p 28015:28015 \
+-p 29015:29015 \
 --name rethink-4g \
 rethinkdb
 

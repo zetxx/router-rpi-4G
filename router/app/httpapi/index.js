@@ -7,18 +7,18 @@ const HapiSwagger = require('hapi-swagger');
 const Pack = require('../package');
 const Hapi = require('hapi');
 
-module.exports = (sequelize) => {
+module.exports = (dbInst) => {
     const server = Hapi.server({
         port: 3000,
         host: '0.0.0.0'
     });
 
     require('./routes/main')(server);
-    require('./routes/lastRecords')(server);
-    require('./routes/vpn/status')(server, sequelize);
-    require('./routes/gsm/status')(server, sequelize);
-    require('./routes/ping/status')(server, sequelize);
-    require('./routes/data/usage')(server, sequelize);
+    // require('./routes/lastRecords')(server);
+    require('./routes/vpn/status')(server, dbInst);
+    require('./routes/gsm/status')(server, dbInst);
+    require('./routes/ping/status')(server, dbInst);
+    require('./routes/data/usage')(server, dbInst);
 
     const init = async () => {
         await server.register([

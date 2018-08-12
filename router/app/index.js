@@ -14,10 +14,10 @@ const db = require('./db');
 const env = process.env.NODE_ENV || 'dev';
 
 db(env)
-    .then((sequelize) => (
-        Promise.resolve(sequelize)
+    .then((dbInst) => (
+        Promise.resolve(dbInst)
             .then(http) // will write everything in sqlite
-            .then(() => sequelize)
+            .then(() => dbInst)
     ))
     .then((sequelize) => (
         Promise.resolve()

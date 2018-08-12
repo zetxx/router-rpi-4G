@@ -3,6 +3,7 @@ const getGsmStatusModel = require('../../db/models/gsmStatus');
 const getVpnStatusModel = require('../../db/models/vpnStatus');
 const getPingStatusModel = require('../../db/models/pingStatus');
 const getDataUsageModel = require('../../db/models/dataUsage');
+const r = require('rethinkdb');
 
 module.exports = (server, sequelize) => (server.route({
     method: 'GET',

@@ -1,18 +1,18 @@
 const Joi = require('joi');
-const getGsmStatusModel = require('../../../db/models/gsmStatus');
+const r = require('rethinkdb');
 
-module.exports = (server, sequelize) => (server.route({
+module.exports = (server, dbInst) => (server.route({
     method: 'PUT',
     path: '/gsm/status',
     config: {
         description: 'populate modem setting',
         notes: 'populate modem setting',
         tags: ['api'],
-        handler: (request, h) => {
-            return getGsmStatusModel()
-                .create(request.payload)
-                .then(() => 'ok');
-        },
+        handler: (request, h) => (r
+            .table('gsm')
+            .insert(request.payload)
+            .run(dbInst)
+        ),
         validate: {
             payload: {
                 total_tx_bytes: Joi.number().integer().positive().example(10),
