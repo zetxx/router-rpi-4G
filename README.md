@@ -11,6 +11,7 @@
   - detect i2c led and get id https://www.raspberrypi.org/forums/viewtopic.php?t=26784
   - https://www.rbit.at/wordpress/modem-router/zte-mf831-auf-modembetrieb-umstellen/
   - https://archlinuxarm.org/platforms/armv6/raspberry-pi
+  - [zte unlock code](https://tools.texby.com/unlock-codes/zte/)
   
   ### telnet it
   
