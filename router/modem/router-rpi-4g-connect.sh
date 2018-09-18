@@ -11,7 +11,7 @@ while true; do
     #-H "X-Requested-With: XMLHttpRequest" \
     #-H "Origin: http://10.0.10.1" \
     #-H "Referer: http://10.0.10.1/index.html" \
-    #http://192.168.0.1/goform/goform_set_cmd_process
+    #http://10.0.10.1/goform/goform_set_cmd_process
     #sleep 1
     ## MODE
     curl -X POST \
@@ -20,7 +20,7 @@ while true; do
     -H "X-Requested-With: XMLHttpRequest" \
     -H "Origin: http://10.0.10.1" \
     -H "Referer: http://10.0.10.1/index.html" \
-    http://192.168.0.1/goform/goform_set_cmd_process
+    http://10.0.10.1/goform/goform_set_cmd_process
     break
   else
     echo "waiting 5 sec"
@@ -33,6 +33,6 @@ done
 #-d "goformId=SET_CONNECTION_MODE&ConnectionMode=auto_dial" \
 #-H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
 #-H "X-Requested-With: XMLHttpRequest" \
-#-H "Origin: http://192.168.0.1" \
-#-H "Referer: http://192.168.0.1/index.html" \
-#http://192.168.0.1/goform/goform_set_cmd_process
+#-H "Origin: http://10.0.10.1" \
+#-H "Referer: http://10.0.10.1/index.html" \
+#http://10.0.10.1/goform/goform_set_cmd_process
