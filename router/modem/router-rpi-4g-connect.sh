@@ -5,21 +5,21 @@ while true; do
     echo "online"
     sleep 10
     ## PIN
-    curl -X POST \
-    -d "isTest=false&goformId=ENTER_PIN&PinNumber=0000" \
-    -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
-    -H "X-Requested-With: XMLHttpRequest" \
-    -H "Origin: http://192.168.0.1" \
-    -H "Referer: http://192.168.0.1/index.html" \
-    http://192.168.0.1/goform/goform_set_cmd_process
-    sleep 1
+    #curl -X POST \
+    #-d "isTest=false&goformId=ENTER_PIN&PinNumber=0000" \
+    #-H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+    #-H "X-Requested-With: XMLHttpRequest" \
+    #-H "Origin: http://10.0.10.1" \
+    #-H "Referer: http://10.0.10.1/index.html" \
+    #http://192.168.0.1/goform/goform_set_cmd_process
+    #sleep 1
     ## MODE
     curl -X POST \
     -d "goformId=SET_BEARER_PREFERENCE&BearerPreference=WCDMA_AND_LTE" \
     -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
     -H "X-Requested-With: XMLHttpRequest" \
-    -H "Origin: http://192.168.0.1" \
-    -H "Referer: http://192.168.0.1/index.html" \
+    -H "Origin: http://10.0.10.1" \
+    -H "Referer: http://10.0.10.1/index.html" \
     http://192.168.0.1/goform/goform_set_cmd_process
     break
   else
