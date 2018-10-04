@@ -6,18 +6,21 @@
 
 ## Resources
   ### 4G modem
-  - https://wiki.archlinux.org/index.php/ZTE_MF_823_(Megafon_M100-3)_4G_Modem
-  - https://www.development-cycle.com/2017/04/27/zte-mf823-inside/
-  - detect i2c led and get id https://www.raspberrypi.org/forums/viewtopic.php?t=26784
-  - https://www.rbit.at/wordpress/modem-router/zte-mf831-auf-modembetrieb-umstellen/
-  - https://archlinuxarm.org/platforms/armv6/raspberry-pi
-  - [zte unlock code](https://tools.texby.com/unlock-codes/zte/)
-  
-  ### telnet it
-  
-  - telnet 192.168.0.1
-  - Login: root
-  - Pwd: zte9x15
+  - [zte unlock code](https://tools.texby.com/unlock-codes/zte/)  
+  #### MF 825
+   ##### telnet it  
+   - telnet 192.168.0.1
+   - Login: root
+   - Pwd: zte9x15
+   ##### links  
+   - https://wiki.archlinux.org/index.php/ZTE_MF_823_(Megafon_M100-3)_4G_Modem
+   - https://www.development-cycle.com/2017/04/27/zte-mf823-inside/
+   - detect i2c led and get id https://www.raspberrypi.org/forums/viewtopic.php?t=26784
+   - https://www.rbit.at/wordpress/modem-router/zte-mf831-auf-modembetrieb-umstellen/
+   - https://archlinuxarm.org/platforms/armv6/raspberry-pi
+
+   #### MF 831  
+   - https://4pda.ru/forum/index.php?showtopic=555876&st=1400
   
   ### Jail it
   https://stackoverflow.com/questions/40265984/i2c-inside-a-docker-container
