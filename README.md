@@ -24,6 +24,7 @@
   * links  
     - https://4pda.ru/forum/index.php?showtopic=555876&st=1400
     - https://technicalexperiments.wordpress.com/2015/10/30/zte-mf831-for-use-with-openwrt-serial-modem-instead-of-cdc_ether/
+    - https://www.rbit.at/wordpress/uncategorized/zte-modem-mf831-telnet-ssh-zugang/
   
   ### Jail it
   * links  
