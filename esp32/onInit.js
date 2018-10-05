@@ -1,24 +1,19 @@
 const watchPin = D14;
 const batteryPin = D15;
 const powerPin = D33;
-
-watchPin.mode('input');
-powerPin.write(true);
-batteryPin.write(false);
-
 [batteryPin, powerPin].map((pin) => pin.mode('output'));
+watchPin.mode('input');
 
-setWatch(
-  (pin) => {
-    console.log('listen pin state:', pin);
+const stateChange = (pin) => {
+    console.log('watched pin state:', pin);
     if(pin.state) {
-      powerPin.write(true);
-      batteryPin.write(false);
+        powerPin.write(true);
+        batteryPin.write(false);
     } else {
-      powerPin.write(false);
-      batteryPin.write(true);
-    }
-  },
-  watchPin,
-  {repeat: true, edge: 'both', data: watchPin}
-);
+        powerPin.write(false);
+        batteryPin.write(true);
+};
+
+stateChange({state: watchPin.read()});
+
+setWatch(stateChange, watchPin, {repeat: true, edge: 'both', data: watchPin});
