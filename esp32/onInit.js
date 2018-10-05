@@ -18,5 +18,5 @@ function onInit () {
 
     stateChange({state: watchPin.read()});
 
-    setWatch(stateChange, watchPin, {repeat: true, edge: 'both', data: watchPin});
-};
+    setWatch(stateChange, watchPin, {debounce : 50, repeat: true, edge: 'both', data: watchPin});
+}
