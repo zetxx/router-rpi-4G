@@ -2,8 +2,10 @@
 Name=usb0
 
 [Network]
-DHCP=yes
+DHCP=no
+#DHCP=yes
 IPForward=1
+Address=10.21.21.23/24
 DNS=1.1.1.1
 DNS=8.8.8.8
 DNS=8.8.4.4
