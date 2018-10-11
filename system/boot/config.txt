@@ -1,5 +1,7 @@
-dtparam=eee=off
+# See /boot/overlays/README for all available options
+
+dtparam=eee=off,sd_overclock=100,audio=off
 max_usb_current=1
 gpu_mem=16
-dtparam=sd_overclock=100
-dtparam=i2c_arm=on
+
+initramfs initramfs-linux.img followkernel
