@@ -1,3 +1,5 @@
+dtparam=eee=off
+max_usb_current=1
 gpu_mem=16
 dtparam=sd_overclock=100
 dtparam=i2c_arm=on
