@@ -2,6 +2,11 @@ App that collects data and prints it on lcd
 
 + # Docker
   + ## Build
+    - ### App
+      ```bash
+      docker build -t statapp . -f ./Docker/app/Dockerfile
+      ```
+  + ## Run
     + ### PROD
       - #### storage
         ```bash
