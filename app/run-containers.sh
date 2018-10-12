@@ -13,7 +13,7 @@ i2c
 
 docker run -it -d \
 --restart=unless-stopped \
--v "/store/data/rethink/4g-router:/data" \
+-v "/mounts/store1/docker-volumes/rethinkdb/4g/data:/data" \
 -p 8080:8080 \
 --name rethink-4g \
 rethinkdb
