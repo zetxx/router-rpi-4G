@@ -10,12 +10,12 @@ RUN addgroup -g 1000 node \
         build-base \
         linux-headers \
         make \
-        nodejs
+        nodejs \
+        && mkdir -p "/usr/src/app/modules" \
+        && mkdir "/usr/src/app/runtime"
 
-RUN mkdir -p "/usr/src/app/modules"
-RUN mkdir "/usr/src/app/runtime"
 WORKDIR "/usr/src/app/modules"
-COPY ./package.json .
+COPY ./package.json /usr/src/app/modules/
 
 RUN npm i
 
