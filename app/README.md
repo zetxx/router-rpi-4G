@@ -24,9 +24,9 @@ App that collects data and prints it on lcd
       - #### APP
         ```bash
         docker run -it -d \
-        --name app \
+        --name statapp \
         --restart=unless-stopped \
-        --link=rethink-4g \
+        --link=rethinkdb \
         -e LCD_ADDR=60 \
         -v /home/zetxx/router-rpi-4G/app:/usr/src/app/runtime \
         --device /dev/i2c-1 \
