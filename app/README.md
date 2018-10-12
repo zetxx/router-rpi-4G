@@ -28,8 +28,7 @@ App that collects data and prints it on lcd
         --restart=unless-stopped \
         --link=rethink-4g \
         -e LCD_ADDR=60 \
-        -v /home/zetxx/router-rpi-4G/router/app:/usr/src/app/runtime \
-        -v /mounts/store1/router-rpi-4G/db/:/db/ \
+        -v /home/zetxx/router-rpi-4G/app:/usr/src/app/runtime \
         --device /dev/i2c-1 \
         -p 3000:3000 \
         i2c
