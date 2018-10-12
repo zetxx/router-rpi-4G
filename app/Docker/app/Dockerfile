@@ -12,7 +12,6 @@ RUN addgroup -g 1000 node \
         make \
         nodejs
 
-RUN mkdir "/db"
 RUN mkdir -p "/usr/src/app/modules"
 RUN mkdir "/usr/src/app/runtime"
 WORKDIR "/usr/src/app/modules"
