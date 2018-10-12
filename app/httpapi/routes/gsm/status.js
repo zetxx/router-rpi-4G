@@ -26,7 +26,7 @@ module.exports = (server, dbInst) => (server.route({
             .run(dbInst)
         ),
         validate: {
-            payload: {
+            payload: Joy.object({
                 total_tx_bytes: Joi.number().integer().positive().example(10),
                 total_rx_bytes: Joi.number().integer().positive().example(10),
                 pin_status: Joi.any(),
@@ -50,7 +50,7 @@ module.exports = (server, dbInst) => (server.route({
                 enodeb_id: Joi.any(),
                 lte_band: Joi.any(),
                 sim_card_type: Joi.any()
-            },
+            }).options({allowUnknown: true}),
             failAction: (request, h, err) => ((err.isJoi && h.response(JSON.stringify(err && err.details)).code(400).takeover()) || h.response(err).takeover())
         }
     }
