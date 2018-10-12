@@ -1,6 +1,5 @@
 FROM alpine:edge
 
-ENV NODE_VERSION 10.1.0
 ENV NODE_ENV prod
 RUN cat /etc/alpine-release
 
@@ -19,15 +18,14 @@ RUN mkdir "/usr/src/app/runtime"
 WORKDIR "/usr/src/app/modules"
 COPY ./package.json .
 
-RUN npm i yarn -g
-RUN yarn install --ignore-engines
+RUN npm i
 
 WORKDIR "/usr/src/app/runtime"
 ENV NODE_PATH "/usr/src/app/modules/node_modules"
 
 CMD ["npm", "run", "server"]
 #build
-#docker build -t i2c . -f ./Dockerfile-apine
+#docker build -t statApp . -f ./Docker/app/Dockerfile
 
 #run temporary
 #docker run --rm -it --device /dev/i2c-1 i2c /bin/sh
