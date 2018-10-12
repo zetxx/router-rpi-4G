@@ -1,8 +1,9 @@
 App that collects data and prints it on lcd
 
 # Docker
-## prod
-### db
+## Build
+### PROD
+#### storage
 ```bash
 docker run -it -d \
 --restart=unless-stopped \
@@ -12,7 +13,7 @@ docker run -it -d \
 rethinkdb
 ```
 
-### app
+#### APP
 ```bash
 docker run -it -d \
 --name app \
@@ -26,8 +27,8 @@ docker run -it -d \
 i2c
 ```
 
-## dev
-### db
+### DEV
+#### storage
 
 ```bash
 docker run -it -d \
@@ -39,7 +40,7 @@ docker run -it -d \
 --name rethink-4g \
 rethinkdb
 ```
-### app
+#### APP
 ```bash
 docker run -it -d \
 --name app \
