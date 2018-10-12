@@ -6,6 +6,10 @@ App that collects data and prints it on lcd
       ```bash
       docker build -t statapp . -f ./Docker/app/Dockerfile
       ```
+    - ### Storage
+      ```bash
+      docker build -t rethinkdb . -f ./Docker/rethinkdb/Dockerfile
+      ```
   + ## Run
     + ### PROD
       - #### storage
