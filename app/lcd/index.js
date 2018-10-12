@@ -104,7 +104,10 @@ const getTrafficMetrics = (num) => {
     }
 };
 
-module.exports = (sequelize, lcdAddress, env) => {
+module.exports = (sequelize, lcdAddress, env, disableLcd) => {
+    if (disableLcd) {
+        return;
+    }
     !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
 
     env === 'dev' && setInterval(() => pullData(sequelize)
