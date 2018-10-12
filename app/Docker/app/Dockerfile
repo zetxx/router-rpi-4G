@@ -14,7 +14,6 @@ RUN addgroup -g 1000 node \
         && mkdir -p "/usr/src/app/modules" \
         && mkdir "/usr/src/app/runtime"
 
-WORKDIR "/usr/src/app/modules"
 COPY ./package.json /usr/src/app/modules/
 
 RUN npm i
