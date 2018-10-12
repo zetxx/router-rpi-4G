@@ -19,9 +19,9 @@ db(env)
             .then(http) // will write everything in sqlite
             .then(() => dbInst)
     ))
-    .then((sequelize) => (
+    .then((dbInst) => (
         Promise.resolve()
-            .then(() => lcd(sequelize, lcdAddress, env)) // will read everything from sqlite
-            .then(() => sequelize)
+            .then(() => lcd(dbInst, lcdAddress, env)) // will read everything from sqlite
+            .then(() => dbInst)
     ))
     .catch(console.error);
