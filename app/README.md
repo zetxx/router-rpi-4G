@@ -58,3 +58,15 @@ App that collects data and prints it on lcd
         -p 3000:3000 \
         i2c
         ```
+
+    + ### temporary
+      - #### app
+        ```bash
+        docker run -it --rm \                               
+        --link=rethink-4g \
+        -e LCD_ADDR=60 \
+        -v /home/zetxx/router-rpi-4G/app:/usr/src/app/runtime \
+        --device /dev/i2c-1 \
+        -p 3000:3000 \
+        statapp /bin/ash
+        ```
