@@ -25,7 +25,7 @@ ENV NODE_PATH "/usr/src/app/modules/node_modules"
 
 CMD ["npm", "run", "server"]
 #build
-#docker build -t statApp . -f ./Docker/app/Dockerfile
+#docker build -t statapp ./Docker/app/Dockerfile
 
 #run temporary
 #docker run --rm -it --device /dev/i2c-1 i2c /bin/sh
