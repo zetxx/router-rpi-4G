@@ -1,6 +1,6 @@
 # See /boot/overlays/README for all available options
 
-dtparam=eee=off,sd_overclock=100,audio=off
+dtparam=eee=off,sd_overclock=100,audio=off,i2c_arm=on
 max_usb_current=1
 gpu_mem=16
 
