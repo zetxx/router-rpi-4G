@@ -12,6 +12,7 @@ const http = require('./httpapi');
 const lcd = require('./lcd');
 const db = require('./db');
 const env = process.env.NODE_ENV || 'dev';
+const disableLcd = (process.env.DISABLE_LCD && true) || false;
 
 db(env)
     .then((dbInst) => (
@@ -21,7 +22,7 @@ db(env)
     ))
     .then((dbInst) => (
         Promise.resolve()
-            .then(() => lcd(dbInst, lcdAddress, env)) // will read everything from sqlite
+            .then(() => lcd(dbInst, lcdAddress, env, disableLcd)) // will read everything from sqlite
             .then(() => dbInst)
     ))
     .catch(console.error);
