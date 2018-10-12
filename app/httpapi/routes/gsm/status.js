@@ -26,7 +26,7 @@ module.exports = (server, dbInst) => (server.route({
             .run(dbInst)
         ),
         validate: {
-            payload: Joy.object({
+            payload: Joi.object({
                 total_tx_bytes: Joi.number().integer().positive().example(10),
                 total_rx_bytes: Joi.number().integer().positive().example(10),
                 pin_status: Joi.any(),
