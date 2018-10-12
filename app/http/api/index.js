@@ -1,10 +1,9 @@
-/* eslint-disable no-process-exit */
 /* eslint-disable no-console */
 'use strict';
 const Inert = require('inert');
 const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
-const Pack = require('../package');
+const Pack = require('../../package');
 const Hapi = require('hapi');
 
 module.exports = (dbInst) => {
@@ -16,9 +15,7 @@ module.exports = (dbInst) => {
     require('./routes/main')(server);
     require('./routes/lastRecords')(server, dbInst);
     require('./routes/vpn/status')(server, dbInst);
-    require('./routes/gsm/status')(server, dbInst);
     require('./routes/ping/status')(server, dbInst);
-    require('./routes/data/usage')(server, dbInst);
 
     const init = async () => {
         await server.register([
@@ -37,11 +34,5 @@ module.exports = (dbInst) => {
         await server.start();
         console.info(`Server running at: ${server.info.uri}`);
     };
-
-    process.on('unhandledRejection', (err) => {
-        console.error(err);
-        process.exit(1);
-    });
-
     init();
 };

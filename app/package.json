@@ -5,13 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "rethink": "^1.4.0",
-    "i2c-bus": "^4.0.1",
+    "i2c-bus": "^4.0.2",
     "oled-i2c-bus": "^1.0.10",
-    "hapi": "^17.3.1",
-    "joi": "^13.1.2",
-    "hapi-swagger": "^9.1.1",
+    "hapi": "^17.6.0",
+    "joi": "^13.7.0",
+    "hapi-swagger": "^9.1.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "inert": "^5.1.0",
-    "vision": "^5.3.3"
+    "vision": "^5.4.0"
   },
   "scripts": {
     "server": "node ./index"

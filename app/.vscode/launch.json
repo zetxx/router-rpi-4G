@@ -13,7 +13,8 @@
             "protocol": "inspector",
             "env": {
                 "NODE_ENV": "dev",
-                "LCD_ADDR": "00"
+                "_LCD_ADDR": "00",
+                "MODEM_URL": "http://10.21.21.1"
             }
         },
         {
