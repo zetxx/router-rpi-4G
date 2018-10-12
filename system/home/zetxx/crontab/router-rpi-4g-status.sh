@@ -9,8 +9,8 @@ printf "\nping status\n"
 PR="$(ping -c 2 www.google.com | tail -1| awk -F '/' '{print $5}' | cut -f1 -d'.')"
 curl -X PUT -d 'host=google&time='"$PR"'ms' http://localhost:3000/ping/status
 
-printf "\ndata usage\n"
 if [ $currentMinute == '05' ] || [ $currentMinute == '20' ] || [ $currentMinute == '45' ]; then
+    printf "\ndata usage\n"
     traffic="$(curl http://data.vivacom.bg | grep 'loader-bar' | grep 'percentage' | egrep -o '>[0-9]+[^(]+' | cut -d '>' -f 2)"
     curl -X PUT -d 'raw='"$traffic" http://localhost:3000/data/usage
 fi
