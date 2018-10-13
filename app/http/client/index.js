@@ -1,5 +1,6 @@
 const req = require('request-promise');
 const r = require('rethinkdb');
+const log = require('../../log');
 
 const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
 
@@ -36,27 +37,31 @@ const mappings = {
         json: true,
         transform
     }),
-    dataUsage: () => ({
-        uri: 'http://data.vivacom.bg',
+    dataUsage: ({uri}) => ({
+        uri,
+        headers: {
+            'Accept-Encoding': 'deflate'
+        },
         transform: (b) => ({usedTotal: convertToBytes((b.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim())})
     })
 };
 
+const doRequest = (dbInst, {options, type}) => req(options)
+    .then((res) =>
+        res && r.table(type)
+        .insert(Object.assign({insertTime: Date.now()}, res))
+        .run(dbInst)
+    )
+    .then((r) => log.info('request: ', type));
+
 const init = (type, dbInst, {uri, repeatInterval} = {}) => {
     const options = mappings[type]({uri});
 
-    return () => setInterval(() => (
-        req(options)
-            .then((res) =>
-                res && r.table(type)
-                .insert(Object.assign({insertTime: Date.now()}, res))
-                .run(dbInst)
-            )
-    ), 5000);
+    return () => setInterval(() => (doRequest(dbInst, {options, type})), repeatInterval);
 };
 
-module.exports = ({dbInst, modemUrl}) => {
+module.exports = (dbInst, {modem, internetProvider}) => {
     return Promise.resolve()
-        .then(init('gsm', dbInst, {uri: modemUrl, repeatInterval: 300000}))
-        .then(init('dataUsage', dbInst, {repeatInterval: 6000000}));
+        .then(init('gsm', dbInst, modem))
+        .then(init('dataUsage', dbInst, internetProvider));
 };

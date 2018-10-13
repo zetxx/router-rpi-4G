@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 'use strict';
 const Inert = require('inert');
 const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
-const Pack = require('../../package');
 const Hapi = require('hapi');
+const Pack = require('../../package');
+const log = require('../../log');
 
 module.exports = (dbInst) => {
     const server = Hapi.server({
@@ -32,7 +32,7 @@ module.exports = (dbInst) => {
             }
         ]);
         await server.start();
-        console.info(`Server running at: ${server.info.uri}`);
+        log.info(`Server running at: ${server.info.uri}`);
     };
     init();
 };

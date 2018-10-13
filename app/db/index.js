@@ -1,4 +1,5 @@
 const r = require('rethinkdb');
+const log = require('../log');
 
 module.exports = (env) => {
     const isDev = env === 'dev';
@@ -31,6 +32,6 @@ module.exports = (env) => {
                 )
         )
         .catch((e) => {
-            console.error(e);
+            log.error(e);
         });
 };

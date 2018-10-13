@@ -1,9 +1,11 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
 
+const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage'];
+
 module.exports = (server, dbInst) => (server.route({
     method: 'GET',
-    path: '/lastRecords/{n}',
+    path: '/lastRecords/{namespace}/{n}',
     config: {
         description: 'get last N records',
         notes: 'get last N records',
@@ -11,16 +13,12 @@ module.exports = (server, dbInst) => (server.route({
         handler: (request, h) => {
             const orderAndLimit = parseInt(request.params.n);
 
-            return Promise.all([
-                r.table('vpn').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({vpn: r})),
-                r.table('gsm').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({gsm: r})),,
-                r.table('ping').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({ping: r})),,
-                r.table('dataUsage').orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({dataUsage: r}))
-            ])
+            return Promise.all(((request.params.namespace !== 'all' && namespaces.filter((ns) => ns === request.params.namespace)) || namespaces).map((ns) => r.table(ns).orderBy('id').limit(orderAndLimit).run(dbInst).then((r) => ({[ns]: r}))))
             .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}));
         },
         validate: {
             params: {
+                namespace: Joi.string().allow(['all'].concat(namespaces)).required().example('all'),
                 n: Joi.number().required().example(10)
             },
             failAction: (request, h, err) => {

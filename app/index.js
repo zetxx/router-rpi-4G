@@ -1,26 +1,20 @@
-/* eslint-disable no-process-env */
-/* eslint-disable no-console */
-var lcdAddress = parseInt(process.env.LCD_ADDR);
-const modemUrl = process.env.MODEM_URL;
+const log = require('./log');
+const config = require('./config')();
 
-if (isNaN(lcdAddress)) {
-    lcdAddress = false;
+config.lcdAddress = parseInt(config.lcdAddress);
+if (isNaN(config.lcdAddress)) {
+    config.lcdAddress = false;
 }
 
 const http = require('./http');
 const lcd = require('./lcd');
 const db = require('./db');
-const env = process.env.NODE_ENV || 'dev';
 
-db(env)
-    .then((dbInst) => (
-        Promise.resolve({dbInst, modemUrl})
-            .then(http)
-            .then(() => dbInst)
-    ))
+db(config.env)
     .then((dbInst) => (
         Promise.resolve()
-            .then(() => lcdAddress && lcd({dbInst, lcdAddress, env}))
-            .then(() => dbInst)
+            .then(() => http(dbInst, config))
+            .then(() => config.lcdAddress && lcd(dbInst, config))
     ))
-    .catch(console.error);
+    .then(() => log.info('everything started'))
+    .catch(log.error.bind(log));

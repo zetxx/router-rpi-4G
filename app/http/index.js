@@ -1,8 +1,8 @@
 const api = require('./api');
 const client = require('./client');
 
-module.exports = ({dbInst, modemUrl}) => {
+module.exports = (dbInst, config) => {
     return Promise.resolve()
         .then(() => api(dbInst))
-        .then(() => client({dbInst, modemUrl}));
+        .then(() => client(dbInst, config));
 };

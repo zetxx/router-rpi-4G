@@ -27,7 +27,8 @@ App that collects data and prints it on lcd
         --name statapp \
         --restart=unless-stopped \
         --link=rethink-4g \
-        -e LCD_ADDR=60 \
+        -e statsapp_config__lcdAddr=60 \
+        -e statsapp_config__modem__uri="http://10.21.21.1" \
         -v /home/zetxx/router-rpi-4G/app:/usr/src/app/runtime \
         --device /dev/i2c-1 \
         -p 3000:3000 \
@@ -62,7 +63,7 @@ App that collects data and prints it on lcd
     + ### temporary
       - #### app
         ```bash
-        docker run -it --rm \                               
+        docker run -it --rm \
         --link=rethink-4g \
         -e LCD_ADDR=60 \
         -v /home/zetxx/router-rpi-4G/app:/usr/src/app/runtime \

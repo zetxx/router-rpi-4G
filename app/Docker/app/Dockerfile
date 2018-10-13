@@ -1,6 +1,8 @@
 FROM alpine:edge
 
-ENV NODE_ENV prod
+ENV statsapp_config__env prod
+ENV NODE_PATH "/usr/src/app/modules/node_modules"
+
 RUN cat /etc/alpine-release
 
 RUN addgroup -g 1000 node \
@@ -19,11 +21,5 @@ WORKDIR "/usr/src/app/modules"
 RUN npm i
 
 WORKDIR "/usr/src/app/runtime"
-ENV NODE_PATH "/usr/src/app/modules/node_modules"
 
 CMD ["npm", "run", "server"]
-#build
-#docker build -t statapp ./Docker/app/Dockerfile
-
-#run temporary
-#docker run --rm -it --device /dev/i2c-1 i2c /bin/sh

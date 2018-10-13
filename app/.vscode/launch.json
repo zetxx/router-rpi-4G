@@ -12,9 +12,10 @@
             "outputCapture": "std",
             "protocol": "inspector",
             "env": {
-                "NODE_ENV": "dev",
-                "_LCD_ADDR": "00",
-                "MODEM_URL": "http://10.21.21.1"
+                "statsapp_config__env": "dev",
+                "statsapp_config__lcdAddr": "00",
+                "statsapp_config__modem__uri": "http://10.21.21.1",
+                "statsapp_config__modem__repeatInterval": 5000
             }
         },
         {

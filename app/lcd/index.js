@@ -1,8 +1,9 @@
 'use strict';
-const draw = require('./draw');
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
 const r = require('rethinkdb');
+const draw = require('./draw');
+const log = require('../log');
 
 const width = 128;
 const height = 64;
@@ -89,7 +90,7 @@ const redraw = (sequelize) => {
         .then(isReady)
         .then(() => oled.turnOnDisplay())
         .then(isReady)
-        .then(() => console.log('done'));
+        .then(() => log.info('done'));
 };
 
 const getTrafficMetrics = (num) => {
@@ -104,14 +105,14 @@ const getTrafficMetrics = (num) => {
     }
 };
 
-module.exports = ({sequelize, lcdAddress, env}) => {
+module.exports = (dbInst, config) => {
     !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
 
-    env === 'dev' && setInterval(() => pullData(sequelize)
+    env === 'dev' && setInterval(() => pullData(dbInst)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
             {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
-        )).then(console.log), 3000);
+        )).then(log.info.bind(log)), 3000);
     env !== 'dev' && setInterval(() => {
-        return oled && redraw(sequelize);
+        return oled && redraw(dbInst);
     }, 10000);
 };

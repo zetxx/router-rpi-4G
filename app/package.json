@@ -13,7 +13,10 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "inert": "^5.1.0",
-    "vision": "^5.4.0"
+    "vision": "^5.4.0",
+    "rc": "^1.2.8",
+    "pino": "^5.7.0",
+    "pino-pretty": "^2.2.2"
   },
   "scripts": {
     "server": "node ./index"
