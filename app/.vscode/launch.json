@@ -15,7 +15,9 @@
                 "statsapp_config__env": "dev",
                 "statsapp_config__lcdAddr": "00",
                 "statsapp_config__modem__uri": "http://10.21.21.1",
-                "statsapp_config__modem__repeatInterval": 5000
+                "statsapp_config__modem__repeatInterval": 5000,
+                "statsapp_config__modemHealthCheck__repeatInterval": 5000,
+                "statsapp_config__storage__host": "localhost"
             }
         },
         {

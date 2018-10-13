@@ -10,11 +10,10 @@ const http = require('./http');
 const lcd = require('./lcd');
 const db = require('./db');
 
-db(config.env)
+db(config.storage)
     .then((dbInst) => (
-        Promise.resolve()
-            .then(() => http(dbInst, config))
-            .then(() => config.lcdAddress && lcd(dbInst, config))
+        http(dbInst, config)
+        .then(() => config.lcdAddress && lcd(dbInst, config))
     ))
     .then(() => log.info('everything started'))
     .catch(log.error.bind(log));

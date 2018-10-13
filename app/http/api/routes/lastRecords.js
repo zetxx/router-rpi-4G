@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
 
-const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage'];
+const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage', 'log'];
 
 module.exports = (server, dbInst) => (server.route({
     method: 'GET',

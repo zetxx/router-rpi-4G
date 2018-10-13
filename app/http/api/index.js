@@ -32,7 +32,7 @@ module.exports = (dbInst) => {
             }
         ]);
         await server.start();
-        log.info(`Server running at: ${server.info.uri}`);
+        log.info(`Http Api Server running at: ${server.info.uri}`);
     };
     init();
 };
