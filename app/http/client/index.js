@@ -103,15 +103,16 @@ const warnLevel = (data) => {
 };
 
 const flipFlopConn = ({mappingDisconnect, mappingConnect, command}) => req(mappingDisconnect)
-    .then((res) => log.info({command, disconnect: true, status: res}))
+    .then((res) => log.info({command, action: 'disconnect', status: res}))
     .then(() => new Promise((resolve, reject) => setTimeout(resolve, 3000)))
     .then(() => req(mappingConnect))
     .then((res) => (res.result !== 'success' && flipFlopConn({mappingDisconnect, mappingConnect, command})) || res)
-    .then((res) => log.info({command, mappingConnect, connect: true, status: res}))
+    .then((res) => log.info({command, mappingConnect, action: 'connect', status: res}))
     .catch((err) => log.error({command, err}));
 
 const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
     const q = r.table('gsm').orderBy(r.desc('insertTime')).limit(3);
+    var recconectInProgress = 0;
     return () => setInterval(() => {
         log.trace('modem health check');
         q.run(dbInst)
@@ -121,9 +122,11 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
                     .then((command) => {
                         var mappingDisconnect = mappings.flipConnection({uri, goformId: 'DISCONNECT_NETWORK'});
                         var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
-                        if (command === 'reset') {
+                        if (command === 'reset' && !recconectInProgress) {
+                            recconectInProgress = 1;
                             log.info({command, data});
-                            return flipFlopConn({mappingDisconnect, mappingConnect, command});
+                            return flipFlopConn({mappingDisconnect, mappingConnect, command})
+                                .then(() => (recconectInProgress = 0));
                         }
                     })
             );
