@@ -21,7 +21,7 @@ module.exports = (options) => {
                             if (tables.indexOf(table) === -1) {
                                 log.trace(`creating table: ${table}`);
                                 return r.tableCreate(table).run(conn)
-                                    .then(() => r.table(table).index_create('insertTime').run(conn));
+                                    .then(() => r.table(table).indexCreate('insertTime').run(conn));
                             }
                             return p;
                         },
