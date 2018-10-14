@@ -27,13 +27,22 @@ const isReady = () => (new Promise((resolve, reject) => oled._waitUntilReady(() 
 
 const getTrafficUsedPercentage = ({usedTotal, monthlyTraffic}) => Math.floor((parseInt(usedTotal) / parseInt(monthlyTraffic)) * 100);
 
-const drawRealtimeGraph = ({up, down}) => [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)];
+const transformGraphData = (data) => {
+    var t1 = data.reduce((a, {realtimeTxBytes, realtimeRxBytes}) => {
+        a[0].push(realtimeRxBytes);
+        a[1].push(realtimeTxBytes);
+        return a;
+    }, [[], []]);
+    t1[0].reverse();
+    t1[1].reverse();
+    return t1;
+};
 
 const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
     return Promise.all([
-        r.table('vpn').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('vpn').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
-        r.table('gsm').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('gsm').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({
                 networkType = '',
                 network = '?',
@@ -48,13 +57,14 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
                 trafficDown: getTrafficMetrics(realtimeRxBytes),
                 realtimeRxBytes
             })),
-        r.table('dataUsage').orderBy('insertTime').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('gsm').orderBy(r.desc('insertTime')).limit(126).run(dbInst).then((r = []) => ({graph: transformGraphData(r)})),
+        r.table('dataUsage').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({usedTotal = 0}) => ({trafficUsed: getTrafficUsedPercentage({usedTotal, monthlyTraffic})})),
-        r.table('ping').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('ping').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => Promise.resolve({
+    .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}) => Promise.resolve({
         gsmNetwork,
         gsmNetworkStatus,
         vpnStatus,
@@ -64,7 +74,7 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
         trafficUsed,
         realtimeTxBytes,
         realtimeRxBytes,
-        graph: drawRealtimeGraph({up: realtimeTxBytes, down: realtimeRxBytes})
+        graph
     }));
 };
 
@@ -102,9 +112,10 @@ module.exports = (dbInst, config) => {
         !o && config.env !== 'dev' && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
 
         config.env === 'dev' && setInterval(() => pullData(dbInst, config)
-            .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
-                {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
-            )).then(log.trace.bind(log)), 3000);
+            .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}) => (
+                {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}
+            ))
+            .then(log.trace.bind(log)), 3000);
         config.env !== 'dev' && setInterval(() => {
             return oled && redraw(dbInst, config);
         }, 10000);
