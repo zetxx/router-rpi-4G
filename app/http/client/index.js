@@ -116,8 +116,10 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
                         if (command === 'reset') {
                             log.info({command, data});
                             return req(mappingDisconnect)
+                                .then((res) => log.info({command, disconnect: true, status: res}))
                                 .then(() => req(mappingConnect))
-                                .then(() => log.trace({command, status: 'done'}));
+                                .then((res) => log.info({command, connect: true, status: res}))
+                                .catch((err) => log.error({command, err}));
                         }
                     })
             );
