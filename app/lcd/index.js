@@ -19,17 +19,15 @@ const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficU
     return d.getPoints();
 };
 
-const i2cInit = (address) => {
-    return new Promise((resolve, reject) => {
-        const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})));
-    });
-};
+const i2cInit = (address) => (new Promise((resolve, reject) => {
+    const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})));
+}));
 
-const isReady = () => {
-    return new Promise((resolve, reject) => oled._waitUntilReady(() => resolve(oled)));
-};
+const isReady = () => (new Promise((resolve, reject) => oled._waitUntilReady(() => resolve(oled))));
 
 const getTrafficUsedPercentage = ({usedTotal, monthlyTraffic}) => Math.floor((parseInt(usedTotal) / parseInt(monthlyTraffic)) * 100);
+
+const drawRealtimeGraph = ({up, down}) => [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)];
 
 const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
     return Promise.all([
@@ -51,7 +49,6 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
                 realtimeRxBytes
             })),
         r.table('dataUsage').orderBy('insertTime').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
-        // .then((r) => {debugger})
             .then(({usedTotal = 0}) => ({trafficUsed: getTrafficUsedPercentage({usedTotal, monthlyTraffic})})),
         r.table('ping').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
@@ -67,7 +64,7 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
         trafficUsed,
         realtimeTxBytes,
         realtimeRxBytes,
-        graph: [new Array(126).fill(0).map((v, idx) => idx), new Array(126).fill(0).map((v, idx) => 100 - idx)]
+        graph: drawRealtimeGraph({up: realtimeTxBytes, down: realtimeRxBytes})
     }));
 };
 

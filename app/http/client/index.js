@@ -126,7 +126,8 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
                             recconectInProgress = 1;
                             log.info({command, data});
                             return flipFlopConn({mappingDisconnect, mappingConnect, command})
-                                .then(() => (recconectInProgress = 0));
+                                .then(() => (recconectInProgress = 0))
+                                .then(() => (log.info({command, reconnect: 'finished'})));
                         }
                     })
             );
