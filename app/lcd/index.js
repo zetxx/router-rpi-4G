@@ -35,8 +35,6 @@ const getTraficUsedPercentage = (up, down) => {
     return Math.floor((total / trafficMonthly) * 100);
 };
 
-const getGraph = (num) => {};
-
 const pullData = (dbInst) => {
     return Promise.all([
         r.table('vpn').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
@@ -106,13 +104,15 @@ const getTrafficMetrics = (num) => {
 };
 
 module.exports = (dbInst, config) => {
-    !o && lcdAddress !== 0 && i2cInit(lcdAddress).then((o) => (oled = o));
+    if (config.lcd.addr !== 0) {
+        !o && i2cInit(config.lcd.addr).then((o) => (oled = o));
 
-    env === 'dev' && setInterval(() => pullData(dbInst)
-        .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
-            {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
-        )).then(log.trace.bind(log)), 3000);
-    env !== 'dev' && setInterval(() => {
-        return oled && redraw(dbInst);
-    }, 10000);
+        config.env === 'dev' && setInterval(() => pullData(dbInst)
+            .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
+                {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
+            )).then(log.trace.bind(log)), 3000);
+        config.env !== 'dev' && setInterval(() => {
+            return oled && redraw(dbInst);
+        }, 10000);
+    }
 };

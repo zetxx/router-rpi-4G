@@ -16,6 +16,9 @@ module.exports = () => (rc('statsapp', {
         internetProvider: {
             repeatInterval: 6000000,
             uri: 'http://data.vivacom.bg'
+        },
+        lcd: {
+            addr: 0
         }
     }
 }).config || {});
