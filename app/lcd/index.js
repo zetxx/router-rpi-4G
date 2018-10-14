@@ -16,7 +16,7 @@ const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficU
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}%`, 25);
     d.addGraph(graph, 0, 34, 64);
-    return d.getPoints();
+    return d;
 };
 
 const i2cInit = (address) => (new Promise((resolve, reject) => {
@@ -35,6 +35,10 @@ const transformGraphData = (data) => {
     }, [[], []]);
     t1[0].reverse();
     t1[1].reverse();
+    var percentDown = t1[0].concat([]).sort((a, b) => b - a).shift() / 100;
+    var percentUp = t1[1].concat([]).sort((a, b) => b - a).shift() / 100;
+    t1[0] = t1[0].map((v) => Math.round(v / percentDown, 0));
+    t1[1] = t1[1].map((v) => Math.round(v / percentUp, 0));
     return t1;
 };
 
@@ -86,7 +90,7 @@ const redraw = (dmInst, config) => {
         .then(() => oled.clearDisplay(true))
         .then(isReady)
         .then(() => pullData(dmInst, config))
-        .then((data) => oled.drawPixel(getPixelCoords(data), true))
+        .then((data) => oled.drawPixel(getPixelCoords(data).getPoints(), true))
         .then(isReady)
         .then(() => oled.update())
         .then(isReady)
@@ -112,9 +116,8 @@ module.exports = (dbInst, config) => {
         !o && config.env !== 'dev' && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
 
         config.env === 'dev' && setInterval(() => pullData(dbInst, config)
-            .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}) => (
-                {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}
-            ))
+            .then((data) => getPixelCoords(data).textart())
+            .then(console.log)
             .then(log.trace.bind(log)), 3000);
         config.env !== 'dev' && setInterval(() => {
             return oled && redraw(dbInst, config);
