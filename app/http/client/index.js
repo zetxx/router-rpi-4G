@@ -117,8 +117,9 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
                             log.info({command, data});
                             return req(mappingDisconnect)
                                 .then((res) => log.info({command, disconnect: true, status: res}))
+                                .then(() => new Promise((resolve, reject) => setTimeout(resolve, 3000)))
                                 .then(() => req(mappingConnect))
-                                .then((res) => log.info({command, connect: true, status: res}))
+                                .then((res) => log.info({command, mappingConnect, connect: true, status: res}))
                                 .catch((err) => log.error({command, err}));
                         }
                     })
