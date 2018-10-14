@@ -7,7 +7,6 @@ const log = require('../log');
 
 const width = 128;
 const height = 64;
-const trafficMonthly = 1024 * 1024 * 1024 * 20;
 var oled, o;
 
 const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
@@ -30,12 +29,9 @@ const isReady = () => {
     return new Promise((resolve, reject) => oled._waitUntilReady(() => resolve(oled)));
 };
 
-const getTraficUsedPercentage = (up, down) => {
-    var total = parseInt(up) + parseInt(down);
-    return Math.floor((total / trafficMonthly) * 100);
-};
+const getTrafficUsedPercentage = ({usedTotal, monthlyTraffic}) => Math.floor((parseInt(usedTotal) / parseInt(monthlyTraffic)) * 100);
 
-const pullData = (dbInst) => {
+const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
     return Promise.all([
         r.table('vpn').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
@@ -54,8 +50,9 @@ const pullData = (dbInst) => {
                 trafficDown: getTrafficMetrics(realtimeRxBytes),
                 realtimeRxBytes
             })),
-        r.table('dataUsage').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
-            .then(({usedTotal = 0}) => ({trafficUsed: getTraficUsedPercentage(usedTotal, 0)})),
+        r.table('dataUsage').orderBy('insertTime').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        // .then((r) => {debugger})
+            .then(({usedTotal = 0}) => ({trafficUsed: getTrafficUsedPercentage({usedTotal, monthlyTraffic})})),
         r.table('ping').orderBy('id').limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
@@ -74,14 +71,14 @@ const pullData = (dbInst) => {
     }));
 };
 
-const redraw = (sequelize) => {
+const redraw = (dmInst, config) => {
     Promise.resolve()
         .then(isReady)
         .then(() => oled.turnOffDisplay())
         .then(isReady)
         .then(() => oled.clearDisplay(true))
         .then(isReady)
-        .then(() => pullData(sequelize))
+        .then(() => pullData(dmInst, config))
         .then((data) => oled.drawPixel(getPixelCoords(data), true))
         .then(isReady)
         .then(() => oled.update())
@@ -105,14 +102,14 @@ const getTrafficMetrics = (num) => {
 
 module.exports = (dbInst, config) => {
     if (config.lcd.addr !== 0) {
-        !o && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
+        !o && config.env !== 'dev' && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
 
-        config.env === 'dev' && setInterval(() => pullData(dbInst)
+        config.env === 'dev' && setInterval(() => pullData(dbInst, config)
             .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
                 {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
             )).then(log.trace.bind(log)), 3000);
         config.env !== 'dev' && setInterval(() => {
-            return oled && redraw(dbInst);
+            return oled && redraw(dbInst, config);
         }, 10000);
     }
 };
