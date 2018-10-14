@@ -112,24 +112,25 @@ const flipFlopConn = ({mappingDisconnect, mappingConnect, command}) => req(mappi
 
 const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
     const q = r.table('gsm').orderBy(r.desc('insertTime')).limit(3);
-    var recconectInProgress = 0;
+    var reconnectInProgress = 0;
     return () => setInterval(() => {
         log.trace('modem health check');
-        q.run(dbInst)
-            .then((data) =>
+        return q.run(dbInst)
+            .then((data) => (
                 Promise.resolve(log.trace(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
                     .then(() => warnLevel(data))
                     .then((command) => {
                         var mappingDisconnect = mappings.flipConnection({uri, goformId: 'DISCONNECT_NETWORK'});
                         var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
-                        if (command === 'reset' && !recconectInProgress) {
-                            recconectInProgress = 1;
+                        if (command === 'reset' && !reconnectInProgress) {
+                            reconnectInProgress = 1;
                             log.info({command, data});
                             return flipFlopConn({mappingDisconnect, mappingConnect, command})
-                                .then(() => (recconectInProgress = 0))
+                                .then(() => (reconnectInProgress = 0))
                                 .then(() => (log.info({command, reconnect: 'finished'})));
                         }
                     })
+                )
             );
     }, repeatInterval);
 };
