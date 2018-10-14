@@ -33,12 +33,10 @@ const transformGraphData = (data) => {
         a[1].push(realtimeTxBytes);
         return a;
     }, [[], []]);
-    t1[0].reverse();
-    t1[1].reverse();
     var percentDown = t1[0].concat([]).sort((a, b) => b - a).shift() / 100;
     var percentUp = t1[1].concat([]).sort((a, b) => b - a).shift() / 100;
-    t1[0] = t1[0].map((v) => Math.round(v / percentDown, 0));
-    t1[1] = t1[1].map((v) => Math.round(v / percentUp, 0));
+    t1[0] = t1[0].reverse().map((v) => Math.round(v / percentDown, 0));
+    t1[1] = t1[1].reverse().map((v) => Math.round(v / percentUp, 0));
     return t1;
 };
 
