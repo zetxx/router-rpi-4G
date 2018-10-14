@@ -14,7 +14,7 @@ const db = require('./db');
 db(config.storage)
     .then((dbInst) => (
         http(dbInst, config)
-        .then(() => config.lcdAddress && lcd(dbInst, config))
+        .then(() => config.lcd && config.lcd.addr && lcd(dbInst, config))
     ))
     .then(() => log.info('everything started'))
     .catch(log.error.bind(log));
