@@ -108,7 +108,7 @@ module.exports = (dbInst, config) => {
     log.warn('led');
     if (config.lcd.addr !== 0) {
         log.warn('led adress set to: ');
-        !o && i2cInit(config.lcd.addr).then((o) => (oled = o));
+        !o && i2cInit(Buffer.from([parseInt(config.lcd.addr)]).toString('hex')).then((o) => (oled = o));
 
         config.env === 'dev' && setInterval(() => pullData(dbInst)
             .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
