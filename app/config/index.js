@@ -3,6 +3,7 @@ const rc = require('rc');
 module.exports = () => (rc('statsapp', {
     config: {
         env: 'dev',
+        log: {level: 'info'},
         storage: {
             db: 'statuses'
         },

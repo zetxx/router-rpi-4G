@@ -65,12 +65,12 @@ const doRequest = (dbInst, {options, type}) => req(options)
         .insert(Object.assign({insertTime: Date.now()}, res))
         .run(dbInst)
     )
-    .then((resp) => log.info(`client ${type}: `, resp));
+    .then((resp) => log.trace(`client ${type}: `, resp));
 
 const init = (type, dbInst, {uri, repeatInterval} = {}) => {
     const options = mappings[type]({uri});
 
-    return () => setInterval(() => (doRequest(dbInst, {options, type})), repeatInterval) && log.info(`http client init: ${type} with options: uri: ${uri}, repeatInterval: ${repeatInterval}`);
+    return () => setInterval(() => (doRequest(dbInst, {options, type})), repeatInterval) && log.trace(`http client init: ${type} with options: uri: ${uri}, repeatInterval: ${repeatInterval}`);
 };
 
 const levelCalc = (prev, cur, level) => ((prev === cur && level + 1) || level);
@@ -105,19 +105,19 @@ const warnLevel = (data) => {
 const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
     const q = r.table('gsm').orderBy(r.desc('insertTime')).limit(3);
     return () => setInterval(() => {
-        log.info('modem health check');
+        log.trace('modem health check');
         q.run(dbInst)
             .then((data) =>
-                Promise.resolve(log.info(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
+                Promise.resolve(log.trace(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
                     .then(() => warnLevel(data))
                     .then((command) => {
-                        log.info({command});
                         var mappingDisconnect = mappings.flipConnection({uri, goformId: 'DISCONNECT_NETWORK'});
                         var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
                         if (command === 'reset') {
+                            log.info({command, data});
                             return req(mappingDisconnect)
                                 .then(() => req(mappingConnect))
-                                .then(() => log.info({command, status: 'done'}));
+                                .then(() => log.trace({command, status: 'done'}));
                         }
                     })
             );
@@ -125,7 +125,7 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
 };
 
 module.exports = (dbInst, {modem, internetProvider, modemHealthCheck}) => Promise.resolve()
-    .then(() => log.info('clients init ...'))
+    .then(() => log.trace('clients init ...'))
     .then(init('gsm', dbInst, modem))
     .then(init('dataUsage', dbInst, internetProvider))
     .then(initModemHealthAction(dbInst, Object.assign({}, modemHealthCheck, {uri: modem.uri})));

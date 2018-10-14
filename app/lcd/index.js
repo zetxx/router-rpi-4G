@@ -90,7 +90,7 @@ const redraw = (sequelize) => {
         .then(isReady)
         .then(() => oled.turnOnDisplay())
         .then(isReady)
-        .then(() => log.info('done'));
+        .then(() => log.trace('done'));
 };
 
 const getTrafficMetrics = (num) => {
@@ -111,7 +111,7 @@ module.exports = (dbInst, config) => {
     env === 'dev' && setInterval(() => pullData(dbInst)
         .then(({trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}) => (
             {trafficUp, trafficDown, vpnStatus, gsmNetwork, gsmNetworkStatus, ping, trafficUsed, realtimeTxBytes, realtimeRxBytes}
-        )).then(log.info.bind(log)), 3000);
+        )).then(log.trace.bind(log)), 3000);
     env !== 'dev' && setInterval(() => {
         return oled && redraw(dbInst);
     }, 10000);

@@ -1,6 +1,7 @@
 const log = require('./log');
 const config = require('./config')();
 
+config.log && config.log.level && (log.level = config.log.level);
 config.lcdAddress = parseInt(config.lcdAddress);
 if (isNaN(config.lcdAddress)) {
     config.lcdAddress = false;

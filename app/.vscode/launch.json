@@ -13,6 +13,7 @@
             "protocol": "inspector",
             "env": {
                 "statsapp_config__env": "dev",
+                "_statsapp_config__log__level": "trace",
                 "statsapp_config__lcdAddr": "00",
                 "statsapp_config__modem__uri": "http://10.21.21.1",
                 "statsapp_config__modem__repeatInterval": 5000,

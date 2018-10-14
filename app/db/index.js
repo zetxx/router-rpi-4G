@@ -2,7 +2,7 @@ const r = require('rethinkdb');
 const log = require('../log');
 
 module.exports = (options) => {
-    log.info('storage connect options: ', options);
+    log.trace('storage connect options: ', options);
 
     return r
         .connect(options)
@@ -19,7 +19,7 @@ module.exports = (options) => {
                     ['gsm', 'ping', 'vpn', 'dataUsage', 'log'].reduce(
                         (p, table) => {
                             if (tables.indexOf(table) === -1) {
-                                log.info(`creating table: ${table}`);
+                                log.trace(`creating table: ${table}`);
                                 return r.tableCreate(table).run(conn);
                             }
                             return p;

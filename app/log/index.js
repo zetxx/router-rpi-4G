@@ -1,3 +1,3 @@
-const pino = require('pino')({prettyPrint: {forceColor: true}});
+const pino = require('pino')({prettyPrint: {forceColor: true}, level: 'warn'});
 
 module.exports = pino;
