@@ -102,6 +102,14 @@ const warnLevel = (data) => {
     return 'ok';
 };
 
+const flipFlopConn = ({mappingDisconnect, mappingConnect, command}) => req(mappingDisconnect)
+    .then((res) => log.info({command, disconnect: true, status: res}))
+    .then(() => new Promise((resolve, reject) => setTimeout(resolve, 3000)))
+    .then(() => req(mappingConnect))
+    .then((res) => (res.result !== 'success' && flipFlopConn({mappingDisconnect, mappingConnect, command})) || res)
+    .then((res) => log.info({command, mappingConnect, connect: true, status: res}))
+    .catch((err) => log.error({command, err}));
+
 const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
     const q = r.table('gsm').orderBy(r.desc('insertTime')).limit(3);
     return () => setInterval(() => {
@@ -115,12 +123,7 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
                         var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
                         if (command === 'reset') {
                             log.info({command, data});
-                            return req(mappingDisconnect)
-                                .then((res) => log.info({command, disconnect: true, status: res}))
-                                .then(() => new Promise((resolve, reject) => setTimeout(resolve, 3000)))
-                                .then(() => req(mappingConnect))
-                                .then((res) => log.info({command, mappingConnect, connect: true, status: res}))
-                                .catch((err) => log.error({command, err}));
+                            return flipFlopConn({mappingDisconnect, mappingConnect, command});
                         }
                     })
             );
