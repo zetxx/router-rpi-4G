@@ -21,7 +21,6 @@ const getPixelCoords = ({gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficU
 };
 
 const i2cInit = (address) => {
-    log.warn({address});
     return new Promise((resolve, reject) => {
         const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, address})));
     });
@@ -105,9 +104,7 @@ const getTrafficMetrics = (num) => {
 };
 
 module.exports = (dbInst, config) => {
-    log.warn('led');
     if (config.lcd.addr !== 0) {
-        log.warn('led adress set to: ');
         !o && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
 
         config.env === 'dev' && setInterval(() => pullData(dbInst)
