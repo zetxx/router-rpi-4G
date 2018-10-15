@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
 
-const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage', 'log'];
+const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage'];
 
 module.exports = (server, dbInst) => (server.route({
     method: 'GET',
@@ -13,7 +13,12 @@ module.exports = (server, dbInst) => (server.route({
         handler: (request, h) => {
             const orderAndLimit = parseInt(request.params.n);
 
-            return Promise.all(((request.params.namespace !== 'all' && namespaces.filter((ns) => ns === request.params.namespace)) || namespaces).map((ns) => r.table(ns).orderBy(r.desc('insertTime')).limit(orderAndLimit).run(dbInst).then((r) => ({[ns]: r}))))
+            return Promise.all(
+                ((request.params.namespace !== 'all' && namespaces.filter((ns) => ns === request.params.namespace)) || namespaces)
+                .map((ns) =>
+                    r.table(ns).orderBy({index: r.desc('insertTime')}).limit(orderAndLimit).run(dbInst).then((cursor) => cursor.toArray()).then((r) => ({[ns]: r}))
+                )
+            )
             .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}));
         },
         validate: {

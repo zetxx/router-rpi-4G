@@ -42,9 +42,13 @@ const transformGraphData = (data) => {
 
 const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
     return Promise.all([
-        r.table('vpn').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('vpn').orderBy({index: r.desc('insertTime')}).limit(1).run(dbInst)
+            .then((cursor) => cursor.toArray())
+            .then((res) => ((res && res.pop()) || {}))
             .then(({isActive = false}) => ({vpnStatus: (isActive && 'connected') || '?'})),
-        r.table('gsm').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('gsm').orderBy({index: r.desc('insertTime')}).limit(1).run(dbInst)
+            .then((cursor) => cursor.toArray())
+            .then((res) => ((res && res.pop()) || {}))
             .then(({
                 networkType = '',
                 network = '?',
@@ -59,10 +63,16 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
                 trafficDown: getTrafficMetrics(realtimeRxBytes),
                 realtimeRxBytes
             })),
-        r.table('gsm').orderBy(r.desc('insertTime')).limit(126).run(dbInst).then((r = []) => ({graph: transformGraphData(r)})),
-        r.table('dataUsage').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('gsm').orderBy({index: r.desc('insertTime')}).limit(126).run(dbInst)
+            .then((cursor) => cursor.toArray())
+            .then((res = []) => ({graph: transformGraphData(res)})),
+        r.table('dataUsage').orderBy({index: r.desc('insertTime')}).limit(1).run(dbInst)
+            .then((cursor) => cursor.toArray())
+            .then((res) => ((res && res.pop()) || {}))
             .then(({usedTotal = 0}) => ({trafficUsed: getTrafficUsedPercentage({usedTotal, monthlyTraffic})})),
-        r.table('ping').orderBy(r.desc('insertTime')).limit(1).run(dbInst).then((r) => ((r && r.pop()) || {}))
+        r.table('ping').orderBy({index: r.desc('insertTime')}).limit(1).run(dbInst)
+            .then((cursor) => cursor.toArray())
+            .then((res) => ((res && res.pop()) || {}))
             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
     ])
     .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
@@ -116,8 +126,7 @@ module.exports = (dbInst, config) => {
         !o && config.env !== 'dev' && i2cInit(parseInt(config.lcd.addr)).then((o) => (oled = o));
 
         config.env === 'dev' && setInterval(() => pullData(dbInst, config)
-            .then((data) => getPixelCoords(data).textart())
-            .then(console.log)
+            .then((data) => getPixelCoords(data).textArt())
             .then(log.trace.bind(log)), 3000);
         config.env !== 'dev' && setInterval(() => {
             return oled && redraw(dbInst, config);

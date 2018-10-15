@@ -20,7 +20,7 @@ const drawByte = (byte) => {
     }
     return textbyte;
 };
-const textart = (plate) => {
+const textArt = (plate) => {
     return plate.map((line) => {
         return line.reduce((a, byte) => a + drawByte(byte), '');
     }, '').join('|\n');
@@ -93,7 +93,7 @@ module.exports = (width, height, font) => {
     var o = {
         addText: (text, line = 0) => ((plate = addText(plate, text, fontData, fontMeta, line)) && o),
         addGraph: (data, newWidth, fromLine = 0, toLine = 1) => ((plate = addGraph(plate, newWidth || width, data, fromLine, toLine)) && o),
-        textart: () => textart(plate),
+        textArt: () => textArt(plate),
         getFrameBuffer: () => plate.reduce((a, line) => a.concat(line), []),
         getPoints: () => getPoints(plate)
     };

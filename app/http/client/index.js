@@ -111,11 +111,12 @@ const flipFlopConn = ({mappingDisconnect, mappingConnect, command}) => req(mappi
     .catch((err) => log.error({command, err}));
 
 const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
-    const q = r.table('gsm').orderBy(r.desc('insertTime')).limit(3);
+    const q = r.table('gsm').orderBy({index: r.desc('insertTime')}).limit(3);
     var reconnectInProgress = 0;
     return () => setInterval(() => {
         log.trace('modem health check');
         return q.run(dbInst)
+            .then((cursor) => cursor.toArray())
             .then((data) => (
                 Promise.resolve(log.trace(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
                     .then(() => warnLevel(data))
