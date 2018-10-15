@@ -83,11 +83,12 @@ const pullData = (dbInst, {internetProvider: {monthlyTraffic}}) => {
 const redraw = (dmInst, config) => {
     Promise.resolve()
         .then(isReady)
-        .then(() => oled.turnOffDisplay())
-        .then(isReady)
-        .then(() => oled.clearDisplay(true))
-        .then(isReady)
-        .then(() => pullData(dmInst, config))
+        .then(() => pullData(dmInst, config)
+            .then((data) => {
+                return oled.clearDisplay(true)
+                    .then(isReady)
+                    .then(() => data)
+            }))
         .then((data) => oled.drawPixel(getPixelCoords(data).getPoints(), true))
         .then(isReady)
         .then(() => oled.update())
@@ -119,6 +120,6 @@ module.exports = (dbInst, config) => {
             .then(log.trace.bind(log)), 3000);
         config.env !== 'dev' && setInterval(() => {
             return oled && redraw(dbInst, config);
-        }, 10000);
+        }, 40000);
     }
 };
