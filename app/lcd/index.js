@@ -85,9 +85,10 @@ const redraw = (dmInst, config) => {
         .then(isReady)
         .then(() => pullData(dmInst, config)
             .then((data) => {
-                return oled.clearDisplay(true)
+                return Promise.resolve()
+                    .then(() => oled.clearDisplay(true))
                     .then(isReady)
-                    .then(() => data)
+                    .then(() => data);
             }))
         .then((data) => oled.drawPixel(getPixelCoords(data).getPoints(), true))
         .then(isReady)
