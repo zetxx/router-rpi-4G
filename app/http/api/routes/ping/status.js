@@ -10,7 +10,7 @@ module.exports = (server, dbInst) => (server.route({
         tags: ['api'],
         handler: (request, h) => (r
             .table('ping')
-            .insert(request.payload)
+            .insert(Object.assign({insertTime: Date.now()}, request.payload))
             .run(dbInst)
         ),
         validate: {
