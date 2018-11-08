@@ -16,7 +16,7 @@ module.exports = (server, dbInst) => (server.route({
             }
             return r
                 .table('vpn')
-                .insert(update)
+                .insert(Object.assign({insertTime: Date.now()}, update))
                 .run(dbInst);
         },
         validate: {
