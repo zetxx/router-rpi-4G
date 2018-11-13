@@ -82,7 +82,8 @@ const doRequest = (dbInst, {options, type}) => req(options)
         .insert(Object.assign({insertTime: Date.now()}, res))
         .run(dbInst)
     )
-    .then((resp) => log.trace(`client ${type}: `, resp));
+    .then((resp) => log.trace(`client ${type}: `, resp))
+    .catch((e) => log.error(e));
 
 const init = (type, dbInst, {uri, repeatInterval} = {}) => {
     const options = mappings[type]({uri});
@@ -134,21 +135,21 @@ const initModemHealth = (dbInst, {uri, repeatInterval} = {}) => {
         log.trace('modem health check');
         return q.run(dbInst)
             .then((cursor) => cursor.toArray())
-            .then((data) => (
-                Promise.resolve(log.trace(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
-                    .then(() => warnLevel(data))
-                    .then((command) => {
-                        var mappingDisconnect = mappings.flipConnection({uri, goformId: 'DISCONNECT_NETWORK'});
-                        var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
-                        if (command === 'reset' && !reconnectInProgress) {
-                            reconnectInProgress = 1;
-                            log.info({command, data});
-                            return flipFlopConn({mappingDisconnect, mappingConnect, command})
-                                .then(() => (reconnectInProgress = 0))
-                                .then(() => (log.info({command, reconnect: 'finished'})));
-                        }
-                    })
-                )
+                .then((data) => {
+                    return Promise.resolve(log.trace(data.map(({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}) => ({insertTime, pppStatus, realtimeRxBytes, realtimeTxBytes}))))
+                        .then(() => warnLevel(data))
+                        .then((command) => {
+                            var mappingDisconnect = mappings.flipConnection({uri, goformId: 'DISCONNECT_NETWORK'});
+                            var mappingConnect = mappings.flipConnection({uri, goformId: 'CONNECT_NETWORK'});
+                            if (command === 'reset' && !reconnectInProgress) {
+                                reconnectInProgress = 1;
+                                log.info({command, data});
+                                return flipFlopConn({mappingDisconnect, mappingConnect, command})
+                                    .then(() => (reconnectInProgress = 0))
+                                    .then(() => log.info({command, reconnect: 'finished'}));
+                            }
+                        });
+                }
             );
     }, repeatInterval);
 };
@@ -159,6 +160,6 @@ module.exports = () => {
             .then(() => log.trace('clients init ...'))
             .then(init('gsm', dbInst, config.modem))
             .then(init('dataUsage', dbInst, config.internetProvider))
-            .then(initModemHealth(dbInst, Object.assign({}, config.modem.healthCheckInterval, {uri: config.modem.uri})))
+            .then(initModemHealth(dbInst, {uri: config.modem.uri, repeatInterval: config.modem.healthCheckInterval}))
         )
 };
