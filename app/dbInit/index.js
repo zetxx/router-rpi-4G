@@ -8,7 +8,7 @@ const config = require('rc')('netRouterDbInit', {
     }
 });
 
-module.exports = () => {
+const init = () => {
     log.info('storage connect options: ', config);
 
     return r
@@ -17,24 +17,28 @@ module.exports = () => {
         .then((conn) => (r
             .dbList()
             .run(conn)
-            .then((dbs) => (dbs.indexOf(config.db) === -1 && r.dbCreate(config.db).run(conn)))).then(() => conn)
+            .then((dbs) => (dbs.indexOf(config.db.db) === -1 && r.dbCreate(config.db.db).run(conn)))).then(() => conn)
         )
         // create tables
-        .then((conn) =>
-            r.tableList().run(conn)
-                .then((tables) =>
-                    ['gsm', 'ping', 'vpn', 'dataUsage', 'log'].reduce(
-                        (p, table) => {
-                            if (tables.indexOf(table) === -1) {
-                                log.trace(`creating table: ${table}`);
-                                return r.tableCreate(table).run(conn)
-                                    .then(() => r.table(table).indexCreate('insertTime').run(conn));
-                            }
-                            return p;
-                        },
-                        Promise.resolve()
-                    )
-                    .then(() => conn)
-                )
-        );
+        .then((conn) => r.db(config.db.db).tableList().run(conn)
+        .then((tables) => {
+            return ['gsm', 'ping', 'vpn', 'dataUsage', 'log'].reduce(
+                (p, table) => {
+                    if (tables.indexOf(table) === -1) {
+                        log.trace(`creating table: ${table}`);
+                        return r.db(config.db.db).tableCreate(table).run(conn)
+                            .then(() => r.db(config.db.db).table(table).indexCreate('insertTime').run(conn));
+                    }
+                    return p;
+                },
+                Promise.resolve()
+            )
+            .then(() => conn);
+        })
+        .catch((e) => log.error(e))
+    )
+    .then((conn) => {
+        conn.close();
+    });
 };
+init();

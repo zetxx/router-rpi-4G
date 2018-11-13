@@ -33,6 +33,14 @@
             "program": "${workspaceFolder}/httpClient/service.js",
             "outputCapture": "std",
             "protocol": "inspector"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "db init",
+            "program": "${workspaceFolder}/dbInit/index.js",
+            "outputCapture": "std",
+            "protocol": "inspector"
         }
     ]
 }
