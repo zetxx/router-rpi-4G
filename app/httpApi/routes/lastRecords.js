@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
+const log = require('../../log');
 
 const namespaces = ['vpn', 'gsm', 'ping', 'dataUsage'];
 
@@ -19,7 +20,11 @@ module.exports = (server, dbInst) => (server.route({
                     r.table(ns).orderBy({index: r.desc('insertTime')}).limit(orderAndLimit).run(dbInst).then((cursor) => cursor.toArray()).then((r) => ({[ns]: r}))
                 )
             )
-            .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}));
+            .then((r) => r.reduce((a, c) => (Object.assign(a, c)), {}))
+            .catch((e) => {
+                log.error(e);
+                throw e;
+            });
         },
         validate: {
             params: {

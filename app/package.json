@@ -19,6 +19,8 @@
     "pino-pretty": "^2.2.2"
   },
   "scripts": {
+    "http": "node ./http",
+    "lcd": "node ./lcd",
     "server": "node ./index"
   },
   "author": "zetxx",

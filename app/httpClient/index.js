@@ -1,6 +1,23 @@
-const req = require('request-promise');
 const r = require('rethinkdb');
-const log = require('../../log');
+const req = require('request-promise');
+const log = require('../log');
+const storage = require('../storage');
+const config = require('rc')('netRouterHttpClient', {
+    internetProvider: {
+        repeatInterval: 6000000,
+        uri: 'http://data.vivacom.bg',
+        monthlyTraffic: 10485760000
+    },
+    modem: {
+        uri: 'http://10.21.21.1',
+        repeatInterval: 5000,
+        healthCheckInterval: 5000
+    },
+    db: {
+        host: 'localhost',
+        db: 'statuses'
+    }
+});
 
 const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
 
@@ -89,7 +106,7 @@ const warnLevel = (data) => {
         }
     }, {});
 
-    if (warn.down.level) {
+    if (warn.down && warn.down.level) {
         if (warn.down.level === warn.up.level) {
             return 'ok';
         } else if (warn.down.level === dataLen && warn.up.level < dataLen - 1) {
@@ -110,7 +127,7 @@ const flipFlopConn = ({mappingDisconnect, mappingConnect, command}) => req(mappi
     .then((res) => log.info({command, mappingConnect, action: 'connect', status: res}))
     .catch((err) => log.error({command, err}));
 
-const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
+const initModemHealth = (dbInst, {uri, repeatInterval} = {}) => {
     const q = r.table('gsm').orderBy({index: r.desc('insertTime')}).limit(3);
     var reconnectInProgress = 0;
     return () => setInterval(() => {
@@ -136,8 +153,12 @@ const initModemHealthAction = (dbInst, {uri, repeatInterval} = {}) => {
     }, repeatInterval);
 };
 
-module.exports = (dbInst, {modem, internetProvider, modemHealthCheck}) => Promise.resolve()
-    .then(() => log.trace('clients init ...'))
-    .then(init('gsm', dbInst, modem))
-    .then(init('dataUsage', dbInst, internetProvider))
-    .then(initModemHealthAction(dbInst, Object.assign({}, modemHealthCheck, {uri: modem.uri})));
+module.exports = () => {
+    return storage(config.db)
+        .then((dbInst) => Promise.resolve()
+            .then(() => log.trace('clients init ...'))
+            .then(init('gsm', dbInst, config.modem))
+            .then(init('dataUsage', dbInst, config.internetProvider))
+            .then(initModemHealth(dbInst, Object.assign({}, config.modem.healthCheckInterval, {uri: config.modem.uri})))
+        )
+};

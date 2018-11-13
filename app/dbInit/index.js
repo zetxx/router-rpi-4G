@@ -1,16 +1,23 @@
 const r = require('rethinkdb');
 const log = require('../log');
 
-module.exports = (options) => {
-    log.info('storage connect options: ', options);
+const config = require('rc')('netRouterDbInit', {
+    db: {
+        host: 'localhost',
+        db: 'statuses'
+    }
+});
+
+module.exports = () => {
+    log.info('storage connect options: ', config);
 
     return r
-        .connect(options)
+        .connect(config)
         // create/select db
         .then((conn) => (r
             .dbList()
             .run(conn)
-            .then((dbs) => (dbs.indexOf(options.db) === -1 && r.dbCreate(options.db).run(conn)))).then(() => conn)
+            .then((dbs) => (dbs.indexOf(config.db) === -1 && r.dbCreate(config.db).run(conn)))).then(() => conn)
         )
         // create tables
         .then((conn) =>

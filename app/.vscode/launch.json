@@ -7,25 +7,30 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Main",
-            "program": "${workspaceFolder}/index.js",
+            "name": "LCD",
+            "program": "${workspaceFolder}/lcdService.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "env": {
-                "statsapp_config__env": "dev",
                 "_statsapp_config__log__level": "trace",
-                "statsapp_config__lcdAddr": "10",
-                "statsapp_config__modem__uri": "http://10.21.21.1",
+                "statsapp_config__lcdAddr": 10,
                 "statsapp_config__modem__repeatInterval": 5000,
-                "statsapp_config__modemHealthCheck__repeatInterval": 5000,
-                "statsapp_config__storage__host": "localhost"
+                "statsapp_config__modemHealthCheck__repeatInterval": 5000
             }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "fonts2",
-            "program": "${workspaceFolder}/.tmp/fff/index.js",
+            "name": "HTTP API",
+            "program": "${workspaceFolder}/httpApi/service.js",
+            "outputCapture": "std",
+            "protocol": "inspector"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "HTTP CLIENT",
+            "program": "${workspaceFolder}/httpClient/service.js",
             "outputCapture": "std",
             "protocol": "inspector"
         }

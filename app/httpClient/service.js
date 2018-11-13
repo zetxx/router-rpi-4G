@@ -1,0 +1,2 @@
+const proc = require('./');
+proc();

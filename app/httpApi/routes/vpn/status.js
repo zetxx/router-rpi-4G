@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const r = require('rethinkdb');
+const log = require('../../../log');
 
 module.exports = (server, dbInst) => (server.route({
     method: 'PUT',
@@ -17,7 +18,11 @@ module.exports = (server, dbInst) => (server.route({
             return r
                 .table('vpn')
                 .insert(Object.assign({insertTime: Date.now()}, update))
-                .run(dbInst);
+                .run(dbInst)
+                .catch((e) => {
+                    log.error(e);
+                    throw e;
+                });
         },
         validate: {
             payload: Joi.object().keys({
