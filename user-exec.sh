@@ -14,6 +14,8 @@ sudo systemctl enable ntpd.service && sudo systemctl start ntpd.service
 
 #interface
 sudo cp /home/zetxx/router-rpi-4G/system/etc/systemd/network/* /etc/systemd/network/
+#journald
+sudo cp /home/zetxx/router-rpi-4G/system/etc/systemd/journald.conf /etc/systemd/journald.conf
 
 sudo cp /home/zetxx/router-rpi-4G/system/etc/systemd/system/router-rpi-4g-connect.service /etc/systemd/system/router-rpi-4g-connect.service
 sudo cp /home/zetxx/router-rpi-4G/system/usr/bin/router-rpi-4g-connect.sh /usr/bin/router-rpi-4g-connect.sh
