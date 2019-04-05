@@ -7,40 +7,29 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "LCD",
-            "program": "${workspaceFolder}/lcdService.js",
+            "name": "Logger",
+            "program": "${workspaceFolder}/Nodes/Logger/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
-            "env": {
-                "_statsapp_config__log__level": "trace",
-                "statsapp_config__lcdAddr": 10,
-                "statsapp_config__modem__repeatInterval": 5000,
-                "statsapp_config__modemHealthCheck__repeatInterval": 5000
-            }
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9000",
+                "--discovery.loopback=false"
+            ]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "HTTP API",
-            "program": "${workspaceFolder}/httpApi/service.js",
+            "name": "Modem",
+            "program": "${workspaceFolder}/Nodes/Modem/index.js",
             "outputCapture": "std",
-            "protocol": "inspector"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "HTTP CLIENT",
-            "program": "${workspaceFolder}/httpClient/service.js",
-            "outputCapture": "std",
-            "protocol": "inspector"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "db init",
-            "program": "${workspaceFolder}/dbInit/index.js",
-            "outputCapture": "std",
-            "protocol": "inspector"
+            "protocol": "inspector",
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9001",
+                "--discovery.loopback=false",
+                "--log.level=debug"
+            ]
         }
     ]
 }

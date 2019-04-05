@@ -4,24 +4,15 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "rethink": "^1.4.0",
-    "i2c-bus": "^4.0.2",
-    "oled-i2c-bus": "^1.0.10",
-    "hapi": "^17.6.0",
-    "joi": "^13.7.0",
-    "hapi-swagger": "^9.1.2",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.2",
-    "inert": "^5.1.0",
-    "vision": "^5.4.0",
-    "rc": "^1.2.8",
-    "pino": "^5.7.0",
-    "pino-pretty": "^2.2.2"
+    "bridg-wrong-playground": "1.1.7",
+    "mdns-resolver": "0.0.3",
+    "parse-strings-in-object": "1.2.0",
+    "pino": "5.12.2",
+    "pino-pretty": "2.6.0"
   },
   "scripts": {
-    "http": "node ./http",
-    "lcd": "node ./lcd",
-    "server": "node ./index"
+    "logger": "node ./Nodes/Logger",
+    "modem": "node ./Nodes/Modem"
   },
   "author": "zetxx",
   "license": "MIT"
