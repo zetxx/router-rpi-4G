@@ -10,16 +10,10 @@ class Modem extends Service {
             ['config', 'modem'],
             pso(rc(this.getNodeName() || 'buzzer', {
                 modem: {
-                    level: 'trace',
-                    endpoints: {
-                        modem: {
-                            uri: 'http://127.0.0.1',
-                            proto: 'http'
-                        },
-                        provider: {
-                            uri: 'http://127.0.0.1',
-                            proto: 'http'
-                        }
+                    api: {
+                        level: 'trace',
+                        uri: 'http://127.0.0.1',
+                        proto: 'http'
                     }
                 }
             }).modem)
@@ -38,7 +32,7 @@ modem.registerExternalMethod({
     fn: function() {
         modem;
         return {
-            uri: `${modem.getStore(['config', 'modem', 'endpoints', 'modem', 'proto'])}://${modem.getStore(['config', 'modem', 'endpoints', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'endpoints', 'modem', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
                 Referer: `${modem.getStore(['config', 'modem', 'endpoints', 'modem', 'proto'])}://${modem.getStore(['config', 'modem', 'endpoints', 'modem', 'uri'])}`
             },
