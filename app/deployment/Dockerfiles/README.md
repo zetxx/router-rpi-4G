@@ -20,7 +20,7 @@ discovery4g
 docker run -it -d \
 --name 4gLogger \
 -h logger \
---link=discovery \
+--link=discovery4g \
 -m=128m \
 --cpus=1 \
 --log-opt max-size=20m \
@@ -32,7 +32,7 @@ docker run -it -d \
 -e logger_api__address="0.0.0.0" \
 -e logger_log__level=trace \
 app4g \
-Logger
+logger
 ```
 ## run temporary
 - `docker run -it --link=discovery --rm nodejs /bin/ash`

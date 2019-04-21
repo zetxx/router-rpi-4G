@@ -40,10 +40,8 @@
                 "--api.port=9001",
                 "--discovery.loopback=false",
                 "--log.level=debug",
-                "--modem.endpoints.modem.uri=10.21.21.1",
-                "--modem.endpoints.modem.proto=http",
-                "--modem.endpoints.provider.proto=http",
-                "--modem.endpoints.provider.uri=data.vivacom.bg"
+                "--modem.api.uri=10.21.21.1",
+                "--modem.api.proto=http"
             ],
             "env": {
                 "NODE_PATH": "./dev"
