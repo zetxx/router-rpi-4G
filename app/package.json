@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "immutable": "4.0.0-rc.12",
     "bridg-wrong-playground": "1.1.7",
     "mdns-resolver": "0.0.3",
     "parse-strings-in-object": "1.2.0",

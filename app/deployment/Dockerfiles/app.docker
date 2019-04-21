@@ -1,0 +1,12 @@
+FROM nodejs
+
+ENV NODE_PATH "/app_modules/node_modules"
+
+RUN mkdir -p /app && mkdir -p /app_modules
+
+WORKDIR /app_modules
+COPY package.json /app_modules
+RUN npm i
+WORKDIR /app
+
+ENTRYPOINT ["npm", "run"]

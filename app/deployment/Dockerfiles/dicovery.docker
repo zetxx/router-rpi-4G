@@ -1,0 +1,5 @@
+FROM nodejs
+
+RUN npm i -g dns-discovery
+
+ENTRYPOINT ["dns-discovery", "listen", "--port=59100", "--ttl=30"]
