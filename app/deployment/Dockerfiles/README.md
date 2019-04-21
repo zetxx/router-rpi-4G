@@ -5,7 +5,7 @@
 
 ## discovery server
 ```bash
-docker run -it -d --name discovery4g -m=64m discovery4g
+docker run -it -d --name discovery4g -h discovery -p 59100:59100/udp -m=64m discovery4g
 ```
 
 # RUN
