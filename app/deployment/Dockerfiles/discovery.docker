@@ -1,4 +1,4 @@
-FROM nodejs
+FROM nodejs-local
 
 RUN npm i -g dns-discovery
 

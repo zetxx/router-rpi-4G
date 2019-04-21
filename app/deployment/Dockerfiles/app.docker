@@ -1,4 +1,4 @@
-FROM nodejs
+FROM nodejs-local
 
 ENV NODE_PATH "/app_modules/node_modules"
 
