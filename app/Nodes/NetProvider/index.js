@@ -2,6 +2,7 @@ const rc = require('rc');
 const Factory = require('bridg-wrong-playground/factory.js');
 const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'http'}});
 const pso = require('parse-strings-in-object');
+const isOnline = require('is-online');
 
 class NetProvider extends Service {
     constructor(args) {
@@ -19,7 +20,9 @@ class NetProvider extends Service {
 
     initCron() {
         this.triggerEvent('traffic', {});
+        this.triggerEvent('isOnline', {});
         setInterval(() => this.triggerEvent('traffic', {}), (60 * 60 * 1000));
+        setInterval(() => this.triggerEvent('isOnline', {}), 60000);
     }
 }
 

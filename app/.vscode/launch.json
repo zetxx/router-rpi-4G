@@ -75,6 +75,27 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "onlineChecker",
+            "program": "${workspaceFolder}/Nodes/onlineChecker/index.js",
+            "outputCapture": "std",
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9003",
+                "--discovery.loopback=false",
+                "--log.level=trace"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "test",
             "program": "${workspaceFolder}/rp.js",
             "outputCapture": "std",
