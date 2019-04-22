@@ -25,7 +25,7 @@ class LoggerConsumer extends Service {
     }
 
     log(level, message) {
-        var lvl = level || 'info';
+        var lvl = level || 'trace';
         const toBeLogged = Object.assign({pid: `${this.name}.${this.domain}`, logLevel: lvl, domain: this.domain, timestamp: Date.now()}, message);
         if (!selfLog && (`${this.name}.${this.domain}` === message.pid || !message.pid)) {
             return Promise.resolve({});
@@ -40,7 +40,7 @@ var loggerConsumer = new LoggerConsumer({name: 'logger'});
 loggerConsumer.registerApiMethod({
     method: 'log',
     direction: 'in',
-    fn: function({level = 'info', fingerPrint, ...rest}) {
+    fn: function({level = 'trace', fingerPrint, ...rest}) {
         try {
             loggerConsumer.log(level, {pid: `${fingerPrint.nodeName}`, ...rest});
         } catch (e) {}

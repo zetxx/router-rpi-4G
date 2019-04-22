@@ -87,7 +87,8 @@
                 "--discovery.domain=borovica4g",
                 "--api.port=9003",
                 "--discovery.loopback=false",
-                "--log.level=trace"
+                "--log.level=trace",
+                "--onlineChecker.checkInterval=5000"
             ],
             "env": {
                 "NODE_PATH": "./dev"

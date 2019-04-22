@@ -2,7 +2,19 @@ const rc = require('rc');
 const Factory = require('bridg-wrong-playground/factory.js');
 const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'http'}});
 const pso = require('parse-strings-in-object');
-const isOnline = require('is-online');
+
+const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
+
+const convertToBytes = (content) => {
+    var arr = content.toLowerCase().split(',').join('').split(' ') || [];
+    var dataUsedRaw = arr.shift();
+    var dataType = dataTypeList.indexOf(arr.pop());
+    var dataUsed = 0;
+    if (dataType >= 0) {
+        dataUsed = ((!isNaN(parseFloat(dataUsedRaw)) && parseFloat(dataUsedRaw)) || 0) * Math.pow(1024, dataType);
+    }
+    return dataUsed;
+};
 
 class NetProvider extends Service {
     constructor(args) {
@@ -12,17 +24,17 @@ class NetProvider extends Service {
             pso(rc(this.getNodeName() || 'buzzer', {
                 httpClient: {
                     level: 'trace',
-                    uri: 'http://data.vivacom.bg'
+                    uri: 'http://data.vivacom.bg',
+                    triggerEventTimeout: 3600000 // 1 hour
                 }
             }).httpClient)
         );
     }
 
     initCron() {
+        let triggerEventTimeout = this.getStore(['config', 'httpClient', 'triggerEventTimeout']);
         this.triggerEvent('traffic', {});
-        this.triggerEvent('isOnline', {});
-        setInterval(() => this.triggerEvent('traffic', {}), (60 * 60 * 1000));
-        setInterval(() => this.triggerEvent('isOnline', {}), 60000);
+        setInterval(() => this.triggerEvent('traffic', {}), triggerEventTimeout);
     }
 }
 
@@ -44,7 +56,8 @@ netProvider.registerExternalMethod({
 netProvider.registerExternalMethod({
     method: 'traffic.response',
     fn: function(response) {
-        // console.log(response);
+        let trafficUsed = convertToBytes((response.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim());
+        netProvider.log('info', {trafficUsed});
         // do soemthing with the response
         return undefined;
     }

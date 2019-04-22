@@ -11,12 +11,24 @@
     "pino-pretty": "2.6.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "is-online": "8.2.0"
+    "is-online": "8.2.0",
+    "rc": "*",
+    "bridg-wrong": "*",
+    "hapi": "*",
+    "immutable": "*",
+    "dns-discovery": "*",
+    "inert": "*",
+    "vision": "*",
+    "joi": "*",
+    "hapi-swagger": "*",
+    "boom": "*",
+    "uuid": "*"
   },
   "scripts": {
     "logger": "node ./Nodes/Logger",
     "modem": "node ./Nodes/Modem",
-    "netProvider": "node ./Nodes/NetProvider"
+    "netProvider": "node ./Nodes/NetProvider",
+    "onlineChecker": "node ./Nodes/OnlineChecker"
   },
   "author": "zetxx",
   "license": "MIT"
