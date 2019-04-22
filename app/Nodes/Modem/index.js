@@ -7,16 +7,13 @@ class Modem extends Service {
     constructor(args) {
         super(args);
         this.setStore(
-            ['config', 'modem'],
+            ['config', 'httpClient'],
             pso(rc(this.getNodeName() || 'buzzer', {
-                modem: {
-                    api: {
-                        level: 'trace',
-                        uri: 'http://127.0.0.1',
-                        proto: 'http'
-                    }
+                httpClient: {
+                    level: 'trace',
+                    uri: 'http://127.0.0.1'
                 }
-            }).modem)
+            }).httpClient)
         );
     }
 
@@ -31,9 +28,9 @@ modem.registerExternalMethod({
     method: 'event.stats',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}`
+                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`
             },
             method: 'POST',
             qs: {
@@ -50,9 +47,9 @@ modem.registerApiMethod({
     method: 'command.disconnect',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}`,
+                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
@@ -68,9 +65,9 @@ modem.registerApiMethod({
     method: 'command.connect',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'api', 'proto'])}://${modem.getStore(['config', 'modem', 'api', 'uri'])}`,
+                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'

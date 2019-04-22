@@ -4,11 +4,11 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "bridg-wrong-playground": "1.1.7",
+    "bridg-wrong-playground": "1.2.1",
     "mdns-resolver": "0.0.3",
     "parse-strings-in-object": "1.2.0",
     "pino": "5.12.2",
-    "pino-pretty": "2.6.0",
+    "pino-pretty": "2.6.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   },

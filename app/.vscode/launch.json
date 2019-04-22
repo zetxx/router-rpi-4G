@@ -39,9 +39,30 @@
                 "--discovery.domain=borovica4g",
                 "--api.port=9001",
                 "--discovery.loopback=false",
-                "--log.level=debug",
-                "--modem.api.uri=10.21.21.1",
-                "--modem.api.proto=http"
+                "--log.level=trace",
+                "--httpClient.uri=http://10.21.21.1"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "NetProvider",
+            "program": "${workspaceFolder}/Nodes/NetProvider/index.js",
+            "outputCapture": "std",
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9002",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--httpClient.uri=http://data.vivacom.bg"
             ],
             "env": {
                 "NODE_PATH": "./dev"
