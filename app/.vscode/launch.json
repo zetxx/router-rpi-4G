@@ -40,7 +40,9 @@
                 "--api.port=9001",
                 "--discovery.loopback=false",
                 "--log.level=trace",
-                "--httpClient.uri=http://10.21.21.1"
+                "--httpClient.uri=http://10.21.21.1",
+                // debug props
+                "--http.timeout=2000"
             ],
             "env": {
                 "NODE_PATH": "./dev"
@@ -62,7 +64,9 @@
                 "--api.port=9002",
                 "--discovery.loopback=false",
                 "--log.level=trace",
-                "--httpClient.uri=http://data.vivacom.bg"
+                "--httpClient.uri=http://data.vivacom.bg",
+                // debug props
+                "--http.timeout=2000"
             ],
             "env": {
                 "NODE_PATH": "./dev"

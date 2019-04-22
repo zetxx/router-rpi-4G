@@ -43,16 +43,16 @@ modem.registerExternalMethod({
     }
 });
 
-modem.registerApiMethod({
+modem.registerExternalMethod({
     method: 'stats.response',
-    fn: function(response) {
-        // do something with the response
+    fn: function() {
         return undefined;
     }
 });
 
 modem.registerApiMethod({
     method: 'command.disconnect',
+    direction: 'in',
     fn: function() {
         return {
             uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
@@ -70,7 +70,27 @@ modem.registerApiMethod({
 });
 
 modem.registerApiMethod({
+    method: 'command.disconnect',
+    direction: 'out',
+    fn: function({result, error}) {
+        if (error) {
+            throw error;
+        }
+        debugger;
+        return {};
+    }
+});
+
+modem.registerExternalMethod({
+    method: 'command.disconnect',
+    fn: function(r) {
+        return r;
+    }
+});
+
+modem.registerApiMethod({
     method: 'command.connect',
+    direction: 'in',
     fn: function() {
         return {
             uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
@@ -84,6 +104,25 @@ modem.registerApiMethod({
             form: {isTest: 'false', notCallback: 'true', goformId: 'CONNECT_NETWORK'},
             json: true
         };
+    }
+});
+
+modem.registerApiMethod({
+    method: 'command.connect',
+    direction: 'out',
+    fn: function({result, error}) {
+        if (error) {
+            throw error;
+        }
+        debugger;
+        return {};
+    }
+});
+
+modem.registerExternalMethod({
+    method: 'command.connect',
+    fn: function(r) {
+        return r;
     }
 });
 
