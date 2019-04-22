@@ -38,5 +38,14 @@ netProvider.registerExternalMethod({
     }
 });
 
+netProvider.registerExternalMethod({
+    method: 'traffic.response',
+    fn: function(response) {
+        // console.log(response);
+        // do soemthing with the response
+        return undefined;
+    }
+});
+
 netProvider.start()
     .then(() => netProvider.initCron());

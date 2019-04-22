@@ -44,6 +44,14 @@ modem.registerExternalMethod({
 });
 
 modem.registerApiMethod({
+    method: 'stats.response',
+    fn: function(response) {
+        // do something with the response
+        return undefined;
+    }
+});
+
+modem.registerApiMethod({
     method: 'command.disconnect',
     fn: function() {
         return {
