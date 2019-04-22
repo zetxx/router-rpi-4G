@@ -75,7 +75,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "onlineChecker",
+            "name": "OnlineChecker",
             "program": "${workspaceFolder}/Nodes/onlineChecker/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
@@ -107,6 +107,12 @@
             "env": {
                 "NODE_PATH": "./dev"
             }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "OnlineChecker + Modem",
+            "configurations": ["OnlineChecker", "Modem"]
         }
     ]
 }

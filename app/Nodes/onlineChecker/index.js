@@ -10,6 +10,7 @@ class OnlineChecker extends Service {
 }
 
 var netProvider = new OnlineChecker({name: 'onlineChecker'});
+var onlineStatus = [];
 
 netProvider.registerExternalMethod({
     method: 'event.isOnline',
@@ -20,8 +21,19 @@ netProvider.registerExternalMethod({
 
 netProvider.registerExternalMethod({
     method: 'isOnline.response',
-    fn: function(response) {
-        // do soemthing with the response
+    fn: function(isOnline) {
+        if (isOnline) {
+            onlineStatus = [];
+        }
+        if (onlineStatus.length > 3) {
+            this.request('modem.command.disconnect')
+                .then(({result, error}) => {
+                    return this.request('modem.command.connect');
+                })
+                .catch((e) => netProvider.log('error', e));
+        } else {
+            onlineStatus.push(Date.now());
+        }
         return undefined;
     }
 });
