@@ -76,7 +76,7 @@
             "type": "node",
             "request": "launch",
             "name": "OnlineChecker",
-            "program": "${workspaceFolder}/Nodes/onlineChecker/index.js",
+            "program": "${workspaceFolder}/Nodes/OnlineChecker/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -89,6 +89,31 @@
                 "--discovery.loopback=false",
                 "--log.level=trace",
                 "--onlineChecker.checkInterval=5000"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Storage",
+            "program": "${workspaceFolder}/Nodes/Storage/index.js",
+            "outputCapture": "std",
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9004",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--storage.user=rpi4g",
+                "--storage.password=123",
+                "--storage.database=rpi4g",
+                "--storage.schema=rpi4g"
             ],
             "env": {
                 "NODE_PATH": "./dev"

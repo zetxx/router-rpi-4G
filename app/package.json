@@ -22,13 +22,15 @@
     "joi": "*",
     "hapi-swagger": "*",
     "boom": "*",
-    "uuid": "*"
+    "uuid": "*",
+    "pg": "*"
   },
   "scripts": {
     "logger": "node ./Nodes/Logger",
     "modem": "node ./Nodes/Modem",
     "netProvider": "node ./Nodes/NetProvider",
-    "onlineChecker": "node ./Nodes/OnlineChecker"
+    "onlineChecker": "node ./Nodes/OnlineChecker",
+    "storage": "node ./Nodes/Storage"
   },
   "author": "zetxx",
   "license": "MIT"

@@ -24,7 +24,7 @@ docker run -it -d \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/var/lib/postgresql/data \
---name persistent.storage \
+--name postgres \
 -e POSTGRES_PASSWORD=123 \
 -e POSTGRES_USER=postgres \
 -p 5432:5432 \
