@@ -39,7 +39,7 @@ onlineChecker.registerExternalMethod({
 
 onlineChecker.registerExternalMethod({
     method: 'isOnline.response',
-    fn: function(isOnline) {
+    fn: function({result, isOnline = result}) {
         let resetCount = onlineChecker.getStore(['config', 'onlineChecker', 'resetCount']);
 
         if (isOnline) {

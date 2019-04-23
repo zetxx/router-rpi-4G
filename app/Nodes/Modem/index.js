@@ -3,22 +3,30 @@ const Factory = require('bridg-wrong-playground/factory.js');
 const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'http'}});
 const pso = require('parse-strings-in-object');
 
+const fnThrowOrReturn = function({result, error}) {
+    if (error) {
+        throw error;
+    }
+    return result;
+};
+
 class Modem extends Service {
     constructor(args) {
         super(args);
         this.setStore(
-            ['config', 'httpClient'],
+            ['config', 'modem'],
             pso(rc(this.getNodeName() || 'buzzer', {
-                httpClient: {
+                modem: {
                     level: 'trace',
-                    uri: 'http://127.0.0.1'
+                    uri: 'http://127.0.0.1',
+                    triggerEventTimeout: 600000 // 10 min
                 }
-            }).httpClient)
+            }).modem)
         );
     }
 
     initCron() {
-        setTimeout(() => this.triggerEvent('stats', {}), 1000);
+        setInterval(() => this.triggerEvent('stats', {}), modem.getStore(['config', 'modem', 'triggerEventTimeout']));
     }
 }
 
@@ -28,9 +36,9 @@ modem.registerExternalMethod({
     method: 'event.stats',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`
+                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`
             },
             method: 'POST',
             qs: {
@@ -45,7 +53,7 @@ modem.registerExternalMethod({
 
 modem.registerExternalMethod({
     method: 'stats.response',
-    fn: function() {
+    fn: function({result, error}) {
         return undefined;
     }
 });
@@ -55,9 +63,9 @@ modem.registerApiMethod({
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`,
+                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
@@ -72,20 +80,12 @@ modem.registerApiMethod({
 modem.registerApiMethod({
     method: 'command.disconnect',
     direction: 'out',
-    fn: function({result, error}) {
-        if (error) {
-            throw error;
-        }
-        debugger;
-        return {};
-    }
+    fn: fnThrowOrReturn
 });
 
 modem.registerExternalMethod({
     method: 'command.disconnect',
-    fn: function(r) {
-        return r;
-    }
+    fn: fnThrowOrReturn
 });
 
 modem.registerApiMethod({
@@ -93,9 +93,9 @@ modem.registerApiMethod({
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'httpClient', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'httpClient', 'uri'])}`,
+                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
@@ -110,20 +110,12 @@ modem.registerApiMethod({
 modem.registerApiMethod({
     method: 'command.connect',
     direction: 'out',
-    fn: function({result, error}) {
-        if (error) {
-            throw error;
-        }
-        debugger;
-        return {};
-    }
+    fn: fnThrowOrReturn
 });
 
 modem.registerExternalMethod({
     method: 'command.connect',
-    fn: function(r) {
-        return r;
-    }
+    fn: fnThrowOrReturn
 });
 
 modem.start()

@@ -55,8 +55,8 @@ netProvider.registerExternalMethod({
 
 netProvider.registerExternalMethod({
     method: 'traffic.response',
-    fn: function(response) {
-        let trafficUsed = convertToBytes((response.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim());
+    fn: function({result}) {
+        let trafficUsed = convertToBytes((result.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim());
         netProvider.log('info', {trafficUsed});
         // do soemthing with the response
         return undefined;
