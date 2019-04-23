@@ -15,9 +15,26 @@ discovery4g
 
 # RUN
 
+## Storage, eg. postgresql
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/var/lib/postgresql/data \
+--name persistent.storage \
+-e POSTGRES_PASSWORD=123 \
+-e POSTGRES_USER=postgres \
+-p 5432:5432 \
+postgres:alpine
+```
+
 ## Logger
 ```bash
 docker run -it -d \
+--restart=unless-stopped \
 --name 4gLogger \
 -h logger \
 --link=discovery4g \
