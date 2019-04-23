@@ -8,6 +8,9 @@
   ### 4G modem
   - [zte unlock code](https://tools.texby.com/unlock-codes/zte/)
 
+## Docker
+  enable memory limit in containers: append this to `/boot/cmdline.txt` `cgroup_enable=memory cgroup_memory=1`
+
   #### MF 825
   * telnet it
     - telnet 192.168.0.1
