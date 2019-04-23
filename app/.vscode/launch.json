@@ -65,10 +65,10 @@
                 "--api.port=9002",
                 "--discovery.loopback=false",
                 "--log.level=trace",
-                "--httpClient.uri=http://data.vivacom.bg",
+                "--netProvider.uri=http://data.vivacom.bg",
                 // debug props
                 "--http.timeout=2000",
-                "--httpClient.triggerEventTimeout=5000"
+                "--netProvider.triggerEventTimeout=5000"
             ],
             "env": {
                 "NODE_PATH": "./dev"

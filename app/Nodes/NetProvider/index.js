@@ -20,19 +20,19 @@ class NetProvider extends Service {
     constructor(args) {
         super(args);
         this.setStore(
-            ['config', 'httpClient'],
+            ['config', 'netProvider'],
             pso(rc(this.getNodeName() || 'buzzer', {
-                httpClient: {
+                netProvider: {
                     level: 'trace',
                     uri: 'http://data.vivacom.bg',
                     triggerEventTimeout: 3600000 // 1 hour
                 }
-            }).httpClient)
+            }).netProvider)
         );
     }
 
     initCron() {
-        let triggerEventTimeout = this.getStore(['config', 'httpClient', 'triggerEventTimeout']);
+        let triggerEventTimeout = this.getStore(['config', 'netProvider', 'triggerEventTimeout']);
         this.triggerEvent('traffic', {});
         setInterval(() => this.triggerEvent('traffic', {}), triggerEventTimeout);
     }
@@ -44,7 +44,7 @@ netProvider.registerExternalMethod({
     method: 'event.traffic',
     fn: function() {
         return {
-            uri: netProvider.getStore(['config', 'httpClient', 'uri']),
+            uri: netProvider.getStore(['config', 'netProvider', 'uri']),
             headers: {
                 'Accept-Encoding': 'gzip'
             },
