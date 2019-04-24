@@ -2,6 +2,12 @@ const joi = require('joi');
 const Factory = require('bridg-wrong-playground/factory.js');
 const Storage = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'storage/postgresql'}});
 
+const throwOrRetrun = function({result, error}) {
+    if (error) {
+        throw error;
+    }
+    return result;
+};
 var storage = new Storage({name: 'storage'});
 
 storage.registerApiMethod({
@@ -17,23 +23,25 @@ storage.registerApiMethod({
         })
     }
 });
+storage.registerExternalMethod({method: 'stats.insert', fn: throwOrRetrun});
+storage.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOrRetrun});
 
-storage.registerExternalMethod({
-    method: 'stats.insert',
-    fn: function({result, error}) {
-        if (error) {
-            throw error;
+['modem', 'provider', 'is.online', 'vpn'].map((type) => {
+    storage.registerApiMethod({
+        method: `get.${type}.stats`,
+        direction: 'in',
+        fn: function({last}) {
+            return {fn: {name: 'getStats', data: [{name: 'type', value: type}, {name: 'last', value: last}]}};
+        },
+        meta: {
+            validate: joi.object({
+                last: joi.number().positive().default(5)
+            })
         }
-        return result;
-    }
-});
+    });
 
-storage.registerApiMethod({
-    method: 'stats.insert',
-    direction: 'out',
-    fn: function(message) {
-        return message;
-    }
+    storage.registerExternalMethod({method: `get.${type}.stats`, fn: throwOrRetrun});
+    storage.registerApiMethod({method: `get.${type}.stats`, direction: 'out', fn: throwOrRetrun});
 });
 
 storage.start();

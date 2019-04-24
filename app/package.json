@@ -23,6 +23,7 @@
     "hapi-swagger": "*",
     "boom": "*",
     "uuid": "*",
+    "serialize-error": "*",
     "pg": "*"
   },
   "scripts": {
