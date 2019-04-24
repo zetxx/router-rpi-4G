@@ -26,7 +26,9 @@ class Modem extends Service {
     }
 
     initCron() {
-        setInterval(() => this.triggerEvent('stats', {}), modem.getStore(['config', 'modem', 'triggerEventTimeout']));
+        let triggerEventTimeout = modem.getStore(['config', 'modem', 'triggerEventTimeout']);
+        this.triggerEvent('stats', {});
+        setInterval(() => this.triggerEvent('stats', {}), triggerEventTimeout);
     }
 }
 
@@ -53,8 +55,9 @@ modem.registerExternalMethod({
 
 modem.registerExternalMethod({
     method: 'stats.response',
-    fn: function({result, error}) {
+    fn: function({result, error: {error} = {}}) {
         (result && this.notification('storage.stats.insert', {type: 'modem', data: result}));
+        (error && this.notification('storage.stats.insert', {type: 'modem', data: {error: {code: error.code}}}));
         return undefined;
     }
 });

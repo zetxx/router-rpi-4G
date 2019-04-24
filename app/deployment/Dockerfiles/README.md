@@ -8,12 +8,33 @@
 docker run -it -d \
 --name discovery4g \
 --restart=unless-stopped \
--h discovery -p 59100:59100/udp \
+-h discovery \
 -m=64m \
 discovery4g
 ```
 
 # RUN
+
+## Logger
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--name 4gLogger \
+-h logger \
+--link=discovery4g \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+app4g \
+logger \
+-- \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--api.port=9000 \
+--log.level=trace
+```
 
 ## Storage, eg. postgresql
 ```bash
@@ -31,26 +52,118 @@ docker run -it -d \
 postgres:alpine
 ```
 
-## Logger
+## Storage
 ```bash
 docker run -it -d \
 --restart=unless-stopped \
---name 4gLogger \
--h logger \
---link=discovery4g \
+--name 4gStorage \
 -m=128m \
 --cpus=1 \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
--e logger_discovery__domain="borovica4g" \
--e logger_discovery__server="discovery:59100" \
--e logger_api__port=9000 \
--e logger_api__address="0.0.0.0" \
--e logger_log__level=trace \
+-h storage \
+--link=discovery4g \
+--link=4gLogger \
+--link=postgres \
+-p 9004:9004 \
 app4g \
-logger
+storage \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--discovery.loopback=false \
+--api.port=9004 \
+--log.level=trace \
+--storage.host=postgres \
+--storage.user=rpi4g \
+--storage.password=123 \
+--storage.database=rpi4g \
+--storage.schema=rpi4g
 ```
+
+## Modem
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--name 4gModem \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+-h modem \
+--link=discovery4g \
+--link=4gLogger \
+--link=4gStorage \
+app4g \
+modem \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--discovery.loopback=false \
+--api.port=9001 \
+--log.level=trace \
+--modem.uri="http://10.21.21.1" \
+--modem.triggerEventTimeout=60000 \
+--http.timeout=10000
+```
+
+## NetProvider
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--name 4gNetProvider \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+-h netProvider \
+--link=discovery4g \
+--link=4gLogger \
+--link=4gStorage \
+app4g \
+netProvider \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--discovery.loopback=false \
+--api.port=9001 \
+--log.level=trace \
+--http.timeout=20000
+```
+
+## OnlineChecker
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--name 4gOnlineChecker \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+-h onlineChecker \
+--link=discovery4g \
+--link=4gLogger \
+--link=4gStorage \
+--link=4gModem \
+app4g \
+onlineChecker \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--discovery.loopback=false \
+--api.port=9003 \
+--log.level=trace \
+--onlineChecker.checkInterval=3600000
+```
+
 ## run temporary
 - `docker run -it --link=discovery --rm nodejs /bin/ash`
 

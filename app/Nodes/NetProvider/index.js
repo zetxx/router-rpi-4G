@@ -25,7 +25,7 @@ class NetProvider extends Service {
                 netProvider: {
                     level: 'trace',
                     uri: 'http://data.vivacom.bg',
-                    triggerEventTimeout: 3600000 // 1 hour
+                    triggerEventTimeout: 10800000 // 3 hour
                 }
             }).netProvider)
         );
