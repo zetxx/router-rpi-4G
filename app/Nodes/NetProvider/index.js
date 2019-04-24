@@ -58,7 +58,7 @@ netProvider.registerExternalMethod({
     fn: function({result}) {
         let trafficUsed = convertToBytes((result.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim());
         netProvider.log('info', {trafficUsed});
-        // do soemthing with the response
+        this.notification('storage.stats.insert', {type: 'provider', data: {trafficUsed}});
         return undefined;
     }
 });
