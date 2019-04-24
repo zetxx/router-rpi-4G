@@ -164,6 +164,33 @@ onlineChecker \
 --onlineChecker.checkInterval=3600000
 ```
 
+## ScreenControl
+```bash
+docker run -it -d \
+--device /dev/i2c-1 \
+--restart=unless-stopped \
+--name 4gScreenControl \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+-h screenControl \
+--link=discovery4g \
+--link=4gLogger \
+--link=4gStorage \
+app4g \
+screenControl \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery:59100" \
+--discovery.loopback=false \
+--api.port=9005 \
+--log.level=trace \
+--screenControl.hwAddr=60 \
+```
+
 ## run temporary
 - `docker run -it --link=discovery --rm nodejs /bin/ash`
 
