@@ -22,7 +22,7 @@ class ScreenControl extends Service {
     }
 
     async start() {
-        this.oled = await oled({
+        this.draw = await oled({
             hwAddr: this.getStore(['config', 'screenControl', 'hwAddr']),
             width: this.getStore(['config', 'screenControl', 'width']),
             height: this.getStore(['config', 'screenControl', 'height'])
@@ -43,11 +43,11 @@ screenControl.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
         return {
-            isOnline: (await this.request('storage.get.is.online.stats')),
-            modem: (await this.request('storage.get.modem.stats')),
-            ping: (await this.request('storage.get.ping.stats')),
-            vpn: (await this.request('storage.get.vpn.stats')),
-            provider: (await this.request('storage.get.provider.stats'))
+            isOnline: (await this.request('storage.get.is.online.stats', {last: 1})).pop() || {},
+            modem: (await this.request('storage.get.modem.stats', {last: 1})).pop() || {},
+            ping: (await this.request('storage.get.ping.stats', {last: 1})).pop() || {},
+            vpn: (await this.request('storage.get.vpn.stats', {last: 1})).pop() || {},
+            provider: (await this.request('storage.get.provider.stats', {last: 1})).pop() || {}
         };
     }
 });
@@ -55,7 +55,15 @@ screenControl.registerExternalMethod({
 screenControl.registerExternalMethod({
     method: 'pullData.response',
     fn: async function({result, error}) {
-        // screenControl.oled;
+        if (!screenControl.getStore(['config', 'screenControl', 'hwAddr'])) {
+            if (result) {
+                let asciiArt = await screenControl.draw(result);
+                // console.log(asciiArt);
+                screenControl.log('info', {asciiArt: asciiArt});
+            }
+        } else {
+            result && screenControl.draw(result);
+        }
         return undefined;
     }
 });

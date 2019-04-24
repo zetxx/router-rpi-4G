@@ -3,13 +3,13 @@ const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
 const draw = require('./draw');
 
-const getPixelCoords = ({width, height, gsmNetwork, gsmNetworkStatus, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
+const getPixelCoords = ({width, height, gsmNetwork, gsmNetworkConnected, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
     var d = draw(width, height, '1_8x8');
-    d.addText(`${gsmNetwork}${gsmNetworkStatus === 'connected' ? '✓' : '✗'}| VPN:${vpnStatus === 'connected' ? '✓' : '✗'}`, 0);
-    d.addText(ping, 8);
+    d.addText(`${gsmNetwork}${(gsmNetworkConnected && '✓') || '✗'}| VPN:${(vpnStatus && '✓') || '✗'}`, 0);
+    d.addText((ping && ping.slice(-8)) || '?:?', 8);
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}%`, 25);
-    d.addGraph(graph, 0, 34, 64);
+    // d.addGraph(graph, 0, 34, 64);
     return d;
 };
 
@@ -50,7 +50,7 @@ const isReady = (wire) => (new Promise((resolve, reject) => wire._waitUntilReady
 //                 realtimeTxBytes = 0,
 //                 pppStatus = ''
 //             }) => ({
-//                 gsmNetworkStatus: (pppStatus === 'ppp_connected' && 'connected') || '?',
+//                 gsmNetworkConnected: (pppStatus === 'ppp_connected' && 'connected') || '?',
 //                 gsmNetwork: networkType.slice(-5),
 //                 trafficUp: getTrafficMetrics(realtimeTxBytes),
 //                 realtimeTxBytes,
@@ -70,9 +70,9 @@ const isReady = (wire) => (new Promise((resolve, reject) => wire._waitUntilReady
 //             .then(({host = '?', time = '?'}) => ({pingHost: host, pingTime: time}))
 //     ])
 //         .then((data) => data.reduce((a, c) => (Object.assign(a, c)), {}))
-//         .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkStatus, gsmNetwork, pingHost, pingTime, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}) => Promise.resolve({
+//         .then(({trafficUp, trafficDown, vpnStatus, gsmNetworkConnected, gsmNetwork, pingHost, pingTime, trafficUsed, realtimeTxBytes, realtimeRxBytes, graph}) => Promise.resolve({
 //             gsmNetwork,
-//             gsmNetworkStatus,
+//             gsmNetworkConnected,
 //             vpnStatus,
 //             ping: `${pingHost}:${pingTime}`,
 //             trafficUp,
@@ -116,16 +116,27 @@ const isReady = (wire) => (new Promise((resolve, reject) => wire._waitUntilReady
 // };
 
 module.exports = async({hwAddr, width, height}) => {
+    const transformator = ({ping, provider, vpn}) => ({
+        width,
+        height,
+        vpnStatus: vpn && vpn.data && vpn.data.connected,
+        ping: (ping && ping.data && `${ping.data.host}:${ping.data.value}${ping.data.units}`),
+        gsmNetwork: '?',
+        gsmNetworkConnected: false,
+        trafficUp: '?',
+        trafficDown: '?',
+        trafficUsed: (provider && provider.data && provider.data.trafficUsed) || '?'
+    });
     if (!hwAddr) {
         return async(data) => {
-            return getPixelCoords({...data, width, height}).textArt();
+            return getPixelCoords(transformator(data)).textArt();
         };
     }
     var wire = await i2cInit({hwAddr, width, height});
     return async(data) => {
         await isReady(wire);
         await wire.clearDisplay(true);
-        await wire.drawPixel(getPixelCoords({...data, width, height}).getPoints(), true);
+        await wire.drawPixel(getPixelCoords(transformator(data)).getPoints(), true);
         await wire.update();
         await wire.turnOnDisplay();
     };
