@@ -137,7 +137,7 @@
                 "--api.port=9005",
                 "--discovery.loopback=false",
                 "--log.level=trace",
-                "--screenControl.refreshInterval=5000"
+                "--screenControl.refreshInterval=15000"
             ],
             "env": {
                 "NODE_PATH": "./dev"

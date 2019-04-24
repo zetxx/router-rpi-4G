@@ -24,7 +24,9 @@
     "boom": "*",
     "uuid": "*",
     "serialize-error": "*",
-    "pg": "*"
+    "pg": "*",
+    "i2c-bus": "^4.0.9",
+    "oled-i2c-bus": "^1.0.10"
   },
   "scripts": {
     "logger": "node ./Nodes/Logger",
