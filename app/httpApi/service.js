@@ -1,3 +1,0 @@
-const proc = require('./');
-
-proc();

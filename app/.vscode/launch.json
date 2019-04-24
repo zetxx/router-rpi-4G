@@ -7,40 +7,140 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "LCD",
-            "program": "${workspaceFolder}/lcdService.js",
+            "name": "Logger",
+            "program": "${workspaceFolder}/Nodes/Logger/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9000",
+                "--discovery.loopback=false"
+            ],
             "env": {
-                "_statsapp_config__log__level": "trace",
-                "statsapp_config__lcdAddr": 10,
-                "statsapp_config__modem__repeatInterval": 5000,
-                "statsapp_config__modemHealthCheck__repeatInterval": 5000
+                "NODE_PATH": "./dev"
             }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "HTTP API",
-            "program": "${workspaceFolder}/httpApi/service.js",
+            "name": "Modem",
+            "program": "${workspaceFolder}/Nodes/Modem/index.js",
             "outputCapture": "std",
-            "protocol": "inspector"
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9001",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--modem.uri=http://10.21.21.1",
+                // debug props
+                "--http.timeout=2000",
+                "--modem.triggerEventTimeout=5000"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "HTTP CLIENT",
-            "program": "${workspaceFolder}/httpClient/service.js",
+            "name": "NetProvider",
+            "program": "${workspaceFolder}/Nodes/NetProvider/index.js",
             "outputCapture": "std",
-            "protocol": "inspector"
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9002",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--netProvider.uri=http://data.vivacom.bg",
+                // debug props
+                "--http.timeout=2000",
+                "--netProvider.triggerEventTimeout=5000"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "db init",
-            "program": "${workspaceFolder}/dbInit/index.js",
+            "name": "OnlineChecker",
+            "program": "${workspaceFolder}/Nodes/OnlineChecker/index.js",
             "outputCapture": "std",
-            "protocol": "inspector"
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9003",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--onlineChecker.checkInterval=5000"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Storage",
+            "program": "${workspaceFolder}/Nodes/Storage/index.js",
+            "outputCapture": "std",
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "args": [
+                "--discovery.domain=borovica4g",
+                "--api.port=9004",
+                "--discovery.loopback=false",
+                "--log.level=trace",
+                "--storage.user=rpi4g",
+                "--storage.password=123",
+                "--storage.database=rpi4g",
+                "--storage.schema=rpi4g"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test",
+            "program": "${workspaceFolder}/rp.js",
+            "outputCapture": "std",
+            "protocol": "inspector",
+            "runtimeArgs": [
+                "--preserve-symlinks",
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_PATH": "./dev"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "OnlineChecker + Modem",
+            "configurations": ["OnlineChecker", "Modem"]
         }
     ]
 }
