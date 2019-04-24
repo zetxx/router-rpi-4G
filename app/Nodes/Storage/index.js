@@ -14,11 +14,15 @@ storage.registerApiMethod({
     method: 'stats.insert',
     direction: 'in',
     fn: function({data, type}) {
+        if (type === 'vpn') {
+            let raw = (Buffer.from(data.raw, 'base64').toString('utf8').split('for more info').pop() || '').split('\n').join('').split(',').slice(0, -1).filter((v) => v);
+            return {insert: {data: `'${JSON.stringify({raw, connected: raw.indexOf('CONNECTED') >= 0})}'`, type: `'${type}'`}, table: 'stats'};
+        }
         return {insert: {data: `'${JSON.stringify(data)}'`, type: `'${type}'`}, table: 'stats'};
     },
     meta: {
         validate: joi.object({
-            type: joi.any().valid(['modem', 'provider', 'is.online', 'vpn']),
+            type: joi.any().valid(['modem', 'provider', 'is.online', 'vpn', 'ping']),
             data: joi.object({}).unknown(true)
         })
     }
@@ -26,7 +30,7 @@ storage.registerApiMethod({
 storage.registerExternalMethod({method: 'stats.insert', fn: throwOrRetrun});
 storage.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOrRetrun});
 
-['modem', 'provider', 'is.online', 'vpn'].map((type) => {
+['modem', 'provider', 'is.online', 'vpn', 'ping'].map((type) => {
     storage.registerApiMethod({
         method: `get.${type}.stats`,
         direction: 'in',

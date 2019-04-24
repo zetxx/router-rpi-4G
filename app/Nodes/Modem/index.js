@@ -54,6 +54,7 @@ modem.registerExternalMethod({
 modem.registerExternalMethod({
     method: 'stats.response',
     fn: function({result, error}) {
+        (result && this.notification('storage.stats.insert', {type: 'modem', data: result}));
         return undefined;
     }
 });
