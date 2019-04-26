@@ -97,6 +97,7 @@ docker run -it -d \
 --link=discovery4g \
 --link=4gLogger \
 --link=4gStorage \
+-p 9001:9001 \
 app4g \
 modem \
 -- \
