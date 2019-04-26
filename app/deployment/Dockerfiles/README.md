@@ -192,13 +192,7 @@ screenControl \
 ```
 
 ## run temporary
-- `docker run -it --link=discovery --rm app4g /bin/ash`
+- `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
 
 ### run temporary screen control
-- `docker run -it --device /dev/i2c-1 --rm app4g /bin/ash`
-
-# TMP
-### debug
-```bash
-docker run -it -d --name discovery -m=512m -p 59100:59100/udp discovery
-```
+- `docker run -it -v ${PWD}:/app --device /dev/i2c-1 --entrypoint "" --rm app4g /bin/ash`
