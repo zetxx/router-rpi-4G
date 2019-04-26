@@ -15,7 +15,8 @@ class ScreenControl extends Service {
                     refreshInterval: 60000,
                     hwAddr: 0,
                     width: 128,
-                    height: 64
+                    height: 64,
+                    monthlyTraffic: 10485760000
                 }
             }).screenControl)
         );
@@ -45,6 +46,11 @@ screenControl.registerExternalMethod({
         return {
             isOnline: (await this.request('storage.get.is.online.stats', {last: 1})).pop() || {},
             modem: (await this.request('storage.get.modem.stats', {last: 1})).pop() || {},
+            graphData: ((await this.request('storage.get.modem.stats', {last: 126})) || [])
+                .reverse().map(({data: {realtime_tx_bytes, realtime_rx_bytes}} = {}) => ({
+                    realtimeTxBytes: realtime_tx_bytes,
+                    realtimeRxBytes: realtime_rx_bytes
+                })),
             ping: (await this.request('storage.get.ping.stats', {last: 1})).pop() || {},
             vpn: (await this.request('storage.get.vpn.stats', {last: 1})).pop() || {},
             provider: (await this.request('storage.get.provider.stats', {last: 1})).pop() || {}
@@ -55,14 +61,15 @@ screenControl.registerExternalMethod({
 screenControl.registerExternalMethod({
     method: 'pullData.response',
     fn: async function({result, error}) {
+        let monthlyTraffic = screenControl.getStore(['config', 'screenControl', 'monthlyTraffic']);
         if (!screenControl.getStore(['config', 'screenControl', 'hwAddr'])) {
             if (result) {
-                let asciiArt = await screenControl.draw(result);
-                // console.log(asciiArt);
+                let asciiArt = await screenControl.draw(result, monthlyTraffic);
+                console.log(asciiArt);
                 screenControl.log('info', {asciiArt: asciiArt});
             }
         } else {
-            result && screenControl.draw(result);
+            result && screenControl.draw(result, monthlyTraffic);
         }
         return undefined;
     }
