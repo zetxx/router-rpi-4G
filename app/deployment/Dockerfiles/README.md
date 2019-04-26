@@ -192,7 +192,10 @@ screenControl \
 ```
 
 ## run temporary
-- `docker run -it --link=discovery --rm nodejs /bin/ash`
+- `docker run -it --link=discovery --rm app4g /bin/ash`
+
+### run temporary screen control
+- `docker run -it --device /dev/i2c-1 --rm app4g /bin/ash`
 
 # TMP
 ### debug
