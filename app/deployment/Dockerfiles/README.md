@@ -161,8 +161,7 @@ onlineChecker \
 --discovery.server="discovery:59100" \
 --discovery.loopback=false \
 --api.port=9003 \
---log.level=trace \
---onlineChecker.checkInterval=3600000
+--log.level=trace
 ```
 
 ## ScreenControl
