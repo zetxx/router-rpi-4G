@@ -75,8 +75,12 @@ module.exports = async({hwAddr, width, height}) => {
     return async(data, monthlyTraffic) => {
         await isReady(wire);
         await wire.clearDisplay(true);
+        await isReady(wire);
         await wire.drawPixel(getPixelCoords(t(data, monthlyTraffic)).getPoints(), true);
+        await isReady(wire);
         await wire.update();
+        await isReady(wire);
         await wire.turnOnDisplay();
+        await isReady(wire);
     };
 };
