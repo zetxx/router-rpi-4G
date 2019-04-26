@@ -188,7 +188,7 @@ screenControl \
 --discovery.loopback=false \
 --api.port=9005 \
 --log.level=trace \
---screenControl.hwAddr=60 \
+--screenControl.hwAddr=60
 ```
 
 ## run temporary

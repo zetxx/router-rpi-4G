@@ -33,7 +33,8 @@
     "modem": "node ./Nodes/Modem",
     "netProvider": "node ./Nodes/NetProvider",
     "onlineChecker": "node ./Nodes/OnlineChecker",
-    "storage": "node ./Nodes/Storage"
+    "storage": "node ./Nodes/Storage",
+    "screenControl": "node ./Nodes/ScreenControl"
   },
   "author": "zetxx",
   "license": "MIT"
