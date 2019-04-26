@@ -66,11 +66,11 @@ modem.registerApiMethod({
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
             headers: {
                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'X-Requested-With': 'XMLHttpRequest',
+                // 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
             },
             method: 'POST',
@@ -96,7 +96,7 @@ modem.registerApiMethod({
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
             headers: {
                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
