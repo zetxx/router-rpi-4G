@@ -70,7 +70,6 @@ modem.registerApiMethod({
             headers: {
                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                // 'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
             },
             method: 'POST',
@@ -100,7 +99,6 @@ modem.registerApiMethod({
             headers: {
                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'X-Requested-With': 'XMLHttpRequest',
                 'Accept-Encoding': 'gzip, deflate'
             },
             method: 'POST',
