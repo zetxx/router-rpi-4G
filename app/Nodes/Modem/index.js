@@ -61,65 +61,65 @@ modem.registerExternalMethod({
     }
 });
 
-// modem.registerApiMethod({
-//     method: 'command.disconnect',
-//     direction: 'in',
-//     fn: function() {
-//         return {
-//             uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
-//             headers: {
-//                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
-//                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-//                 'X-Requested-With': 'XMLHttpRequest',
-//                 'Accept-Encoding': 'gzip, deflate'
-//             },
-//             method: 'POST',
-//             form: {isTest: 'false', notCallback: 'true', goformId: 'DISCONNECT_NETWORK'},
-//             json: true
-//         };
-//     }
-// });
+modem.registerApiMethod({
+    method: 'command.disconnect',
+    direction: 'in',
+    fn: function() {
+        return {
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            headers: {
+                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept-Encoding': 'gzip, deflate'
+            },
+            method: 'POST',
+            form: {isTest: 'false', notCallback: 'true', goformId: 'DISCONNECT_NETWORK'},
+            json: true
+        };
+    }
+});
 
-// modem.registerApiMethod({
-//     method: 'command.disconnect',
-//     direction: 'out',
-//     fn: fnThrowOrReturn
-// });
+modem.registerApiMethod({
+    method: 'command.disconnect',
+    direction: 'out',
+    fn: fnThrowOrReturn
+});
 
-// modem.registerExternalMethod({
-//     method: 'command.disconnect',
-//     fn: fnThrowOrReturn
-// });
+modem.registerExternalMethod({
+    method: 'command.disconnect',
+    fn: fnThrowOrReturn
+});
 
-// modem.registerApiMethod({
-//     method: 'command.connect',
-//     direction: 'in',
-//     fn: function() {
-//         return {
-//             uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
-//             headers: {
-//                 Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
-//                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-//                 'X-Requested-With': 'XMLHttpRequest',
-//                 'Accept-Encoding': 'gzip, deflate'
-//             },
-//             method: 'POST',
-//             form: {isTest: 'false', notCallback: 'true', goformId: 'CONNECT_NETWORK'},
-//             json: true
-//         };
-//     }
-// });
+modem.registerApiMethod({
+    method: 'command.connect',
+    direction: 'in',
+    fn: function() {
+        return {
+            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            headers: {
+                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept-Encoding': 'gzip, deflate'
+            },
+            method: 'POST',
+            form: {isTest: 'false', notCallback: 'true', goformId: 'CONNECT_NETWORK'},
+            json: true
+        };
+    }
+});
 
-// modem.registerApiMethod({
-//     method: 'command.connect',
-//     direction: 'out',
-//     fn: fnThrowOrReturn
-// });
+modem.registerApiMethod({
+    method: 'command.connect',
+    direction: 'out',
+    fn: fnThrowOrReturn
+});
 
-// modem.registerExternalMethod({
-//     method: 'command.connect',
-//     fn: fnThrowOrReturn
-// });
+modem.registerExternalMethod({
+    method: 'command.connect',
+    fn: fnThrowOrReturn
+});
 
 modem.start()
     .then(() => modem.initCron());
