@@ -73,24 +73,23 @@ module.exports = async({hwAddr, width, height}) => {
     }
     var wire = await i2cInit({hwAddr, width, height});
     return async(data, monthlyTraffic) => {
-        await isReady(wire);
         console.log(Date.now());
+        // await isReady(wire);
+        // console.log(Date.now());
         await wire.turnOnDisplay();
-        await isReady(wire);
+        // await isReady(wire);
         console.log(Date.now());
-        await wire.clearDisplay(true);
+        await wire.clearDisplay();
         console.log(Date.now());
-        await isReady(wire);
-        console.log(Date.now());
+        // await isReady(wire);
+        // console.log(Date.now());
         await wire.drawPixel(getPixelCoords(t(data, monthlyTraffic)).getPoints());
         console.log(Date.now());
-        await isReady(wire);
+        // await isReady(wire);
+        // console.log(Date.now());
+        // await wire.update();
         console.log(Date.now());
-        await wire.update();
-        console.log(Date.now());
-        await isReady(wire);
-        console.log(Date.now());
-        await isReady(wire);
-        console.log(Date.now());
+        // await isReady(wire);
+        // console.log(Date.now());
     };
 };
