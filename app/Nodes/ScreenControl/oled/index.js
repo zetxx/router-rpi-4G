@@ -5,11 +5,11 @@ const draw = require('./draw');
 
 const getPixelCoords = ({width, height, gsmNetwork, gsmNetworkConnected, vpnStatus, ping, trafficUp, trafficDown, trafficUsed, graph}) => {
     var d = draw(width, height, '1_8x8');
-    d.addText(`${gsmNetwork}${(gsmNetworkConnected && '✓') || '✗'}| VPN:${(vpnStatus && '✓') || '✗'}`, 0);
-    d.addText((ping && ping.slice(-8)) || '?:?', 8);
+    d.addText(`${gsmNetwork}:${(gsmNetworkConnected && '✓') || '✗'} VPN:${(vpnStatus && '✓') || '✗'}`, 0);
+    d.addText((ping && ping.slice((width / 8) * -1)) || '?:?', 8);
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}%`, 25);
-    // d.addGraph(graph, 0, 34, 64);
+    d.addGraph(graph, 0, 34, 64);
     return d;
 };
 
@@ -49,7 +49,7 @@ const transformer = ({width, height}) => ({ping, provider, vpn, modem, graphData
         vpnStatus: vpn && vpn.data && vpn.data.connected,
         ping: (ping && ping.data && `${ping.data.host}:${ping.data.value}${ping.data.units}`),
         gsmNetwork: (modem && modem.data && modem.data.network_type) || '-',
-        gsmNetworkConnected: (modem && modem.data && modem.data.pppStatus && modem.data.pppStatus === 'ppp_connected') || false,
+        gsmNetworkConnected: (modem && modem.data && modem.data.ppp_status && modem.data.ppp_status === 'ppp_connected') || false,
         trafficUp: getTrafficMetrics(realtimeTxBytes),
         trafficDown: getTrafficMetrics(realtimeRxBytes),
         graph: transformGraphData(graphData),
@@ -60,8 +60,6 @@ const transformer = ({width, height}) => ({ping, provider, vpn, modem, graphData
 const i2cInit = ({hwAddr, width, height}) => (new Promise((resolve, reject) => {
     const i2cBus = i2c.open(1, (err) => (err && reject(err)) || resolve(new Oled(i2cBus, {width, height, hwAddr})));
 }));
-
-const isReady = (wire) => (new Promise((resolve, reject) => wire._waitUntilReady(() => resolve())));
 
 module.exports = async({hwAddr, width, height}) => {
     let t = transformer({width, height});
