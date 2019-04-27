@@ -7,7 +7,7 @@ function onInit () {
 
     const stateChange = (pin) => {
         console.log('watched pin state:', pin);
-        if(pin.state) {
+        if (pin.state) {
             powerPin.write(true);
             batteryPin.write(false);
         } else {
@@ -18,5 +18,5 @@ function onInit () {
 
     stateChange({state: watchPin.read()});
 
-    setWatch(stateChange, watchPin, {debounce : 50, repeat: true, edge: 'both', data: watchPin});
+    setWatch (stateChange, watchPin, {debounce: 50, repeat: true, edge: 'both', data: watchPin});
 }
