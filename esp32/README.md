@@ -15,5 +15,5 @@ needs to be done
 Adafruit Feather HUZZAH32 ESP32 - Wi-Fi, Bluetooth, CP2104 USB-UART, Li-Po charging port
 
 ## devices, libs
-    - https://www.espruino.com/
+    - https://www.espruino.com/ESP32
     - https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
