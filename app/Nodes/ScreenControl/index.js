@@ -47,10 +47,7 @@ screenControl.registerExternalMethod({
             isOnline: (await this.request('storage.get.is.online.stats', {last: 1})).pop() || {},
             modem: (await this.request('storage.get.modem.stats', {last: 1})).pop() || {},
             graphData: ((await this.request('storage.get.modem.stats', {last: 126})) || [])
-                .reverse().map(({data: {realtime_tx_bytes, realtime_rx_bytes}} = {}) => ({
-                    realtimeTxBytes: realtime_tx_bytes,
-                    realtimeRxBytes: realtime_rx_bytes
-                })),
+                .reverse().map(({data: {realtime_tx_bytes, realtime_rx_bytes}} = {}) => ({tx: parseInt(realtime_tx_bytes), rx: parseInt(realtime_rx_bytes)})),
             ping: (await this.request('storage.get.ping.stats', {last: 1})).pop() || {},
             vpn: (await this.request('storage.get.vpn.stats', {last: 1})).pop() || {},
             provider: (await this.request('storage.get.provider.stats', {last: 1})).pop() || {}

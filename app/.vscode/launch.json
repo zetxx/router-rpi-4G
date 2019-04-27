@@ -147,7 +147,7 @@
             "type": "node",
             "request": "launch",
             "name": "test",
-            "program": "${workspaceFolder}/rp.js",
+            "program": "${workspaceFolder}/play/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [

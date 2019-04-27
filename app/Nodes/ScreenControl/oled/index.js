@@ -27,17 +27,40 @@ const getTrafficMetrics = (num) => {
 
 const getTrafficUsedPercentage = ({usedTotal, monthlyTraffic}) => Math.floor((parseInt(usedTotal) / parseInt(monthlyTraffic)) * 100);
 
+// const transformGraphDataOld = (data) => {
+//     let t1 = data.reduce((a, {tx, rx}) => {
+//         a[0].push(rx);
+//         a[1].push(tx);
+//         return a;
+//     }, [[], []]);
+//     let percentDown = t1[0].concat([]).sort((a, b) => b - a).shift() / 100;
+//     let percentUp = t1[1].concat([]).sort((a, b) => b - a).shift() / 100;
+//     t1[0] = t1[0].reverse().map((v) => Math.round(v / percentDown, 0));
+//     t1[1] = t1[1].reverse().map((v) => Math.round(v / percentUp, 0));
+//     return t1;
+// };
+
 const transformGraphData = (data) => {
-    let t1 = data.reduce((a, {realtimeTxBytes, realtimeRxBytes}) => {
-        a[0].push(realtimeRxBytes);
-        a[1].push(realtimeTxBytes);
-        return a;
-    }, [[], []]);
-    let percentDown = t1[0].concat([]).sort((a, b) => b - a).shift() / 100;
-    let percentUp = t1[1].concat([]).sort((a, b) => b - a).shift() / 100;
-    t1[0] = t1[0].reverse().map((v) => Math.round(v / percentDown, 0));
-    t1[1] = t1[1].reverse().map((v) => Math.round(v / percentUp, 0));
-    return t1;
+    let {maxRx, maxTx, diff} = data.reduce(
+        ({maxRx, maxTx, prevRx, prevTx, diff}, {rx, tx}, idx) => {
+            let diffRx = rx - prevRx;
+            let diffTx = tx - prevTx;
+            return {
+                diff: (idx && diff.concat([{rx: diffRx, tx: diffTx}])) || [],
+                prevRx: rx,
+                prevTx: tx,
+                maxRx: idx && ((diffRx > maxRx && diffRx) || maxRx),
+                maxTx: idx && ((diffTx > maxTx && diffTx) || maxTx)
+            };
+        },
+        {diff: [], prevRx: 0, prevTx: 0, maxRx: 0, maxTx: 0}
+    );
+    let maxRxPercent = maxRx / 100;
+    let maxTxPercent = maxTx / 100;
+    let {rx, tx} = diff.reduce((a, {rx, tx}) => {
+        return {rx: [...a.rx, Math.round(rx / maxRxPercent)], tx: [...a.tx, Math.round(tx / maxTxPercent)]};
+    }, {rx: [], tx: []});
+    return [rx, tx];
 };
 
 const transformer = ({width, height}) => ({ping, provider, vpn, modem, graphData}, monthlyTraffic) => {
@@ -71,23 +94,8 @@ module.exports = async({hwAddr, width, height}) => {
     }
     var wire = await i2cInit({hwAddr, width, height});
     return async(data, monthlyTraffic) => {
-        console.log(Date.now());
-        // await isReady(wire);
-        // console.log(Date.now());
         await wire.turnOnDisplay();
-        // await isReady(wire);
-        console.log(Date.now());
         await wire.clearDisplay();
-        console.log(Date.now());
-        // await isReady(wire);
-        // console.log(Date.now());
         await wire.drawPixel(getPixelCoords(t(data, monthlyTraffic)).getPoints());
-        console.log(Date.now());
-        // await isReady(wire);
-        // console.log(Date.now());
-        // await wire.update();
-        console.log(Date.now());
-        // await isReady(wire);
-        // console.log(Date.now());
     };
 };

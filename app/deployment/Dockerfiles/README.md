@@ -189,7 +189,7 @@ screenControl \
 --api.port=9005 \
 --log.level=trace \
 --screenControl.hwAddr=60
---screenControl.refreshInterval=20000
+--screenControl.refreshInterval=30000
 ```
 
 ## run temporary
