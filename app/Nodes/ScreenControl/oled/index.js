@@ -9,7 +9,7 @@ const getPixelCoords = ({width, height, gsmNetwork, gsmNetworkConnected, vpnStat
     d.addText((ping && ping.slice(-8)) || '?:?', 8);
     d.addText(`${String.fromCharCode(24)}${trafficUp} ${String.fromCharCode(25)}${trafficDown}`, 17);
     d.addText(`traffic: ${trafficUsed}%`, 25);
-    d.addGraph(graph, 0, 34, 64);
+    // d.addGraph(graph, 0, 34, 64);
     return d;
 };
 
@@ -74,13 +74,23 @@ module.exports = async({hwAddr, width, height}) => {
     var wire = await i2cInit({hwAddr, width, height});
     return async(data, monthlyTraffic) => {
         await isReady(wire);
-        await wire.clearDisplay(true);
-        await isReady(wire);
-        await wire.drawPixel(getPixelCoords(t(data, monthlyTraffic)).getPoints(), true);
-        await isReady(wire);
-        await wire.update();
-        await isReady(wire);
+        console.log(Date.now());
         await wire.turnOnDisplay();
         await isReady(wire);
+        console.log(Date.now());
+        await wire.clearDisplay(true);
+        console.log(Date.now());
+        await isReady(wire);
+        console.log(Date.now());
+        await wire.drawPixel(getPixelCoords(t(data, monthlyTraffic)).getPoints());
+        console.log(Date.now());
+        await isReady(wire);
+        console.log(Date.now());
+        await wire.update();
+        console.log(Date.now());
+        await isReady(wire);
+        console.log(Date.now());
+        await isReady(wire);
+        console.log(Date.now());
     };
 };
