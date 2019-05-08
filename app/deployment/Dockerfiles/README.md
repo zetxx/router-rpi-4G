@@ -194,6 +194,7 @@ screenControl \
 
 ## run temporary
 - `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
+- `docker run -it --rm --device /dev/spidev0.0 --device /dev/spidev0.1 --entrypoint "" app4g /bin/ash`
 
 ### run temporary screen control
 - `docker run -it -v ${PWD}:/app --device /dev/i2c-1 --entrypoint "" --rm app4g /bin/ash`
