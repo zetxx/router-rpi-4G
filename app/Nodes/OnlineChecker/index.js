@@ -1,4 +1,4 @@
-const isOnline = require('is-online');
+const isReachable = require('is-reachable');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
 const Factory = require('bridg-wrong-playground/factory.js');
@@ -21,8 +21,8 @@ class OnlineChecker extends Service {
 
     initCron() {
         let checkInterval = onlineChecker.getStore(['config', 'onlineChecker', 'checkInterval']);
-        this.triggerEvent('isOnline', {});
-        setInterval(() => this.triggerEvent('isOnline', {}), checkInterval);
+        this.triggerEvent('isReachable', {});
+        setInterval(() => this.triggerEvent('isReachable', {}), checkInterval);
     }
 }
 
@@ -30,25 +30,25 @@ var onlineChecker = new OnlineChecker({name: 'onlineChecker'});
 var onlineStatus = [];
 
 onlineChecker.registerExternalMethod({
-    method: 'event.isOnline',
+    method: 'event.isReachable',
     fn: async function() {
-        var io = await isOnline();
+        var io = await isReachable('google.com:80');
         return io;
     }
 });
 
 onlineChecker.registerExternalMethod({
-    method: 'isOnline.response',
-    fn: async function({result, isOnline = result}) {
+    method: 'isReachable.response',
+    fn: async function({result, isReachable = result}) {
         let resetCount = onlineChecker.getStore(['config', 'onlineChecker', 'resetCount']);
 
-        if (isOnline) {
+        if (isReachable) {
             onlineStatus = [];
             onlineChecker.log('info', {internetConnection: 'ok'});
-            this.notification('storage.stats.insert', {type: 'is.online', data: {isOnline: true}});
+            this.notification('storage.stats.insert', {type: 'is.online', data: {isReachable: true}});
         } else if (onlineStatus.length >= resetCount) {
             onlineChecker.log('warn', {internetConnection: 'down', checks: onlineStatus.length, checkLimit: 'reached'});
-            this.notification('storage.stats.insert', {type: 'is.online', data: {isOnline: false}});
+            this.notification('storage.stats.insert', {type: 'is.online', data: {isReachable: false}});
             onlineStatus = [];
             try {
                 await this.request('modem.command.disconnect');
