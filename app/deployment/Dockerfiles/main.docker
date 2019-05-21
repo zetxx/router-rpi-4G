@@ -2,7 +2,8 @@ FROM node:10-alpine
 
 RUN apk add --no-cache --virtual .build-deps \
         expat \
-        python \
         build-base \
         linux-headers \
         make
+
+RUN apk add --no-cache --virtual python
