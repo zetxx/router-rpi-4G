@@ -167,7 +167,7 @@ onlineChecker \
 ## ScreenControl
 ```bash
 docker run -it -d \
---device /dev/i2c-1 \
+--privileged \
 --restart=unless-stopped \
 --name 4gScreenControl \
 -m=128m \
@@ -188,7 +188,6 @@ screenControl \
 --discovery.loopback=false \
 --api.port=9005 \
 --log.level=trace \
---screenControl.hwAddr=60
 --screenControl.refreshInterval=30000
 ```
 
