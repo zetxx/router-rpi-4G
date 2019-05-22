@@ -7,7 +7,7 @@ const test = async() => {
     try {
         await ssd1351.turnOnDisplay();
         ssd1351.clearDisplay();
-        ssd1351.setCursor(0, 0);
+        ssd1351.setCursor(10, 10);
         await ssd1351.writeString(oledFont5x7, 4, '12:12', { r: 255, g: 255, b: 255 });
         await ssd1351.updateScreen();
         console.log('finished');
