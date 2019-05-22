@@ -25,8 +25,7 @@
     "uuid": "*",
     "serialize-error": "*",
     "pg": "*",
-    "i2c-bus": "^4.0.9",
-    "oled-i2c-bus": "^1.0.10"
+    "ssd1351": "~0.1.6"
   },
   "scripts": {
     "logger": "node ./Nodes/Logger",
