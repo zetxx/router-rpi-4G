@@ -1,7 +1,10 @@
 # Build
-- `docker build -t nodejs-local -f deployment/Dockerfiles/main.docker .`
-- `docker build -t app4g -f deployment/Dockerfiles/app.docker .`
-- `docker build -t discovery4g -f deployment/Dockerfiles/discovery.docker .`
+
+```bash
+docker build -t nodejs-local -f deployment/Dockerfiles/main.docker . && \
+docker build -t app4g -f deployment/Dockerfiles/app.docker . && \
+docker build -t discovery4g -f deployment/Dockerfiles/discovery.docker .
+```
 
 ## discovery server
 ```bash
