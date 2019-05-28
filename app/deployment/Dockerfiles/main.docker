@@ -1,3 +1,3 @@
-FROM node:10-alpine
+FROM archlinux/base
 
-RUN apk add --no-cache --virtual .build-deps expat build-base linux-headers make python
+RUN pacman -Suy --noconfirm base-devel linux-headers python chromium nodejs-lts-carbon
