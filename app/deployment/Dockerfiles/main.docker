@@ -1,3 +1,10 @@
 FROM node:10-alpine
 
-RUN apk add --no-cache --virtual .build-deps expat build-base linux-headers make python
+RUN apk add --no-cache --virtual .build-deps expat build-base linux-headers make python \
+build-base \
+g++ \
+cairo-dev \
+jpeg-dev \
+pango-dev \
+bash \
+imagemagick
