@@ -7,6 +7,7 @@
 - https://www.raspberrypi-spy.co.uk/wp-content/uploads/2012/06/Raspberry-Pi-GPIO-Layout-Model-B-Plus-rotated-2700x900.png
 - https://www.freetronics.com.au/pages/oled128-quickstart-guide-raspberry-pi
 - https://gitlab.com/ftmazzone/ssd1351
+- https://github.com/GoogleChrome/puppeteer/blob/v1.17.0/docs/api.md#browsernewpage
 
 ### Wiring
 
