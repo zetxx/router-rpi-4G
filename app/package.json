@@ -25,6 +25,7 @@
     "uuid": "*",
     "serialize-error": "*",
     "pg": "*",
+    "puppeteer-core": "*",
     "ssd1351": "~0.1.6",
     "d3": "~5.9.2"
   },

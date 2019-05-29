@@ -3,7 +3,8 @@
 ```bash
 docker build -t nodejs-local -f deployment/Dockerfiles/main.docker . && \
 docker build -t app4g -f deployment/Dockerfiles/app.docker . && \
-docker build -t discovery4g -f deployment/Dockerfiles/discovery.docker .
+docker build -t discovery4g -f deployment/Dockerfiles/discovery.docker . && \
+docker build -t chromium4g -f deployment/Dockerfiles/chromium.docker .
 ```
 
 ## discovery server
@@ -193,6 +194,10 @@ screenControl \
 --log.level=trace \
 --screenControl.refreshInterval=30000
 ```
+
+## Chromium
+
+- `docker run -d -p 9222:9222 --cap-add=SYS_ADMIN chromium4g`
 
 ## run temporary
 - `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
