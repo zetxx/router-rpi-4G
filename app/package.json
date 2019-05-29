@@ -26,8 +26,7 @@
     "serialize-error": "*",
     "pg": "*",
     "ssd1351": "~0.1.6",
-    "d3-node": "*",
-    "canvas":"*"
+    "d3": "~5.9.2"
   },
   "scripts": {
     "logger": "node ./Nodes/Logger",
