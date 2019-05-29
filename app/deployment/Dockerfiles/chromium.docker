@@ -21,4 +21,4 @@ RUN apt-get install chromium-browser -y
 EXPOSE 9222
 
 ENTRYPOINT [ "chromium-browser" ]
-CMD [ "--headless", "--disable-gpu", "--remote-debugging-address=0.0.0.0", "--remote-debugging-port=9222" ]
+CMD [ "--headless", "--disable-gpu", "--no-sandbox", "--remote-debugging-address=0.0.0.0", "--remote-debugging-port=9222" ]
