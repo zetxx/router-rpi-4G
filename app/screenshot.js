@@ -14,7 +14,7 @@ request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json:
         console.log('link opened');
         await page.waitFor(5000);
         console.log('waited ...');
-        await page.screenshot({path: './screenshot.png', encoding: 'base64', fullPage: true});
+        await page.screenshot({path: './screenshot.png', fullPage: true});
         console.log('screenshoted');
         await context.close();
         console.log('closed');
