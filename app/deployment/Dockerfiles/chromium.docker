@@ -18,11 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN apt-get install chromium-browser -y
 
-RUN groupadd -r chrome && useradd -r -g chrome -G audio,video chrome \
-    && mkdir -p /home/chrome && chown -R chrome:chrome /home/chrome \
-		&& mkdir -p /opt/google/chrome && chown -R chrome:chrome /opt/google/chrome
-
-USER chrome
 EXPOSE 9222
 
 ENTRYPOINT [ "chromium-browser" ]
