@@ -15,9 +15,9 @@ docker network create 4gnet
 ## discovery server
 ```bash
 docker run -it -d \
+--restart=unless-stopped \
 --network 4gnet \
 --name discovery4g \
---restart=unless-stopped \
 -m=64m \
 discovery4g
 ```
@@ -177,6 +177,7 @@ onlineChecker \
 
 ```bash
 docker run -it -d \
+--restart=unless-stopped \
 --network 4gnet \
 -m=256m \
 --cpus=1 \
