@@ -197,7 +197,7 @@ screenControl \
 
 ## Chromium
 
-- `docker run -d -p 9222:9222 --cap-add=SYS_ADMIN chromium4g`
+- `docker run -it -d -m=128m --cpus=1 --name 4gChromium -p 61000:9222 --cap-add=SYS_ADMIN chromium4g`
 
 ## run temporary
 - `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
