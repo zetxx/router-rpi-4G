@@ -2,7 +2,7 @@ FROM nodejs-local
 
 ENV NODE_PATH "/app_modules/node_modules"
 
-RUN mkdir -p /app && mkdir -p /app_modules
+RUN mkdir -p /app && mkdir -p /app_modules && mkdir -p /app_tmp
 
 WORKDIR /app_modules
 COPY package.json /app_modules
