@@ -1,3 +1,7 @@
+https://bl.ocks.org/interwebjill/8122dd08da9facf8c6ef6676be7da03f
+https://bl.ocks.org/d3noob/119a138ef9bd1d8f0a8d57ea72355252
+https://bl.ocks.org/d3noob/814a2bcb3e7d8d8db74f36f77c8e6b7f
+
 <html>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.3/d3.min.js"></script>
   <style>
