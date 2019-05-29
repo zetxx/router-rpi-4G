@@ -178,6 +178,7 @@ onlineChecker \
 ```bash
 docker run -it -d \
 --network 4gnet \
+-m=256m \
 --cpus=1 \
 --name 4g-chromium \
 -p 61000:9222 \
