@@ -1,3 +1,5 @@
+const path = require('path');
+const Hapi = require('@hapi/hapi');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
 const Ssd1351 = require('ssd1351').Ssd1351;
@@ -22,6 +24,9 @@ class ScreenControl extends Service {
                         host: '4g-chromium:9222',
                         screenDimensions: {width: 128, height: 128},
                         uri: 'https://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/'
+                    },
+                    http: {
+                        port: 34523
                     }
                 }
             }).screenControl)
@@ -36,8 +41,39 @@ class ScreenControl extends Service {
         this.pixelsBuffer = Array.from({length: this.getStore(['config', 'screenControl', 'screenshot', 'screenDimensions', 'hw']) * 2}).fill(0);
         let {rst, dc} = this.getStore(['config', 'screenControl', 'gpio']);
         this.oled = new Ssd1351(rst, dc);
+        await this.httpInit();
         return super.start()
             .then((d) => ((this.initCron && this.initCron() && d) || d));
+    }
+
+    async httpInit() {
+        const server = Hapi.server({
+            ...this.getStore(['config', 'screenControl', 'http']),
+            routes: {
+                files: {
+                    relativeTo: path.join(__dirname, 'http')
+                }
+            }
+        });
+        await server.register(require('@hapi/inert'));
+        server.route({
+            method: 'GET',
+            path: '/screen.{ext}',
+            handler: (request, h) => {
+                return h.file(['screen', request.params.ext].join('.'));
+            }
+        });
+        server.route({
+            method: 'GET',
+            path: '/assets/d3/{params*}',
+            handler: {
+                directory: {
+                    path: path.dirname(require.resolve('d3')),
+                    listing: true
+                }
+            }
+        });
+        await server.start();
     }
 
     initCron() {
