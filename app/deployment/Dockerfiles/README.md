@@ -30,7 +30,6 @@ docker run -it -d \
 --restart=unless-stopped \
 --name 4g-logger \
 --network 4gnet \
---link=discovery4g \
 -m=128m \
 --cpus=1 \
 --log-opt max-size=20m \
@@ -41,6 +40,7 @@ logger \
 -- \
 --discovery.domain=borovica4g \
 --discovery.server="discovery4g:59100" \
+--discovery.nodeName="4g-logger" \
 --api.port=9000 \
 --log.level=trace
 ```
@@ -226,6 +226,7 @@ docker run -it -d \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
+-p 34523:34523 \
 app4g \
 screenControl \
 -- \
@@ -244,10 +245,11 @@ screenControl \
 ```
 
 ## run temporary
-- `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
+- `docker run -it -v ${PWD}:/app --entrypoint "" --rm app4g /bin/ash`
 - `docker run -it --rm --device /dev/spidev0.0 --device /dev/spidev0.1 --entrypoint "" app4g /bin/ash`
 
 ### run temporary screen control
 ```bash
-docker run -it --rm --network 4gnet --privileged --entrypoint "" app4g /bin/ash
+docker run -it --rm --network 4gnet --privileged -v ${PWD}:/app -p 34523:34523  --entrypoint "" app4g /bin/ash
+docker run -it --rm --network 4gnet --entrypoint "" app4g /bin/ash
 ```
