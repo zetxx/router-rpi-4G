@@ -8,6 +8,12 @@ const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
 const Factory = require('bridg-wrong-playground/factory.js');
 const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'dummy'}});
+const fnThrowOrReturn = function({result, error}) {
+    if (error) {
+        throw error;
+    }
+    return result;
+};
 
 class ScreenControl extends Service {
     constructor(args) {
@@ -137,6 +143,27 @@ screenControl.registerExternalMethod({
         await screenControl.oled.updateScreen();
         return false;
     }
+});
+
+screenControl.registerApiMethod({
+    method: 'stats',
+    direction: 'in',
+    fn: function() {
+        return {
+            uri: 12
+        };
+    }
+});
+
+screenControl.registerApiMethod({
+    method: 'stats',
+    direction: 'out',
+    fn: fnThrowOrReturn
+});
+
+screenControl.registerExternalMethod({
+    method: 'stats',
+    fn: fnThrowOrReturn
 });
 
 screenControl.start();
