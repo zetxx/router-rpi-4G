@@ -109,21 +109,28 @@ screenControl.registerExternalMethod({
     fn: async function() {
         let {storeDir, host, uri, screenDimensions: {width, height, hw}} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
         let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
+        screenControl.log('debug', {in: 'event.pullData', browserInfo});
         let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
+        screenControl.log('debug', {in: 'event.pullData', browser: {connected: true}});
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         try {
             await page.goto(uri);
+            screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
             await page.waitFor(2000);
             await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
+            screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
         } catch (e) {
+            screenControl.log('error', {in: 'event.pullData', browser: 'error'});
             throw e;
         } finally {
             await context.close();
             await browser.disconnect();
+            screenControl.log('debug', {in: 'event.pullData', browser: 'closed and diss'});
         }
 
         let myImage = await jimp.read(path.join(storeDir, 'screenshot.png'));
+        screenControl.log('debug', {in: 'event.pullData', image: 'opened'});
         await myImage.rgba(false);
         var scanStop = (hw - 1) * 4;
         await new Promise((resolve, reject) => {
@@ -136,11 +143,13 @@ screenControl.registerExternalMethod({
                 }
             });
         });
+        screenControl.log('debug', {in: 'event.pullData', image: 'constructed'});
         await screenControl.oled.turnOnDisplay();
         await screenControl.oled.clearDisplay();
         await screenControl.oled.setCursor(0, 0);
         await screenControl.oled.setRawData(screenControl.pixelsBuffer);
         await screenControl.oled.updateScreen();
+        screenControl.log('debug', {in: 'event.pullData', image: 'send to device'});
         return false;
     }
 });
