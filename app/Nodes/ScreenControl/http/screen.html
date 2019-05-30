@@ -1,40 +1,19 @@
 <html>
 <script src="/assets/d3/d3.js"></script>
 <script src="/screen.js"></script>
-<style>
-    body {margin: 0;padding: 0;}
-    .line {
-    fill: none;
-    stroke-width: 2px;
-    }
-    .area.close {
-    fill: rgba(249, 208, 87, 0.5);
-    }
-    .area.open {
-    fill: rgba(54, 174, 175, 0.5);
-    }
-    .line.close {
-    stroke: rgba(214, 178, 74);
-    }
-    .line.open {
-    stroke: rgba(43, 144, 145);
-    }
-    .axis {
-    font-size: 8px;
-    }
-    .axis.close text{
-    fill: rgba(214, 178, 74);
-    }
-
-    .axis.open text{
-    fill: rgba(43, 144, 145);
-    }
-</style>
+<link rel="stylesheet" href="/screen.css">
 <body>
-    <div class="textContent">
-
+    <div class="container">
+        <div class="topContent">
+            <div class="iconContent">
+                <div class="fl net on bar4"></div>
+                <div class="fl vpn on"></div>
+                <div class="fl ping"><span class="text">10024ms</span></div>
+                <div class="fl traffic-used"><span class="text">100%</span></div>
+            </div>
+        </div>
+        <svg id="plate" width="128" height="64"></svg>
     </div>
-    <svg width="300" height="150"></svg>
 </body>
 <script>runAll();</script>
 </html>

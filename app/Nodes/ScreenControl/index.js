@@ -73,6 +73,16 @@ class ScreenControl extends Service {
                 }
             }
         });
+        server.route({
+            method: 'GET',
+            path: '/icons/{params*}',
+            handler: {
+                directory: {
+                    path: path.join(__dirname, 'http/icons'),
+                    listing: true
+                }
+            }
+        });
         await server.start();
     }
 

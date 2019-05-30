@@ -1,0 +1,104 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: gray;
+    color: white;
+    font-size: 5px;
+}
+.iconContent, .container, .iconContent .fl, .topContent, .iconContent .fl .text {
+    display: block;
+    overflow: hidden;
+}
+.iconContent, .container {
+    width: 128px;
+}
+.iconContent .fl {
+    float: left;
+}
+.container {
+    height: 128px;
+    background: black;
+}
+.topContent {
+    height: 64px;
+}
+.iconContent {
+    height: 18px;
+}
+.line {
+    fill: none;
+    stroke-width: 0.5px;
+}
+.area.upload {
+    fill: rgba(255, 242, 198, 0.5);
+}
+.area.download {
+    fill: rgba(179, 255, 255, 0.5);
+}
+.line.upload {
+    stroke: rgba(255, 234, 161);
+}
+.line.download {
+    stroke: rgba(179, 245, 245);
+}
+.axis text {
+    color: white;
+    font-size: 5px;
+}
+.axis.upload text{
+    fill: rgba(255, 234, 161);
+}
+
+.axis.download text{
+    fill: rgba(179, 245, 245);
+}
+.axis .domain, .axis line {
+    stroke:white;
+}
+.axis.upload .domain, .axis.upload line {
+    stroke:rgba(255, 234, 161);
+}
+.axis.download .domain, .axis.download line {
+    stroke:rgba(179, 245, 245);
+}
+.net.off path {
+    fill: red;
+    stroke: red;
+}
+.iconContent .fl {
+    height: 18px;
+    padding: 0 0 0 18px;
+}
+.iconContent .fl .text {
+    padding-top: 6px;
+}
+.iconContent .fl.net.off {
+    background: url('/icons/signal-cellular/off.png') no-repeat top left;
+}
+.iconContent .fl.net.on.bar0 {
+    background: url('/icons/signal-cellular/0.png') no-repeat top left;
+}
+.iconContent .fl.net.on.bar1 {
+    background: url('/icons/signal-cellular/1.png') no-repeat top left;
+}
+.iconContent .fl.net.on.bar2 {
+    background: url('/icons/signal-cellular/2.png') no-repeat top left;
+}
+.iconContent .fl.net.on.bar3 {
+    background: url('/icons/signal-cellular/3.png') no-repeat top left;
+}
+.iconContent .fl.net.on.bar4 {
+    background: url('/icons/signal-cellular/4.png') no-repeat top left;
+}
+.iconContent .fl.vpn.on {
+    background: url('/icons/vpn/on.png') no-repeat top left;
+}
+.iconContent .fl.vpn.off {
+    background: url('/icons/vpn/off.png') no-repeat top left;
+}
+.iconContent .fl.ping {
+    background: url('/icons/ping.png') no-repeat top left;
+}
+.iconContent .fl.traffic-used {
+    background: url('/icons/traffic-used.png') no-repeat top left;
+}

@@ -146,18 +146,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "screenshot",
-            "program": "${workspaceFolder}/screenshot.js",
-            "outputCapture": "std",
-            "protocol": "inspector",
-            "runtimeArgs": [
-                "--preserve-symlinks",
-                "--nolazy"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "test",
             "program": "${workspaceFolder}/play/index.js",
             "outputCapture": "std",

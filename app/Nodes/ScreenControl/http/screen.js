@@ -1,47 +1,45 @@
-var data = JSON.parse('[{"date":"1-May-12","close":"10","open":"90"},{"date":"30-Apr-12","close":"90","open":"10"},{"date":"27-Apr-12","close":"10.00","open":"90.78"}]');
+var data = JSON.parse('[{"date":1559211018052,"upload":"10","download":"90"},{"date":1559212018052,"upload":"90","download":"10"},{"date":1559213018052,"upload":"10.00","download":"90.78"}]');
 
 function runAll() {
-    var svgWidth = (parseInt(d3.select('svg').style('width').slice(0, -2)));
-    var svgHeight = (parseInt(d3.select('svg').style('height').slice(0, -2)));
+    var list = data.map(({date, ...rest}) => ({date: new Date(date * 1000), ...rest}));
+    var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
+    var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
     // set the dimensions and margins of the graph
-    var margin = {top: 2, right: 18, bottom: 18, left: 18};
+    var margin = {top: 3, right: 18, bottom: 18, left: 18};
     var width = svgWidth - margin.left - margin.right;
     var height = svgHeight - margin.top - margin.bottom;
-
-    // parse the date / time
-    var parseTime = d3.timeParse('%d-%b-%y');
 
     // set the ranges
     var x = d3.scaleTime().range([0, width]);
     var y0 = d3.scaleLinear().range([height, 0]);
     var y1 = d3.scaleLinear().range([height, 0]);
 
-    // define the close area
-    var closeArea = d3.area()
+    // define the upload area
+    var uploadArea = d3.area()
         .x(function(d) { return x(d.date); })
         .y0(height)
-        .y1(function(d) { return y0(d.close); });
+        .y1(function(d) { return y0(d.upload); });
 
-    // define the close area
-    var openArea = d3.area()
+    // define the upload area
+    var downloadArea = d3.area()
         .x(function(d) { return x(d.date); })
         .y0(height)
-        .y1(function(d) { return y1(d.open); });
+        .y1(function(d) { return y1(d.download); });
 
-    // define the close line
-    var closeValue = d3.line()
+    // define the upload line
+    var uploadValue = d3.line()
         .x(function(d) { return x(d.date); })
-        .y(function(d) { return y0(d.close); });
+        .y(function(d) { return y0(d.upload); });
 
-    // define the open line
-    var openValue = d3.line()
+    // define the download line
+    var downloadValue = d3.line()
         .x(function(d) { return x(d.date); })
-        .y(function(d) { return y1(d.open); });
+        .y(function(d) { return y1(d.download); });
 
     // append the svg obgect to the body of the page
     // appends a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
-    var svg = d3.select('svg')
+    var svg = d3.select('#plate')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
@@ -49,40 +47,46 @@ function runAll() {
             'translate(' + margin.left + ',' + margin.top + ')');
 
     // format the data
-    data.map(function(d) {
-        d.date = parseTime(d.date);
-        d.close = +d.close;
-        d.open = +d.open;
+    list.map(function(d) {
+        d.date = d.date;
+        d.upload = +d.upload;
+        d.download = +d.download;
     });
 
     // Scale the range of the data
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y0.domain([0, d3.max(data, function(d) {return Math.max(d.close);})]);
-    y1.domain([0, d3.max(data, function(d) {return Math.max(d.open); })]);
+    x.domain(d3.extent(data, function(d) {
+        return d.date;
+    }));
+    y0.domain([0, d3.max(data, function(d) {
+        return Math.max(d.upload);
+    })]);
+    y1.domain([0, d3.max(data, function(d) {
+        return Math.max(d.download);
+    })]);
 
-    // add close area
+    // add upload area
     svg.append('path')
         .data([data])
-        .attr('class', 'area close')
-        .attr('d', closeArea);
+        .attr('class', 'area upload')
+        .attr('d', uploadArea);
 
-    // add open area
+    // add download area
     svg.append('path')
         .data([data])
-        .attr('class', 'area open')
-        .attr('d', openArea);
+        .attr('class', 'area download')
+        .attr('d', downloadArea);
 
-    // Add the open path.
+    // Add the download path.
     svg.append('path')
         .data([data])
-        .attr('class', 'line close')
-        .attr('d', closeValue);
+        .attr('class', 'line upload')
+        .attr('d', uploadValue);
 
-    // Add the close path.
+    // Add the upload path.
     svg.append('path')
         .data([data])
-        .attr('class', 'line open')
-        .attr('d', openValue);
+        .attr('class', 'line download')
+        .attr('d', downloadValue);
 
     // Add the X Axis
     svg.append('g')
@@ -92,12 +96,20 @@ function runAll() {
 
     // Add the Y0 Axis
     svg.append('g')
-        .attr('class', 'axis close')
-        .call(d3.axisLeft(y0));
+        .attr('class', 'axis upload')
+        .call(d3.axisLeft(y0))
+        .append('text')
+        .attr('y', 50)
+        .attr('x', -1)
+        .html('MB&#8679;');
 
     // Add the Y1 Axis
     svg.append('g')
-        .attr('class', 'axis open')
+        .attr('class', 'axis download')
         .attr('transform', 'translate( ' + width + ', 0 )')
-        .call(d3.axisRight(y1));
+        .call(d3.axisRight(y1))
+        .append('text')
+        .attr('y', 50)
+        .attr('x', 3)
+        .html('MB&#8681;');
 };
