@@ -21,8 +21,7 @@ class ScreenControl extends Service {
                     monthlyTraffic: 10485760000,
                     gpio: {rst: 25, dc: 24},
                     screenshot: {
-                        // host: '4g-chromium:9222',
-                        host: '10.8.0.1:61000',
+                        host: '4g-chromium:9222',
                         screenDimensions: {width: 128, height: 128},
                         uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
                         storeDir: '/app_tmp/'

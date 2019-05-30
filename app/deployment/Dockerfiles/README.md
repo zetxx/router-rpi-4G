@@ -214,6 +214,35 @@ screenControl \
 --screenControl.refreshInterval=30000
 ```
 
+## ScreenControl home rpi
+```bash
+docker run -it -d \
+--privileged \
+--restart=unless-stopped \
+--network 4gnet \
+--name 4g-screen-control \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+app4g \
+screenControl \
+-- \
+--discovery.nameResolve=true \
+--discovery.domain=borovica4g \
+--discovery.server="discovery4g:59100" \
+--discovery.nodeName="4g-screen-control" \
+--discovery.loopback=false \
+--discovery.resolveMap.logger=4g-logger \
+--discovery.resolveMap.storage=4g-storage \
+--api.port=9005 \
+--log.level=trace \
+--screenControl.screenshot.uri="http://10.8.0.1:34523/screen.html" \
+--screenControl.screenshot.host="10.8.0.1:61000" \
+--screenControl.refreshInterval=30000
+```
+
 ## run temporary
 - `docker run -it -v ${PWD}:/app --link=discovery --entrypoint "" --rm app4g /bin/ash`
 - `docker run -it --rm --device /dev/spidev0.0 --device /dev/spidev0.1 --entrypoint "" app4g /bin/ash`
