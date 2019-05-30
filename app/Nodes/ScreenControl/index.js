@@ -21,9 +21,11 @@ class ScreenControl extends Service {
                     monthlyTraffic: 10485760000,
                     gpio: {rst: 25, dc: 24},
                     screenshot: {
-                        host: '4g-chromium:9222',
+                        // host: '4g-chromium:9222',
+                        host: '10.8.0.1:61000',
                         screenDimensions: {width: 128, height: 128},
-                        uri: 'https://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/'
+                        uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
+                        storeDir: '/app_tmp/'
                     },
                     http: {
                         port: 34523
@@ -42,6 +44,8 @@ class ScreenControl extends Service {
         let {rst, dc} = this.getStore(['config', 'screenControl', 'gpio']);
         this.oled = new Ssd1351(rst, dc);
         await this.httpInit();
+        // this.setStore(['config', 'screenControl', 'screenshot', 'uri'], `http://${this.name}:${this.getStore(['config', 'screenControl', 'http', 'port'])}/screen.html`);
+
         return super.start()
             .then((d) => ((this.initCron && this.initCron() && d) || d));
     }
@@ -98,7 +102,7 @@ var screenControl = new ScreenControl({name: 'screenControl'});
 screenControl.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
-        let {host, uri, screenDimensions: {width, height, hw}} = this.getStore(['config', 'screenControl', 'screenshot']);
+        let {storeDir, host, uri, screenDimensions: {width, height, hw}} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
         let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
         let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
         const context = await browser.createIncognitoBrowserContext();
@@ -106,7 +110,7 @@ screenControl.registerExternalMethod({
         try {
             await page.goto(uri);
             await page.waitFor(2000);
-            await page.screenshot({path: '/app_tmp/screenshot.png', clip: {x: 0, y: 0, width, height}});
+            await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
         } catch (e) {
             throw e;
         } finally {
@@ -114,23 +118,24 @@ screenControl.registerExternalMethod({
             await browser.disconnect();
         }
 
-        let myImage = await jimp.read('/app_tmp/screenshot.png');
+        let myImage = await jimp.read(path.join(storeDir, 'screenshot.png'));
         await myImage.rgba(false);
+        var scanStop = (hw - 1) * 4;
         await new Promise((resolve, reject) => {
             myImage.scan(0, 0, height, width, function(x, y, idx) {
                 const bytes = Ssd1351.convertRgbColourToRgb565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
-                this.pixelsBuffer[idx / 2] = bytes[0];
-                this.pixelsBuffer[idx / 2 + 1] = bytes[1];
-                if (hw === (idx / 4)) {
+                screenControl.pixelsBuffer[idx / 2] = bytes[0];
+                screenControl.pixelsBuffer[idx / 2 + 1] = bytes[1];
+                if (scanStop === idx) {
                     resolve(1);
                 }
             });
         });
-        await this.oled.turnOnDisplay();
-        this.oled.clearDisplay();
-        this.oled.setCursor(0, 0);
-        this.oled.setRawData(this.pixelsBuffer);
-        await this.oled.updateScreen();
+        await screenControl.oled.turnOnDisplay();
+        await screenControl.oled.clearDisplay();
+        await screenControl.oled.setCursor(0, 0);
+        await screenControl.oled.setRawData(screenControl.pixelsBuffer);
+        await screenControl.oled.updateScreen();
         return false;
     }
 });

@@ -137,7 +137,10 @@
                 "--api.port=9005",
                 "--discovery.loopback=false",
                 "--log.level=trace",
-                "--screenControl.refreshInterval=15000"
+                "--screenControl.refreshInterval=60000",
+                "--discovery.nodeName=4g-screen-control",
+                "--screenControl.screenshot.uri=http://10.8.0.90:34523/screen.html",
+                "--screenControl.screenshot.storeDir=./"
             ],
             "env": {
                 "NODE_PATH": "./dev"
