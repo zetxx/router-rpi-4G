@@ -149,10 +149,9 @@ screenControl.registerApiMethod({
     method: 'stats',
     direction: 'in',
     fn: function() {
-        return {
-            uri: 12
-        };
-    }
+        return [{date: 1559211018052, upload: 10, download: 90}, {date: 1559212018052, upload: 90, download: 10}, {date: 1559213018052, upload: 10.00, download: 90}];
+    },
+    meta: {cors: true}
 });
 
 screenControl.registerApiMethod({
