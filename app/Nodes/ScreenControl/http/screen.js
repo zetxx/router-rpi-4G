@@ -1,48 +1,10 @@
-https://bl.ocks.org/interwebjill/8122dd08da9facf8c6ef6676be7da03f
-https://bl.ocks.org/d3noob/119a138ef9bd1d8f0a8d57ea72355252
-https://bl.ocks.org/d3noob/814a2bcb3e7d8d8db74f36f77c8e6b7f
-
-<html>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.3/d3.min.js"></script>
-  <style>
-    .line {
-      fill: none;
-      stroke-width: 2px;
-    }
-    .area.close {
-      fill: rgba(249, 208, 87, 0.7);
-    }
-    .area.open {
-      fill: rgba(54, 174, 175, 0.65);
-    }
-    .line.close {
-      stroke: rgba(249, 208, 87, 0.7);
-    }
-    .line.open {
-      stroke: rgba(54, 174, 175, 0.65);
-    }
-
-    .axisClose text{
-      fill: steelblue;
-    }
-
-    .axisOpen text{
-      fill: red;
-    }
-  </style>
-  <body><svg width="300" height="150"></svg></body>
-<script>runAll();</script>
-</html>
-
-
 var data = JSON.parse('[{"date":"1-May-12","close":"10","open":"90"},{"date":"30-Apr-12","close":"90","open":"10"},{"date":"27-Apr-12","close":"10.00","open":"90.78"}]');
-
 
 function runAll() {
     var svgWidth = (parseInt(d3.select('svg').style('width').slice(0, -2)));
     var svgHeight = (parseInt(d3.select('svg').style('height').slice(0, -2)));
     // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 40, bottom: 30, left: 50};
+    var margin = {top: 2, right: 18, bottom: 18, left: 18};
     var width = svgWidth - margin.left - margin.right;
     var height = svgHeight - margin.top - margin.bottom;
 
@@ -56,17 +18,17 @@ function runAll() {
 
     // define the close area
     var closeArea = d3.area()
-      .x(function(d) { return x(d.date); })
-      .y0(height)
-      .y1(function(d) { return y0(d.close); });
+        .x(function(d) { return x(d.date); })
+        .y0(height)
+        .y1(function(d) { return y0(d.close); });
 
-  // define the close area
+    // define the close area
     var openArea = d3.area()
-      .x(function(d) { return x(d.date); })
-      .y0(height)
-      .y1(function(d) { return y1(d.open); });
+        .x(function(d) { return x(d.date); })
+        .y0(height)
+        .y1(function(d) { return y1(d.open); });
 
-  // define the close line
+    // define the close line
     var closeValue = d3.line()
         .x(function(d) { return x(d.date); })
         .y(function(d) { return y0(d.close); });
@@ -87,7 +49,7 @@ function runAll() {
             'translate(' + margin.left + ',' + margin.top + ')');
 
     // format the data
-    data.forEach(function(d) {
+    data.map(function(d) {
         d.date = parseTime(d.date);
         d.close = +d.close;
         d.open = +d.open;
@@ -99,16 +61,16 @@ function runAll() {
     y1.domain([0, d3.max(data, function(d) {return Math.max(d.open); })]);
 
     // add close area
-    svg.append("path")
-       .data([data])
-       .attr("class", "area close")
-       .attr("d", closeArea);
+    svg.append('path')
+        .data([data])
+        .attr('class', 'area close')
+        .attr('d', closeArea);
 
     // add open area
-    svg.append("path")
-       .data([data])
-       .attr("class", "area open")
-       .attr("d", openArea);
+    svg.append('path')
+        .data([data])
+        .attr('class', 'area open')
+        .attr('d', openArea);
 
     // Add the open path.
     svg.append('path')
@@ -124,17 +86,18 @@ function runAll() {
 
     // Add the X Axis
     svg.append('g')
+        .attr('class', 'axis bottom')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x));
 
     // Add the Y0 Axis
     svg.append('g')
-        .attr('class', 'axisClose')
+        .attr('class', 'axis close')
         .call(d3.axisLeft(y0));
 
     // Add the Y1 Axis
     svg.append('g')
-        .attr('class', 'axisOpen')
+        .attr('class', 'axis open')
         .attr('transform', 'translate( ' + width + ', 0 )')
         .call(d3.axisRight(y1));
 };
