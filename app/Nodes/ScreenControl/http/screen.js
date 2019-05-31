@@ -19,7 +19,7 @@ function runAll() {
             var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
             var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
             // set the dimensions and margins of the graph
-            var margin = {top: 3, right: 18, bottom: 18, left: 18};
+            var margin = {top: 3, right: 19, bottom: 18, left: 19};
             var width = svgWidth - margin.left - margin.right;
             var height = svgHeight - margin.top - margin.bottom;
 
@@ -113,9 +113,9 @@ function runAll() {
                 .attr('class', 'axis upload')
                 .call(d3.axisLeft(y0))
                 .append('text')
-                .attr('y', 50)
-                .attr('x', -1)
-                .html('MB&#8679;');
+                .attr('y', 86)
+                .attr('x', -4)
+                .html('M&#8679;');
 
             // Add the Y1 Axis
             svg.append('g')
@@ -123,9 +123,9 @@ function runAll() {
                 .attr('transform', 'translate( ' + width + ', 0 )')
                 .call(d3.axisRight(y1))
                 .append('text')
-                .attr('y', 50)
-                .attr('x', 3)
-                .html('MB&#8681;');
+                .attr('y', 86)
+                .attr('x', 4)
+                .html('M&#8681;');
             return 1;
         })
         .catch((e) => {

@@ -227,6 +227,7 @@ docker run -it -d \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
 -p 34523:34523 \
+-p 9005:9005 \
 app4g \
 screenControl \
 -- \
@@ -252,4 +253,5 @@ screenControl \
 ```bash
 docker run -it --rm --network 4gnet --privileged -v ${PWD}:/app -p 34523:34523  --entrypoint "" app4g /bin/ash
 docker run -it --rm --network 4gnet --entrypoint "" app4g /bin/ash
+docker run -it --rm  -v ${PWD}:/app --entrypoint "" mysnapshot /bin/ash
 ```

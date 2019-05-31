@@ -138,6 +138,8 @@
                 "--discovery.loopback=false",
                 "--log.level=trace",
                 "--screenControl.refreshInterval=60000",
+                "--screenControl.gpio.rst=0",
+                "--screenControl.gpio.dc=0",
                 "--discovery.nodeName=4g-screen-control",
                 "--screenControl.screenshot.uri=http://10.8.0.90:34523/screen.html",
                 "--screenControl.screenshot.storeDir=./"

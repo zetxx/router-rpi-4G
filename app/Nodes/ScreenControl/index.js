@@ -50,10 +50,12 @@ class ScreenControl extends Service {
         let {rst, dc} = this.getStore(['config', 'screenControl', 'gpio']);
         let {height, width} = this.getStore(['config', 'screenControl', 'screenDimensions']);
         this.oled = new Ssd1351({height, width, rst, dc});
-        await this.oled.init();
-        screenControl.log('debug', {in: 'start', log: 'device init done'});
-        await this.oled.deviceDisplayOn();
-        screenControl.log('debug', {in: 'start', log: 'device display is on'});
+        if (rst && dc) {
+            await this.oled.init();
+            screenControl.log('debug', {in: 'start', log: 'device init done'});
+            await this.oled.deviceDisplayOn();
+            screenControl.log('debug', {in: 'start', log: 'device display is on'});
+        }
         await this.httpInit();
 
         return super.start()
@@ -97,6 +99,16 @@ class ScreenControl extends Service {
                 }
             }
         });
+        server.route({
+            method: 'GET',
+            path: '/fonts/{params*}',
+            handler: {
+                directory: {
+                    path: path.join(__dirname, 'http/icons'),
+                    listing: true
+                }
+            }
+        });
         await server.start();
     }
 
@@ -112,48 +124,51 @@ var screenControl = new ScreenControl({name: 'screenControl'});
 screenControl.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
-        let {width, height, hw} = screenControl.getStore(['config', 'screenControl', 'screenDimensions']);
-        let {storeDir, host, uri, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
-        let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
-        screenControl.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
-        let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
-        screenControl.log('debug', {in: 'event.pullData', browser: {connected: true}});
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
-        try {
-            await page.goto(uri);
-            screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
-            await page.waitFor(loadWait);
-            await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
-            screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
-        } catch (e) {
-            screenControl.log('error', {in: 'event.pullData', browser: 'error'});
-            throw e;
-        } finally {
-            await context.close();
-            await browser.disconnect();
-            screenControl.log('debug', {in: 'event.pullData', browser: 'closed and diss'});
-        }
+        let {rst, dc} = screenControl.getStore(['config', 'screenControl', 'gpio']);
+        if (rst && dc) {
+            let {width, height, hw} = screenControl.getStore(['config', 'screenControl', 'screenDimensions']);
+            let {storeDir, host, uri, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
+            let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
+            screenControl.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
+            let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
+            screenControl.log('debug', {in: 'event.pullData', browser: {connected: true}});
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            try {
+                await page.goto(uri);
+                screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
+                await page.waitFor(loadWait);
+                await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
+                screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
+            } catch (e) {
+                screenControl.log('error', {in: 'event.pullData', browser: 'error'});
+                throw e;
+            } finally {
+                await context.close();
+                await browser.disconnect();
+                screenControl.log('debug', {in: 'event.pullData', browser: 'closed and diss'});
+            }
 
-        let myImage = await jimp.read(path.join(storeDir, 'screenshot.png'));
-        screenControl.log('debug', {in: 'event.pullData', image: 'opened'});
-        await myImage.rgba(false);
-        var scanStop = (hw - 1) * 4;
-        await new Promise((resolve, reject) => {
-            myImage.scan(0, 0, height, width, function(x, y, idx) {
-                const bytes = Ssd1351.RGBToRGB565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
-                screenControl.pixelsBuffer[idx / 2] = bytes[0];
-                screenControl.pixelsBuffer[idx / 2 + 1] = bytes[1];
-                if (scanStop === idx) {
-                    resolve(1);
-                }
+            let myImage = await jimp.read(path.join(storeDir, 'screenshot.png'));
+            screenControl.log('debug', {in: 'event.pullData', image: 'opened'});
+            await myImage.rgba(false);
+            var scanStop = (hw - 1) * 4;
+            await new Promise((resolve, reject) => {
+                myImage.scan(0, 0, height, width, function(x, y, idx) {
+                    const bytes = Ssd1351.RGBToRGB565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
+                    screenControl.pixelsBuffer[idx / 2] = bytes[0];
+                    screenControl.pixelsBuffer[idx / 2 + 1] = bytes[1];
+                    if (scanStop === idx) {
+                        resolve(1);
+                    }
+                });
             });
-        });
-        screenControl.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
-        await screenControl.oled.deviceClearDisplay();
-        screenControl.log('debug', {in: 'event.pullData', image: 'display cleaned'});
-        await screenControl.oled.deviceSendRaw(screenControl.pixelsBuffer);
-        screenControl.log('debug', {in: 'event.pullData', image: 'display ready'});
+            screenControl.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
+            await screenControl.oled.deviceClearDisplay();
+            screenControl.log('debug', {in: 'event.pullData', image: 'display cleaned'});
+            await screenControl.oled.deviceSendRaw(screenControl.pixelsBuffer);
+            screenControl.log('debug', {in: 'event.pullData', image: 'display ready'});
+        }
         return false;
     }
 });
