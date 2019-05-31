@@ -7,7 +7,9 @@ const hw = height * width;
 const ssd1351 = new Ssd1351({height, width, rst: 25, dc: 24});
 var pixelsBuffer = Array.from({length: hw * 2}).fill(0);
 const getPixelBuffer = async() => {
-    let myImage = await jimp.read(path.join('./', 'screenshot.png'));
+    let imgName = `screenshot${cc}.png`;
+    console.log(imgName);
+    let myImage = await jimp.read(path.join('./', imgName));
     await myImage.rgba(false);
     var scanStop = (hw - 1) * 4;
     return new Promise((resolve, reject) => {
@@ -22,18 +24,22 @@ const getPixelBuffer = async() => {
     });
 };
 
+var cc = 1;
+
 ssd1351.init()
-    .then((oled) => {
+    .then(async(oled) => {
+        console.log('deviceDisplayOn');
+        await oled.deviceDisplayOn();
         const f = async() => {
             var pb = await getPixelBuffer();
-            console.log('deviceDisplayOn');
-            await oled.deviceDisplayOn();
+            cc++;
+            cc = ((cc > 3) && 1) || cc;
             console.log('deviceSendRaw');
             await oled.deviceSendRaw(pb);
             console.log('done');
         };
 
-        f();
+        await f();
         return setInterval(async() => f(), 10000);
     })
     .catch(console.error);
