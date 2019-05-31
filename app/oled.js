@@ -47,7 +47,11 @@ class Oled {
         await this.write('dc', 1);
         if (data.length) {
             await sliceArray(data, 4096)
-                .reduce(async(spi, chunk) => (await spi.sendNow(chunk)), this.spiTransfer());
+                .reduce(async(spi, chunk) => {
+                    var r = await spi.sendNow(chunk);
+                    console.log(r);
+                    return r;
+                }, this.spiTransfer());
         }
     }
 
@@ -65,7 +69,7 @@ class Oled {
                 return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
             },
             send: async() => (new Promise((resolve, reject) => this.device.spi.transfer(collection, (err, res) => {
-                console.log(err, res);
+                // console.log(err, res);
                 if (err) {
                     return reject(err);
                 }
