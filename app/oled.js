@@ -1,7 +1,12 @@
 const spiDevice = require('spi-device');
 const Gpio = require('onoff').Gpio;
+const sliceArray = (oldArray, length, newArray = []) => {
+    newArray = newArray.concat([oldArray.slice(0, length)]);
+    let left = oldArray.slice(length);
+    return (left.length && sliceArray(left, length, newArray)) || newArray;
+};
 
-class oled {
+class Oled {
     constructor({rst, dc}) {
         this.oled = {
             rst: new Gpio(rst, 'out'),
@@ -16,7 +21,7 @@ class oled {
 
     async initSpi() {
         return new Promise((resolve, reject) => {
-            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async (err) => (err && reject(err)) || (!err && resolve(spi)));
+            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
         });
     }
 
@@ -28,37 +33,26 @@ class oled {
 
     async sendCommand(command, data) {
         await this.write('dc', 0);
-        await sendBytes([dataCommand]);
+        await this.sendBytes([command]);
         await this.write('dc', 1);
-        if (0 === data.length) {
-            return;
-        }
-
-        for (let i = 0; i < data.length; i = i + 4096) {
-            {
-                const dataToSend = Buffer.from(data.slice(i, i + 4096))
-                await sendBytes(dataToSend);
-            }
+        if (data.length) {
+            await sliceArray(data, 4096)
+                .map(async(chunk) => this.spiSendBytes(Buffer.from(chunk)));
         }
     }
 
-    async function sendBytes(bytes) {
+    async spiSendBytes(bytes) {
         return new Promise((resolve, reject) => {
-            const message = [{
+            let message = [{
                 sendBuffer: Buffer.from(bytes),
                 byteLength: bytes.length
             }];
 
-            oled.transfer(message, function (err, message) {
-                if (err) {
-                    console.error(err);
-                    reject(err);
-                    return;
-                }
-                resolve();
-            });
+            this.oled.spi.transfer(message, (err, message) => ((!err && resolve()) || (err && reject(err))));
         });
     }
 }
 
-module.exports = oled;
+module.exports = async function({rst = 0, dc = 0}) {
+    return (new Oled({rst, dc}));
+};
