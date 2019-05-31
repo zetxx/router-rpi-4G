@@ -59,6 +59,7 @@ class Oled {
                 clsr.add(bytes);
                 await clsr.send(collection);
                 collection = [];
+                return clsr;
             },
             add: (bytes) => {
                 return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
