@@ -1,10 +1,10 @@
-const Ssd1351 = require('ssd1351').Ssd1351;
+const Ssd1351 = require('./oled');
 const jimp = require('jimp');
 const path = require('path');
-const oled = new Ssd1351(25, 24);
 const height = 128;
 const width = 128;
 const hw = height * width;
+const ssd1351 = new Ssd1351({height, width, rst: 25, dc: 24});
 var pixelsBuffer = Array.from({length: hw * 2}).fill(0);
 const getPixelBuffer = async() => {
     let myImage = await jimp.read(path.join('./', 'screenshot.png'));
@@ -12,7 +12,7 @@ const getPixelBuffer = async() => {
     var scanStop = (hw - 1) * 4;
     return new Promise((resolve, reject) => {
         myImage.scan(0, 0, height, width, function(x, y, idx) {
-            const bytes = Ssd1351.convertRgbColourToRgb565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
+            const bytes = Ssd1351.RGBToRGB565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
             pixelsBuffer[idx / 2] = bytes[0];
             pixelsBuffer[idx / 2 + 1] = bytes[1];
             if (scanStop === idx) {
@@ -22,17 +22,18 @@ const getPixelBuffer = async() => {
     });
 };
 
-const f = async() => {
-    var pb = await getPixelBuffer();
-    console .log('turnOnDisplay');
-    await oled.turnOnDisplay();
-    console .log('setCursor');
-    await oled.setCursor(0, 0);
-    console .log('setRawData');
-    await oled.setRawData(pb);
-    console .log('updateScreen');
-    await oled.updateScreen();
-};
+ssd1351.init()
+    .then((oled) => {
+        const f = async() => {
+            var pb = await getPixelBuffer();
+            console.log('deviceDisplayOn');
+            await oled.deviceDisplayOn();
+            console.log('deviceSendRaw');
+            await oled.deviceSendRaw(pb);
+            console.log('done');
+        };
 
-f();
-setInterval(async() => await f(), 10000);
+        f();
+        return setInterval(async() => f(), 10000);
+    })
+    .catch(console.error);

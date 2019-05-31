@@ -1,4 +1,4 @@
-const spiDevice = require('spi-device');
+// const spiDevice = require('spi-device');
 const Gpio = require('onoff').Gpio;
 const sliceArray = (oldArray, length, newArray = []) => {
     newArray = newArray.concat([oldArray.slice(0, length)]);
@@ -7,38 +7,56 @@ const sliceArray = (oldArray, length, newArray = []) => {
 };
 
 class Oled {
-    constructor({rst, dc}) {
-        this.oled = {
-            rst: new Gpio(rst, 'out'),
-            dc: new Gpio(dc, 'out')
-        };
-        // return promise from constructor, so we can init spi async
-        return new Promise(async(resolve, reject) => {
-            this.oled.spi = await this.initSpi();
-            return this;
-        });
+    constructor({rst, dc, width = 128, height = 128}) {
+        this.device = {rst, dc, width, height};
+    }
+
+    async init() {
+        this.initGpio();
+        await this.initSpi();
+        return this;
+    }
+
+    initGpio() {
+        this.device.rst = new Gpio(this.device.rst, 'out');
+        this.device.dc = new Gpio(this.device.dc, 'out');
     }
 
     async initSpi() {
-        return new Promise((resolve, reject) => {
-            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
+        let spi = await new Promise((resolve, reject) => {
+            // var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
+            resolve({transfer: (collection, cb) => cb(null, collection)});
         });
+        this.device.spi = spi;
     }
 
     async write(gpio, data) {
         return new Promise((resolve, reject) => {
-            this.oled[gpio].write(data, (err) => ((err && reject(err)) || resolve(1)));
+            this.device[gpio].write(data, (err) => ((err && reject(err)) || resolve(1)));
         });
     }
 
-    async sendCommand(command, data) {
+    async sendCommand(command, data = []) {
         await this.write('dc', 0);
-        await this.sendBytes([command]);
+        await this.spiTransfer().add([command]).send();
         await this.write('dc', 1);
         if (data.length) {
             await sliceArray(data, 4096)
-                .map(async(chunk) => this.spiSendBytes(Buffer.from(chunk)));
+                .reduce((spi, chunk) => spi.add(chunk), this.spiTransfer())
+                .send();
         }
+    }
+
+    spiTransfer() {
+        var collection = [];
+
+        var clsr = {
+            add: (bytes) => {
+                return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
+            },
+            send: async() => (new Promise((resolve, reject) => this.device.spi.transfer(collection, (err, message) => ((!err && resolve()) || (err && reject(err))))))
+        };
+        return clsr;
     }
 
     async spiSendBytes(bytes) {
@@ -48,11 +66,67 @@ class Oled {
                 byteLength: bytes.length
             }];
 
-            this.oled.spi.transfer(message, (err, message) => ((!err && resolve()) || (err && reject(err))));
+            this.device.spi.transfer(message, (err, message) => ((!err && resolve()) || (err && reject(err))));
         });
+    }
+
+    async deviceReset() {
+        await this.write('rst', 0);
+        await this.write('rst', 1);
+    }
+
+    async deviceClearDisplay() {
+        await this.deviceRefreshScreen(Array(this.device.width * this.device.height * 2).fill(0));
+    }
+
+    async deviceDisplayOn(contrast = 255) {
+        await this.deviceReset();
+
+        await this.sendCommand(0xFD, [0x12]);
+        await this.sendCommand(0xFD, [0xB1]); // await command A2,B1,B3,BB,BE,C1 accessible if in unlock state
+        await this.sendCommand(0xAE); // Display off
+        await this.sendCommand(0xB3, [0xF1]); // Clock divider
+        await this.sendCommand(0xCA, [0x7F]); // Mux ratio
+        await this.sendCommand(0x15, [0x00, 0x7F]); // Set column address
+        await this.sendCommand(0x75, [0x00, 0x7F]); // Set row address
+        await this.sendCommand(0xA0, [0x74]); // Segment remapping - Column address remapping or else everything is mirrored
+        await this.sendCommand(0xA1, [0x00]); // Set Display start line
+        await this.sendCommand(0xA2, [0x00]); // Set display offset
+        await this.sendCommand(0xB5, [0x00]); // Set GPIO
+        await this.sendCommand(0xAB, [0x01]); // Function select (internal - diode drop)
+        await this.sendCommand(0xB1, [0x32]); // Precharge
+        await this.sendCommand(0xB4, [0xA0, 0xB5, 0x55]); // Set segment low voltage
+        await this.sendCommand(0xBE, [0x05]); // Set VcomH voltage
+        await this.sendCommand(0xC7, [0x0F]); // Contrast master
+        await this.sendCommand(0xB6, [0x01]); // Precharge2
+        await this.sendCommand(0xC1, [contrast, contrast, contrast]); // Contrast
+        await this.sendCommand(0xAF); // Normal display
+        await this.sendCommand(0xA6); // Normal display
+    }
+
+    async deviceRefreshScreen(data) {
+        await this.sendCommand(21, [0, 127]);
+        await this.sendCommand(117, [0, 127]);
+        await this.sendCommand(92, data);
+    }
+
+    async deviceSendRaw(data) {
+        if (data.length % 8 !== 0) {
+            throw new Error('setRawData the size of the array is incorrect');
+        }
+        await this.deviceRefreshScreen(data);
     }
 }
 
-module.exports = async function({rst = 0, dc = 0}) {
-    return (new Oled({rst, dc}));
+Oled.RGBToRGB565 = (r, g, b) => {
+    let red = +r;
+    let green = +g;
+    let blue = +b;
+
+    if (isNaN(red) || isNaN(green) || isNaN(blue) || red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {
+        throw new Error(`Rgb colour ${r} ${g} ${b} is not a valid hexadecimal colour`);
+    }
+    return [(red & 0xF8 | green >> 5), ((green & 0x1C) << 3) | (blue >> 3)];
 };
+
+module.exports = Oled;
