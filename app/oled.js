@@ -46,7 +46,7 @@ class Oled {
         await this.spiTransfer([command]);
         await this.write('dc', 1);
         if (data.length) {
-            await sliceArray(data, 4096)
+.            await sliceArray(data, 4096)
             .reduce(async(p, chunk) => {
                 await p;
                 return this.spiTransfer(chunk);
