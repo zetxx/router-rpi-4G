@@ -53,7 +53,7 @@ class ScreenControl extends Service {
         if (rst && dc) {
             await this.oled.init();
             screenControl.log('debug', {in: 'start', log: 'device init done'});
-            await this.oled.deviceDisplayOn();
+            await this.oled.deviceDisplayOn(180);
             screenControl.log('debug', {in: 'start', log: 'device display is on'});
         }
         await this.httpInit();
@@ -164,8 +164,6 @@ screenControl.registerExternalMethod({
                 });
             });
             screenControl.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
-            await screenControl.oled.deviceClearDisplay();
-            screenControl.log('debug', {in: 'event.pullData', image: 'display cleaned'});
             await screenControl.oled.deviceSendRaw(screenControl.pixelsBuffer);
             screenControl.log('debug', {in: 'event.pullData', image: 'display ready'});
         }
