@@ -45,6 +45,7 @@ ssd1351.init()
             console.log('deviceSendRaw');
             await oled.deviceSendRaw(pb);
             console.log('deviceContrast');
+            await oled.deviceContrast(0);
             Array(255).fill(0).map((v, k) => k).reduce(async(p, c) => {
                 await p;
                 return waitFor(10, () => oled.deviceContrast(c));
