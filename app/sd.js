@@ -7,6 +7,7 @@ let rstGpio, rstGpioId, dcGpio, dcGpioId;
 let cursor_x = 0, cursor_y = 0;
 
 async function command(dataCommand, data) {
+    console.log('---', dataCommand, data);
     dcGpio.writeSync(0);
     await sendBytes([dataCommand]);
     dcGpio.writeSync(1);

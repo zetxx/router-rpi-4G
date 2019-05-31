@@ -37,6 +37,7 @@ class Oled {
     }
 
     async sendCommand(command, data = []) {
+        console.log('---', command, data);
         await this.write('dc', 0);
         await this.spiTransfer().add([command]).send();
         await this.write('dc', 1);
