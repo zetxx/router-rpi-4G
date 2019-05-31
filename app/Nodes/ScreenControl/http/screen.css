@@ -46,20 +46,20 @@ body {
     font-family: 'Arvo';
 }
 .axis.upload text{
-    fill: rgba(255, 234, 161);
+    fill: rgba(255, 0, 0);
 }
 
 .axis.download text{
-    fill: rgba(179, 245, 245);
+    fill: rgba(100, 255, 255);
 }
 .axis .domain, .axis line {
     stroke:white;
 }
 .axis.upload .domain, .axis.upload line {
-    stroke:rgba(255, 234, 161);
+    stroke:rgba(255, 0, 0);
 }
 .axis.download .domain, .axis.download line {
-    stroke:rgba(179, 245, 245);
+    stroke:rgba(100, 255, 255);
 }
 .iconContent .fl {
     height: 18px;
