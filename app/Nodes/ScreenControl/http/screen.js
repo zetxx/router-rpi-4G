@@ -19,7 +19,7 @@ function runAll() {
             var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
             var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
             // set the dimensions and margins of the graph
-            var margin = {top: 3, right: 19, bottom: 18, left: 19};
+            var margin = {top: 3, right: 21, bottom: 18, left: 21};
             var width = svgWidth - margin.left - margin.right;
             var height = svgHeight - margin.top - margin.bottom;
 
