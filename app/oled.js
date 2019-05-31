@@ -43,42 +43,24 @@ class Oled {
 
     async sendCommand(command, data = []) {
         await this.write('dc', 0);
-        await this.spiTransfer().add([command]).send();
+        await this.spiTransfer([command]);
         await this.write('dc', 1);
         if (data.length) {
             await sliceArray(data, 4096)
-                .reduce((spi, chunk) => spi.add(chunk), this.spiTransfer())
-                .send();
+                .reduce(async(p, chunk) => {
+                    await p;
+                    return this.spiTransfer([chunk]);
+                }, Promise.resolve());
         }
     }
 
-    spiTransfer() {
-        var collection = [];
-
-        var clsr = {
-            add: (bytes) => {
-                return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
-            },
-            send: async() => (new Promise((resolve, reject) => this.device.spi.transfer(collection, (err, res) => {
-                // console.log(err, res);
-                if (err) {
-                    return reject(err);
-                }
-                resolve(res);
-            })))
-        };
-        return clsr;
-    }
-
-    async spiSendBytes(bytes) {
-        return new Promise((resolve, reject) => {
-            let message = [{
-                sendBuffer: Buffer.from(bytes),
-                byteLength: bytes.length
-            }];
-
-            this.device.spi.transfer(message, (err, message) => ((!err && resolve()) || (err && reject(err))));
-        });
+    spiTransfer(bytes) {
+        return (new Promise((resolve, reject) => this.device.spi.transfer([{sendBuffer: Buffer.from(bytes), byteLength: bytes.length}], (err, res) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(res);
+        })));
     }
 
     async deviceReset() {
