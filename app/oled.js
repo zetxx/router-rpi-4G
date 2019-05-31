@@ -46,17 +46,16 @@ class Oled {
         await this.spiTransfer([command]);
         await this.write('dc', 1);
         if (data.length) {
-.            await sliceArray(data, 4096)
-            .reduce(async(p, chunk) => {
-                await p;
-                return this.spiTransfer(chunk);
-            }, Promise.resolve());
+            await sliceArray(data, 4096)
+                .reduce(async(p, chunk) => {
+                    await p;
+                    return this.spiTransfer(chunk);
+                }, Promise.resolve());
         }
     }
 
     spiTransfer(bytes) {
         return (new Promise((resolve, reject) => this.device.spi.transfer([{sendBuffer: Buffer.from(bytes), byteLength: bytes.length}], (err, res) => {
-            console.log(err, res);
             if (err) {
                 return reject(err);
             }
