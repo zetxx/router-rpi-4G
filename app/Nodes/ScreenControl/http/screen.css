@@ -34,21 +34,11 @@ body {
 .iconContent {
     height: 18px;
 }
-/* .line {
-    fill: none;
-    stroke-width: 0px;
-} */
 .area.upload {
-    fill: rgba(255, 242, 198, 0.5);
+    fill: rgba(255, 0, 0, 0.7);
 }
 .area.download {
-    fill: rgba(179, 255, 255, 0.5);
-}
-.line.upload {
-    stroke: rgba(255, 234, 161);
-}
-.line.download {
-    stroke: rgba(179, 245, 245);
+    fill: rgba(100, 255, 255, 0.5);
 }
 .axis text {
     color: white;

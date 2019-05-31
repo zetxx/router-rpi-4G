@@ -201,7 +201,7 @@ screenControl.registerApiMethod({
     direction: 'in',
     fn: async function() {
         let lastModemStats = await this.request('storage.get.modem.stats', {last: 1});
-        let modemTraffic = (await this.request('storage.get.modem.stats', {last: 50}));
+        let modemTraffic = (await this.request('storage.get.modem.stats', {last: 70}));
         let lastVpnStats = await this.request('storage.get.vpn.stats', {last: 1});
         let lastPingStats = await this.request('storage.get.ping.stats', {last: 1});
         let lastProviderStats = await this.request('storage.get.provider.stats', {last: 1});
