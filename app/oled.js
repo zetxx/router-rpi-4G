@@ -36,7 +36,6 @@ class Oled {
                 if (err) {
                     return reject(err);
                 }
-                console.log(res);
                 resolve();
             });
         });
@@ -60,7 +59,13 @@ class Oled {
             add: (bytes) => {
                 return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
             },
-            send: async() => (new Promise((resolve, reject) => this.device.spi.transfer(collection, (err, message) => ((!err && resolve()) || (err && reject(err))))))
+            send: async() => (new Promise((resolve, reject) => this.device.spi.transfer(collection, (err, res) => {
+                console.log(err, res);
+                if (err) {
+                    return reject(err);
+                }
+                resolve(res);
+            })))
         };
         return clsr;
     }
