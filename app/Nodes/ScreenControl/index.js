@@ -30,7 +30,8 @@ class ScreenControl extends Service {
                     screenshot: {
                         host: '4g-chromium:9222',
                         uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
-                        storeDir: '/app_tmp/'
+                        storeDir: '/app_tmp/',
+                        loadWait: 8000
                     },
                     http: {
                         port: 34523
@@ -111,9 +112,9 @@ var screenControl = new ScreenControl({name: 'screenControl'});
 screenControl.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
-        let {storeDir, host, uri, screenDimensions: {width, height, hw}} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
+        let {storeDir, host, uri, screenDimensions: {width, height, hw}, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
         let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
-        screenControl.log('debug', {in: 'event.pullData', browserInfo});
+        screenControl.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
         let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
         screenControl.log('debug', {in: 'event.pullData', browser: {connected: true}});
         const context = await browser.createIncognitoBrowserContext();
@@ -121,7 +122,7 @@ screenControl.registerExternalMethod({
         try {
             await page.goto(uri);
             screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
-            await page.waitFor(8000);
+            await page.waitFor(loadWait);
             await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
             screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
         } catch (e) {
