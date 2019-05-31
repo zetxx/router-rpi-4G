@@ -141,7 +141,7 @@ screenControl.registerExternalMethod({
         var scanStop = (hw - 1) * 4;
         await new Promise((resolve, reject) => {
             myImage.scan(0, 0, height, width, function(x, y, idx) {
-                const bytes = Ssd1351.convertRgbColourToRgb565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
+                const bytes = Ssd1351.RGBToRGB565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
                 screenControl.pixelsBuffer[idx / 2] = bytes[0];
                 screenControl.pixelsBuffer[idx / 2 + 1] = bytes[1];
                 if (scanStop === idx) {
