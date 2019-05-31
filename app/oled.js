@@ -72,7 +72,7 @@ class Oled {
         await this.deviceRefreshScreen(Array(this.device.width * this.device.height * 2).fill(0));
     }
 
-    async deviceDisplayOn(contrast = 255) {
+    async deviceDisplayOn(contrast) {
         await this.deviceReset();
 
         await this.sendCommand(0xFD, [0x12]);
@@ -92,9 +92,14 @@ class Oled {
         await this.sendCommand(0xBE, [0x05]); // Set VcomH voltage
         await this.sendCommand(0xC7, [0x0F]); // Contrast master
         await this.sendCommand(0xB6, [0x01]); // Precharge2
-        await this.sendCommand(0xC1, [contrast, contrast, contrast]); // Contrast
+        await this.deviceContrast(contrast);
         await this.sendCommand(0xAF); // Normal display
         await this.sendCommand(0xA6); // Normal display
+    }
+
+    async deviceContrast(contrast = 255) {
+        contrast = (contrast > 255 && 255) || (contrast < 1 && 1) || contrast;
+        return this.sendCommand(0xC1, [contrast, contrast, contrast]); // Contrast
     }
 
     async deviceRefreshScreen(data) {

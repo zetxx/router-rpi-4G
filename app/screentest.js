@@ -24,6 +24,14 @@ const getPixelBuffer = async() => {
     });
 };
 
+const waitFor = async(time, fn) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(fn());
+        }, time);
+    });
+};
+
 var cc = 1;
 
 ssd1351.init()
@@ -36,6 +44,12 @@ ssd1351.init()
             cc = ((cc > 3) && 1) || cc;
             console.log('deviceSendRaw');
             await oled.deviceSendRaw(pb);
+            console.log('deviceContrast');
+            await waitFor(1000, () => oled.deviceContrast(50));
+            await waitFor(1000, () => oled.deviceContrast(100));
+            await waitFor(1000, () => oled.deviceContrast(150));
+            await waitFor(1000, () => oled.deviceContrast(200));
+            await waitFor(1000, () => oled.deviceContrast(255));
             console.log('done');
         };
 
