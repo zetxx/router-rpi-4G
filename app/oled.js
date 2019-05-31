@@ -56,6 +56,7 @@ class Oled {
 
     spiTransfer(bytes) {
         return (new Promise((resolve, reject) => this.device.spi.transfer([{sendBuffer: Buffer.from(bytes), byteLength: bytes.length}], (err, res) => {
+            console.log(err, res);
             if (err) {
                 return reject(err);
             }
