@@ -1,4 +1,4 @@
-// const spiDevice = require('spi-device');
+const spiDevice = require('spi-device');
 const Gpio = require('onoff').Gpio;
 const sliceArray = (oldArray, length, newArray = []) => {
     newArray = newArray.concat([oldArray.slice(0, length)]);
@@ -24,8 +24,8 @@ class Oled {
 
     async initSpi() {
         let spi = await new Promise((resolve, reject) => {
-            // var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
-            resolve({transfer: (collection, cb) => cb(null, collection)});
+            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
+            // resolve({transfer: (collection, cb) => cb(null, collection)});
         });
         this.device.spi = spi;
     }
@@ -47,11 +47,8 @@ class Oled {
         await this.write('dc', 1);
         if (data.length) {
             await sliceArray(data, 4096)
-                .reduce(async(spi, chunk) => {
-                    var r = await spi.sendNow(chunk);
-                    console.log(r);
-                    return r;
-                }, this.spiTransfer());
+                .reduce((spi, chunk) => spi.add(chunk), this.spiTransfer())
+                .send();
         }
     }
 
@@ -59,12 +56,6 @@ class Oled {
         var collection = [];
 
         var clsr = {
-            sendNow: async(bytes) => {
-                clsr.add(bytes);
-                await clsr.send(collection);
-                collection = [];
-                return clsr;
-            },
             add: (bytes) => {
                 return (collection.push({sendBuffer: Buffer.from(bytes), byteLength: bytes.length}) && clsr);
             },
