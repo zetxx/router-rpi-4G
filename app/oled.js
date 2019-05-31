@@ -105,9 +105,9 @@ class Oled {
     }
 
     async deviceRefreshScreen(data) {
-        await this.sendCommand(21, [0, 127]);
-        await this.sendCommand(117, [0, 127]);
-        await this.sendCommand(92, data);
+        await this.sendCommand(0x15, [0, 127]);
+        await this.sendCommand(0x75, [0, 127]);
+        await this.sendCommand(0x5C, data);
     }
 
     async deviceSendRaw(data) {
