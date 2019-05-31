@@ -2,7 +2,7 @@ const path = require('path');
 const Hapi = require('@hapi/hapi');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
-const Ssd1351 = require('ssd1351').Ssd1351;
+const Ssd1351 = require('../../oled');
 const jimp = require('jimp');
 const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
@@ -26,9 +26,9 @@ class ScreenControl extends Service {
                     refreshInterval: 60000,
                     monthlyTraffic: 10485760000,
                     gpio: {rst: 25, dc: 24},
+                    screenDimensions: {width: 128, height: 128},
                     screenshot: {
                         host: '4g-chromium:9222',
-                        screenDimensions: {width: 128, height: 128},
                         uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
                         storeDir: '/app_tmp/'
                     },
@@ -42,14 +42,18 @@ class ScreenControl extends Service {
 
     async start() {
         this.setStore(
-            ['config', 'screenControl', 'screenshot', 'screenDimensions', 'hw'],
-            this.getStore(['config', 'screenControl', 'screenshot', 'screenDimensions', 'height']) * this.getStore(['config', 'screenControl', 'screenshot', 'screenDimensions', 'width'])
+            ['config', 'screenControl', 'screenDimensions', 'hw'],
+            this.getStore(['config', 'screenControl', 'screenDimensions', 'height']) * this.getStore(['config', 'screenControl', 'screenDimensions', 'width'])
         );
-        this.pixelsBuffer = Array.from({length: this.getStore(['config', 'screenControl', 'screenshot', 'screenDimensions', 'hw']) * 2}).fill(0);
+        this.pixelsBuffer = Array.from({length: this.getStore(['config', 'screenControl', 'screenDimensions', 'hw']) * 2}).fill(0);
         let {rst, dc} = this.getStore(['config', 'screenControl', 'gpio']);
-        this.oled = new Ssd1351(rst, dc);
+        let {height, width} = this.getStore(['config', 'screenControl', 'screenDimensions']);
+        this.oled = new Ssd1351({height, width, rst, dc});
+        await this.oled.init();
+        screenControl.log('debug', {in: 'start', log: 'device init done'});
+        await this.oled.deviceDisplayOn();
+        screenControl.log('debug', {in: 'start', log: 'device display is on'});
         await this.httpInit();
-        // this.setStore(['config', 'screenControl', 'screenshot', 'uri'], `http://${this.name}:${this.getStore(['config', 'screenControl', 'http', 'port'])}/screen.html`);
 
         return super.start()
             .then((d) => ((this.initCron && this.initCron() && d) || d));
@@ -143,14 +147,11 @@ screenControl.registerExternalMethod({
                 }
             });
         });
-        screenControl.log('debug', {in: 'event.pullData', image: 'constructed'});
-        await screenControl.oled.clearDisplay();
-        await screenControl.oled.turnOffDisplay();
-        await screenControl.oled.turnOnDisplay();
-        await screenControl.oled.setCursor(0, 0);
-        await screenControl.oled.setRawData(screenControl.pixelsBuffer);
-        await screenControl.oled.updateScreen();
-        screenControl.log('debug', {in: 'event.pullData', image: 'send to device'});
+        screenControl.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
+        await screenControl.oled.deviceClearDisplay();
+        screenControl.log('debug', {in: 'event.pullData', image: 'display cleaned'});
+        await screenControl.oled.deviceSendRaw(screenControl.pixelsBuffer);
+        screenControl.log('debug', {in: 'event.pullData', image: 'display ready'});
         return false;
     }
 });
