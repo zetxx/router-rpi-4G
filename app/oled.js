@@ -45,10 +45,11 @@ class Oled {
         await this.write('dc', 0);
         await this.spiTransfer([command]);
         await this.write('dc', 1);
-        console.log(command, data);
         if (data.length) {
+            console.log(11111111111111);
             await sliceArray(data, 4096)
-                .reduce(async(p, chunk) => {
+            .reduce(async(p, chunk) => {
+                    console.log(222222222222222);
                     await p;
                     return this.spiTransfer([chunk]);
                 }, Promise.resolve());
