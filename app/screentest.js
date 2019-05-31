@@ -39,13 +39,13 @@ ssd1351.init()
         console.log('deviceDisplayOn');
         await oled.deviceDisplayOn(0);
         const f = async() => {
+            await oled.deviceContrast(0);
             var pb = await getPixelBuffer();
             cc++;
             cc = ((cc > 3) && 1) || cc;
             console.log('deviceSendRaw');
             await oled.deviceSendRaw(pb);
             console.log('deviceContrast');
-            await oled.deviceContrast(0);
             Array(180).fill(0).map((v, k) => k).reduce(async(p, c) => {
                 await p;
                 return waitFor(10, () => oled.deviceContrast(c));
