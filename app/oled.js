@@ -32,12 +32,17 @@ class Oled {
 
     async write(gpio, data) {
         return new Promise((resolve, reject) => {
-            this.device[gpio].write(data, (err) => ((err && reject(err)) || resolve(1)));
+            this.device[gpio].write(data, (err, res) => {
+                if (err) {
+                    return reject(err);
+                }
+                console.log(res);
+                resolve();
+            });
         });
     }
 
     async sendCommand(command, data = []) {
-        console.log('---', command, data);
         await this.write('dc', 0);
         await this.spiTransfer().add([command]).send();
         await this.write('dc', 1);
