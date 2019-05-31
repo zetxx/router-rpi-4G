@@ -21,8 +21,6 @@ const f = async() => {
             }
         });
     });
-    await oled.clearDisplay();
-    await oled.turnOffDisplay();
     await oled.turnOnDisplay();
     await oled.setCursor(0, 0);
     await oled.setRawData(pixelsBuffer);
