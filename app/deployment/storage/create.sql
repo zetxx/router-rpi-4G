@@ -17,7 +17,7 @@ BEGIN;
 
     CREATE INDEX "index_type" ON "rpi4g"."stats" USING btree( "type" Asc NULLS Last );
 
-    CREATE OR REPLACE FUNCTION rpi4g.rpi4g.getStats(t "stat.type", last integer) RETURNS TABLE(id int, data JSON) AS $$
-        SELECT id, data FROM rpi4g.rpi4g.stats WHERE (type=$1) order by id DESC limit $2 offset 0;
+    CREATE OR REPLACE FUNCTION rpi4g.rpi4g.getStats(t "stat.type", last integer) RETURNS TABLE(id int, inserted bigint, data JSON) AS $$
+        SELECT id, inserted, data FROM rpi4g.rpi4g.stats WHERE (type=$1) order by id DESC limit $2 offset 0;
     $$ LANGUAGE SQL;
 COMMIT;

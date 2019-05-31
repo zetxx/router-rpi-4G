@@ -15,7 +15,7 @@ function runAll() {
         })
     })
         .then((data) => {
-            var list = data.map(({date, ...rest}) => ({date: new Date(date * 1000), ...rest}));
+            var list = data.traffic.map(({date, ...rest}) => ({date: new Date(date), ...rest}));
             var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
             var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
             // set the dimensions and margins of the graph
@@ -40,15 +40,15 @@ function runAll() {
                 .y0(height)
                 .y1(function(d) { return y1(d.download); });
 
-            // define the upload line
-            var uploadValue = d3.line()
-                .x(function(d) { return x(d.date); })
-                .y(function(d) { return y0(d.upload); });
+            // // define the upload line
+            // var uploadValue = d3.line()
+            //     .x(function(d) { return x(d.date); })
+            //     .y(function(d) { return y0(d.upload); });
 
-            // define the download line
-            var downloadValue = d3.line()
-                .x(function(d) { return x(d.date); })
-                .y(function(d) { return y1(d.download); });
+            // // define the download line
+            // var downloadValue = d3.line()
+            //     .x(function(d) { return x(d.date); })
+            //     .y(function(d) { return y1(d.download); });
 
             // append the svg obgect to the body of the page
             // appends a 'group' element to 'svg'
@@ -68,39 +68,39 @@ function runAll() {
             });
 
             // Scale the range of the data
-            x.domain(d3.extent(data, function(d) {
+            x.domain(d3.extent(data.traffic, function(d) {
                 return d.date;
             }));
-            y0.domain([0, d3.max(data, function(d) {
+            y0.domain([0, d3.max(data.traffic, function(d) {
                 return Math.max(d.upload);
             })]);
-            y1.domain([0, d3.max(data, function(d) {
+            y1.domain([0, d3.max(data.traffic, function(d) {
                 return Math.max(d.download);
             })]);
 
             // add upload area
             svg.append('path')
-                .data([data])
+                .data([data.traffic])
                 .attr('class', 'area upload')
                 .attr('d', uploadArea);
 
             // add download area
             svg.append('path')
-                .data([data])
+                .data([data.traffic])
                 .attr('class', 'area download')
                 .attr('d', downloadArea);
 
-            // Add the download path.
-            svg.append('path')
-                .data([data])
-                .attr('class', 'line upload')
-                .attr('d', uploadValue);
+            // // Add the download path.
+            // svg.append('path')
+            //     .data([data.traffic])
+            //     .attr('class', 'line upload')
+            //     .attr('d', uploadValue);
 
-            // Add the upload path.
-            svg.append('path')
-                .data([data])
-                .attr('class', 'line download')
-                .attr('d', downloadValue);
+            // // Add the upload path.
+            // svg.append('path')
+            //     .data([data.traffic])
+            //     .attr('class', 'line download')
+            //     .attr('d', downloadValue);
 
             // Add the X Axis
             svg.append('g')

@@ -166,8 +166,8 @@
     ],
     "compounds": [
         {
-            "name": "OnlineChecker + Modem",
-            "configurations": ["OnlineChecker", "Modem"]
+            "name": "Storage + ScreenControl",
+            "configurations": ["ScreenControl", "Storage"]
         }
     ]
 }

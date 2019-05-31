@@ -34,10 +34,10 @@ body {
 .iconContent {
     height: 18px;
 }
-.line {
+/* .line {
     fill: none;
-    stroke-width: 0.5px;
-}
+    stroke-width: 0px;
+} */
 .area.upload {
     fill: rgba(255, 242, 198, 0.5);
 }
@@ -52,7 +52,7 @@ body {
 }
 .axis text {
     color: white;
-    font-size: 8px;
+    font-size: 6px;
     font-family: 'Arvo';
 }
 .axis.upload text{
@@ -70,10 +70,6 @@ body {
 }
 .axis.download .domain, .axis.download line {
     stroke:rgba(179, 245, 245);
-}
-.net.off path {
-    fill: red;
-    stroke: red;
 }
 .iconContent .fl {
     height: 18px;

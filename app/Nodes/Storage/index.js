@@ -1,4 +1,4 @@
-const joi = require('joi');
+const joi = require('@hapi/joi');
 const Factory = require('bridg-wrong-playground/factory.js');
 const Storage = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'storage/postgresql'}});
 
