@@ -121,7 +121,7 @@ screenControl.registerExternalMethod({
         try {
             await page.goto(uri);
             screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
-            await page.waitFor(5000);
+            await page.waitFor(8000);
             await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
             screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
         } catch (e) {
