@@ -21,9 +21,13 @@ const f = async() => {
             }
         });
     });
+    console .log('turnOnDisplay');
     await oled.turnOnDisplay();
+    console .log('setCursor');
     await oled.setCursor(0, 0);
+    console .log('setRawData');
     await oled.setRawData(pixelsBuffer);
+    console .log('updateScreen');
     await oled.updateScreen();
 };
 
