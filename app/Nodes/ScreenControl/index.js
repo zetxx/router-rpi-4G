@@ -112,7 +112,8 @@ var screenControl = new ScreenControl({name: 'screenControl'});
 screenControl.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
-        let {storeDir, host, uri, screenDimensions: {width, height, hw}, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
+        let {width, height, hw} = screenControl.getStore(['config', 'screenControl', 'screenDimensions']);
+        let {storeDir, host, uri, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
         let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
         screenControl.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
         let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
