@@ -45,11 +45,10 @@ ssd1351.init()
             console.log('deviceSendRaw');
             await oled.deviceSendRaw(pb);
             console.log('deviceContrast');
-            await waitFor(1000, () => oled.deviceContrast(50));
-            await waitFor(1000, () => oled.deviceContrast(100));
-            await waitFor(1000, () => oled.deviceContrast(150));
-            await waitFor(1000, () => oled.deviceContrast(200));
-            await waitFor(1000, () => oled.deviceContrast(255));
+            Array(255).fill(0).map((v, k) => k).reduce(async(p, c) => {
+                await p;
+                return waitFor(10, () => oled.deviceContrast(50));
+            }, Promise.resolve());
             console.log('done');
         };
 
