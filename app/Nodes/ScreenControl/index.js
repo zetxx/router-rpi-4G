@@ -241,7 +241,7 @@ screenControl.registerApiMethod({
         }
         if (lastProviderStats && lastProviderStats.length) {
             let {data} = lastProviderStats.pop();
-            response.provider = data;
+            response.provider = {trafficUsed: getTrafficMetrics(data.trafficUsed)};
         }
 
         return response;
