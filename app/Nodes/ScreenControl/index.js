@@ -2,7 +2,7 @@ const path = require('path');
 const Hapi = require('@hapi/hapi');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
-const Ssd1351 = require('../../oled');
+const Ssd1351 = require('./lib');
 const jimp = require('jimp');
 const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
@@ -13,6 +13,43 @@ const fnThrowOrReturn = function({result, error}) {
         throw error;
     }
     return result;
+};
+
+const getTrafficMetrics = (num) => {
+    if (num <= 1024) {
+        return `${num}b`;
+    } else if ((num / 1024) <= 1024) {
+        return `${Math.round(num / 1024)}Kb`;
+    } else if ((num / (1024 * 1024)) <= 1024) {
+        return `${Math.round(num / (1024 * 1024))}Mb`;
+    } else {
+        return `${Math.round(num / (1024 * 1024 * 1024))}Gb`;
+    }
+};
+
+const transformGraphData = (data) => {
+    let {maxRx, maxTx, diff} = data.reduce(
+        ({maxRx, maxTx, prevRx, prevTx, diff}, {download, upload}, idx) => {
+            let diffRx = download - prevRx;
+            let diffTx = upload - prevTx;
+            return {
+                diff: (idx && diff.concat([{download: diffRx, upload: diffTx}])) || [],
+                prevRx: download,
+                prevTx: upload,
+                maxRx: idx && ((diffRx > maxRx && diffRx) || maxRx),
+                maxTx: idx && ((diffTx > maxTx && diffTx) || maxTx)
+            };
+        },
+        {diff: [], prevRx: 0, prevTx: 0, maxRx: 0, maxTx: 0}
+    );
+    let maxRxPercent = maxRx / 100;
+    let maxTxPercent = maxTx / 100;
+    let rxMetrics = getTrafficMetrics(maxRx);
+    let txMetrics = getTrafficMetrics(maxTx);
+    let {download, upload} = diff.reduce((a, {download, upload}) => {
+        return {download: [...a.download, Math.round(download / maxRxPercent)], upload: [...a.upload, Math.round(upload / maxTxPercent)]};
+    }, {download: [], upload: []});
+    return [download, upload, rxMetrics, txMetrics];
 };
 
 class ScreenControl extends Service {
@@ -171,47 +208,26 @@ screenControl.registerExternalMethod({
     }
 });
 
-const transformGraphData = (data) => {
-    let {maxRx, maxTx, diff} = data.reduce(
-        ({maxRx, maxTx, prevRx, prevTx, diff}, {download, upload}, idx) => {
-            let diffRx = prevRx - download;
-            let diffTx = prevTx - upload;
-            return {
-                diff: (idx && diff.concat([{download: diffRx, upload: diffTx}])) || [],
-                prevRx: download,
-                prevTx: upload,
-                maxRx: idx && ((diffRx > maxRx && diffRx) || maxRx),
-                maxTx: idx && ((diffTx > maxTx && diffTx) || maxTx)
-            };
-        },
-        {diff: [], prevRx: 0, prevTx: 0, maxRx: 0, maxTx: 0}
-    );
-    let maxRxPercent = maxRx / 100;
-    let maxTxPercent = maxTx / 100;
-    let {download, upload} = diff.reduce((a, {download, upload}) => {
-        return {download: [...a.download, Math.round(download / maxRxPercent)], upload: [...a.upload, Math.round(upload / maxTxPercent)]};
-    }, {download: [], upload: []});
-    return [download, upload];
-};
-
 screenControl.registerApiMethod({
     method: 'stats',
     direction: 'in',
     fn: async function() {
+        let recForGraph = 70;
         let lastModemStats = await this.request('storage.get.modem.stats', {last: 1});
-        let modemTraffic = (await this.request('storage.get.modem.stats', {last: 70}));
+        let modemTraffic = (await this.request('storage.get.modem.stats', {last: recForGraph}));
         let lastVpnStats = await this.request('storage.get.vpn.stats', {last: 1});
-        let lastPingStats = await this.request('storage.get.ping.stats', {last: 1});
+        let lastPingStats = await this.request('storage.get.ping.stats', {last: recForGraph});
         let lastProviderStats = await this.request('storage.get.provider.stats', {last: 1});
-        let response = {net: {}, vpn: {}, ping: {}, provider: {}, traffic: []};
+        let response = {net: {}, vpn: {}, provider: {}, graphData: [], trafficMetrics: {rx: '0b', tx: '0b'}};
         if (modemTraffic && modemTraffic.length) {
-            let t1 = modemTraffic.map(({data: {realtime_tx_bytes, realtime_rx_bytes}, inserted}) => ({upload: parseInt(realtime_tx_bytes), download: parseInt(realtime_rx_bytes)}));
-            let [down, up] = transformGraphData(t1);
+            let t1 = modemTraffic.map(({data: {realtime_tx_bytes, realtime_rx_bytes}, inserted}) => ({upload: parseInt(realtime_tx_bytes), download: parseInt(realtime_rx_bytes)})).reverse();
+            let [down, up, rxMetrics, txMetrics] = transformGraphData(t1);
+            response.trafficMetrics.rx = rxMetrics;
+            response.trafficMetrics.tx = txMetrics;
             let t2 = down.map((download, idx) => {
-                return {download, upload: up[idx], date: idx + 1};
+                return {download, upload: up[idx], date: idx + 1, ping: parseInt((lastPingStats[idx] && lastPingStats[idx].data && lastPingStats[idx].data.value) || 0)};
             });
-            response.traffic = t2;
-            // response.traffic = [{date: 1559211018052, upload: 10, download: 90}, {date: 1559212018052, upload: 90, download: 10}, {date: 1559213018052, upload: 10.00, download: 90}];
+            response.graphData = t2;
         }
         if (lastModemStats && lastModemStats.length) {
             let {data: {ppp_status, signalbar}} = lastModemStats.pop();
@@ -221,10 +237,6 @@ screenControl.registerApiMethod({
         if (lastVpnStats && lastVpnStats.length) {
             let {data: {connected}} = lastVpnStats.pop();
             response.vpn.on = connected;
-        }
-        if (lastPingStats && lastPingStats.length) {
-            let {data: {host, value}} = lastPingStats.pop();
-            response.ping = {host, value};
         }
         if (lastProviderStats && lastProviderStats.length) {
             let {data} = lastProviderStats.pop();
