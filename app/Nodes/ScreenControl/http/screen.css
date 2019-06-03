@@ -35,31 +35,40 @@ body {
     height: 18px;
 }
 .area.upload {
-    fill: rgba(255, 0, 0, 0.7);
+    fill: rgba(211, 195, 108, 0.6);
 }
 .area.download {
-    fill: rgba(100, 255, 255, 0.5);
+    fill: rgba(255, 61, 101, 0.5);
+
 }
+.area.ping {
+    fill: rgba(0, 255, 255, 0.3);
+}
+
 .axis text {
     color: white;
     font-size: 6px;
     font-family: 'Arvo';
 }
+.axis line {
+    stroke-width: 1px;
+}
+
 .axis.upload text{
-    fill: rgba(255, 0, 0);
+    fill: rgba(211, 195, 108);
 }
 
 .axis.download text{
-    fill: rgba(100, 255, 255);
+    fill: rgba(255, 61, 101);
 }
 .axis .domain, .axis line {
     stroke:white;
 }
 .axis.upload .domain, .axis.upload line {
-    stroke:rgba(255, 0, 0);
+    stroke:rgba(211, 195, 108);
 }
 .axis.download .domain, .axis.download line {
-    stroke:rgba(100, 255, 255);
+    stroke:rgba(255, 61, 101);
 }
 .iconContent .fl {
     height: 18px;
