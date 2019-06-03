@@ -52,6 +52,8 @@ const transformGraphData = (data) => {
     return [download, upload, rxMetrics, txMetrics];
 };
 
+const getTrafficUsedPercentage = (usedTotal, monthlyTraffic) => Math.floor((parseInt(usedTotal) / parseInt(monthlyTraffic)) * 100);
+
 class ScreenControl extends Service {
     constructor(args) {
         super(args);
@@ -241,7 +243,7 @@ screenControl.registerApiMethod({
         }
         if (lastProviderStats && lastProviderStats.length) {
             let {data} = lastProviderStats.pop();
-            response.provider = {trafficUsed: getTrafficMetrics(data.trafficUsed)};
+            response.provider = {trafficUsed: getTrafficUsedPercentage(data.trafficUsed, screenControl.getStore(['config', 'screenControl', 'monthlyTraffic']))};
         }
 
         return response;
