@@ -42,10 +42,9 @@ function runAll() {
                 .y1((d) => y1(d.download));
 
             // define the ping area
-            var pingArea = d3.area()
+            var pingLine = d3.line()
                 .x((d) => x(d.date))
-                .y0(height)
-                .y1((d) => y2(d.ping));
+                .y((d) => y2(d.ping));
 
             // append the svg obgect to the body of the page
             // appends a 'group' element to 'svg'
@@ -75,11 +74,11 @@ function runAll() {
                 .attr('class', 'area download')
                 .attr('d', downloadArea);
 
-            // add ping area
+            // add ping line
             svg.append('path')
                 .data([list])
-                .attr('class', 'area ping')
-                .attr('d', pingArea);
+                .attr('class', 'line ping')
+                .attr('d', pingLine);
 
             // Add the X Axis
             svg.append('g')
@@ -105,6 +104,11 @@ function runAll() {
                 .attr('y', -4)
                 .attr('x', -75)
                 .html(data.trafficMetrics.rx + '&#8681;');
+            svg.append('text')
+                .attr('class', 'ping')
+                .attr('y', -5)
+                .attr('x', 60)
+                .html('ping');
             return 1;
         })
         .catch(console.error);

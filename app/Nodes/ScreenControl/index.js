@@ -224,6 +224,7 @@ screenControl.registerApiMethod({
             let [down, up, rxMetrics, txMetrics] = transformGraphData(t1);
             response.trafficMetrics.rx = rxMetrics;
             response.trafficMetrics.tx = txMetrics;
+            lastPingStats = lastPingStats.reverse();
             let t2 = down.map((download, idx) => {
                 return {download, upload: up[idx], date: idx + 1, ping: parseInt((lastPingStats[idx] && lastPingStats[idx].data && lastPingStats[idx].data.value) || 0)};
             });

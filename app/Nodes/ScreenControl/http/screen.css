@@ -41,14 +41,17 @@ body {
     fill: rgba(255, 61, 101, 0.5);
 
 }
-.area.ping {
-    fill: rgba(0, 255, 255, 0.3);
+.line.ping {
+    stroke: rgba(0, 100, 255);
+    fill: none;
 }
-
-.axis text {
+.axis text, text.ping {
     color: white;
     font-size: 6px;
     font-family: 'Arvo';
+}
+text.ping {
+    stroke: rgba(0, 100, 255);
 }
 .axis line {
     stroke-width: 1px;
