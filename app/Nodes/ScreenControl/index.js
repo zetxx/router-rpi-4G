@@ -73,7 +73,8 @@ class ScreenControl extends Service {
                         loadWait: 8000
                     },
                     http: {
-                        port: 34523
+                        port: 34523,
+                        host: '0.0.0.0'
                     }
                 }
             }).screenControl)
@@ -91,9 +92,9 @@ class ScreenControl extends Service {
         this.oled = new Ssd1351({height, width, rst, dc});
         if (rst && dc) {
             await this.oled.init();
-            screenControl.log('debug', {in: 'start', log: 'device init done'});
+            this.log('debug', {in: 'start', log: 'device init done'});
             await this.oled.deviceDisplayOn(180);
-            screenControl.log('debug', {in: 'start', log: 'device display is on'});
+            this.log('debug', {in: 'start', log: 'device display is on'});
         }
         await this.httpInit();
 
@@ -149,6 +150,7 @@ class ScreenControl extends Service {
             }
         });
         await server.start();
+        this.log('debug', {in: 'start', staticServer: this.getStore(['config', 'screenControl', 'http'])});
     }
 
     initCron() {
