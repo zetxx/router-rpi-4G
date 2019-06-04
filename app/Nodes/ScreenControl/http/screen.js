@@ -15,9 +15,9 @@ function runAll() {
         })
     })
         .then((data) => {
-            d3.select('.fl.net').attr('class', ['fl net on bar'].concat([data.net.bar]).join(''));
-            d3.select('.fl.vpn').attr('class', ['fl vpn'].concat([(data.vpn.on && 'on') || 'off']).join(' '));
-            d3.select('.fl.traffic-used span').html([data.provider.trafficUsed, '%'].join(''));
+            d3.select('.fl.net').attr('class', (data.net.bar && ['fl net on bar'].concat([data.net.bar]).join('')) || 'off');
+            d3.select('.fl.vpn').attr('class', (data.vpn.on && ['fl vpn'].concat([(data.vpn.on && 'on') || 'off']).join(' ')) || 'off');
+            d3.select('.fl.traffic-used span').html((data.provider.trafficUsed && [data.provider.trafficUsed, '%'].join('')) || '0');
 
             var list = data.graphData.map(({date, ...rest}) => ({date: new Date(date), ...rest}));
             var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
