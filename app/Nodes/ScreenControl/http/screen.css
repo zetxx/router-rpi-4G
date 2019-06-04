@@ -45,13 +45,10 @@ body {
     stroke: rgba(0, 100, 255);
     fill: none;
 }
-.axis text, text.ping {
+.axis text {
     color: white;
     font-size: 6px;
     font-family: 'Arvo';
-}
-text.ping {
-    stroke: rgba(0, 100, 255);
 }
 .axis line {
     stroke-width: 1px;
@@ -63,6 +60,9 @@ text.ping {
 
 .axis.download text{
     fill: rgba(255, 61, 101);
+}
+.axis.download text.ping{
+    fill: rgba(0, 100, 255);
 }
 .axis .domain, .axis line {
     stroke:white;

@@ -214,7 +214,7 @@ screenControl.registerApiMethod({
     method: 'stats',
     direction: 'in',
     fn: async function() {
-        let recForGraph = 70;
+        let recForGraph = 80;
         let lastModemStats = await this.request('storage.get.modem.stats', {last: 1});
         let modemTraffic = (await this.request('storage.get.modem.stats', {last: recForGraph}));
         let lastVpnStats = await this.request('storage.get.vpn.stats', {last: 1});

@@ -23,7 +23,7 @@ function runAll() {
             var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
             var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
             // set the dimensions and margins of the graph
-            var margin = {top: 9, right: 12, bottom: 3, left: 11};
+            var margin = {top: 9, right: 2, bottom: 3, left: 1};
             var width = svgWidth - margin.left - margin.right;
             var height = svgHeight - margin.top - margin.bottom;
 
@@ -93,7 +93,7 @@ function runAll() {
             // Add the Y0 Axis
             svg.append('g')
                 .attr('class', 'axis upload')
-                .call(d3.axisLeft(y0).tickSize(1).tickPadding(0))
+                .call(d3.axisLeft(y0).tickSize(1))
                 .append('text')
                 .attr('y', -4)
                 .attr('x', 22)
@@ -103,15 +103,17 @@ function runAll() {
             svg.append('g')
                 .attr('class', 'axis download')
                 .attr('transform', 'translate( ' + width + ', 0 )')
-                .call(d3.axisRight(y1).tickSize(2).tickPadding(0))
+                .call(d3.axisRight(y1).tickSize(2))
                 .append('text')
                 .attr('y', -4)
-                .attr('x', -75)
+                .attr('x', -95)
                 .html(data.trafficMetrics.rx + '&#8681;');
-            svg.append('text')
+
+            svg.select('.axis.download')
+                .append('text')
                 .attr('class', 'ping')
                 .attr('y', -5)
-                .attr('x', 60)
+                .attr('x', -65)
                 .html('ping');
             return 1;
         })
