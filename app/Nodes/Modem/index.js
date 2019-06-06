@@ -9,6 +9,13 @@ const fnThrowOrReturn = function({result, error}) {
     }
     return result;
 };
+const lodashToCamelCase = (obj) => {
+    return pso(Object.keys(obj).reduce((a, c) => {
+        return {...a, [c.split('_').map((v, k) => {
+            return (k && ([v.slice(0, 1).toUpperCase(), v.slice(1)].join(''))) || v;
+        }).join('')]: obj[c]};
+    }, {}));
+};
 
 class Modem extends Service {
     constructor(args) {
