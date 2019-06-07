@@ -11,9 +11,10 @@ const fnThrowOrReturn = function({result, error}) {
 };
 const lodashToCamelCase = (obj) => {
     return pso(Object.keys(obj).reduce((a, c) => {
-        return {...a, [c.split('_').map((v, k) => {
-            return (k && ([v.slice(0, 1).toUpperCase(), v.slice(1)].join(''))) || v;
-        }).join('')]: obj[c]};
+        return {
+            ...a,
+            [c.split('_').map((v, k) => ((k && ([v.slice(0, 1).toUpperCase(), v.slice(1)].join(''))) || v)).join('')]: obj[c]
+        };
     }, {}));
 };
 
@@ -26,7 +27,7 @@ class Modem extends Service {
                 modem: {
                     level: 'trace',
                     uri: 'http://127.0.0.1',
-                    triggerEventTimeout: 600000 // 10 min
+                    triggerEventTimeout: 30000 // 30 sec
                 }
             }).modem)
         );
@@ -62,7 +63,7 @@ modem.registerExternalMethod({
 modem.registerExternalMethod({
     method: 'stats.response',
     fn: function({result, error: {error} = {}}) {
-        (result && this.notification('storage.stats.insert', {type: 'modem', data: result}));
+        (result && this.notification('storage.stats.insert', {type: 'modem', data: lodashToCamelCase(result)}));
         (error && this.notification('storage.stats.insert', {type: 'modem', data: {error: {code: error.code}}}));
         return undefined;
     }

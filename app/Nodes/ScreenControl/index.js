@@ -224,7 +224,7 @@ screenControl.registerApiMethod({
         let lastProviderStats = await this.request('storage.get.provider.stats', {last: 1});
         let response = {net: {}, vpn: {}, provider: {}, graphData: [], trafficMetrics: {rx: '0b', tx: '0b'}};
         if (modemTraffic && modemTraffic.length) {
-            let t1 = modemTraffic.map(({data: {realtime_tx_bytes, realtime_rx_bytes}, inserted}) => ({upload: parseInt(realtime_tx_bytes), download: parseInt(realtime_rx_bytes)})).reverse();
+            let t1 = modemTraffic.map(({data: {realtimeTxBytes, realtimeRxBytes}, inserted}) => ({upload: parseInt(realtimeTxBytes), download: parseInt(realtimeRxBytes)})).reverse();
             let [down, up, rxMetrics, txMetrics] = transformGraphData(t1);
             response.trafficMetrics.rx = rxMetrics;
             response.trafficMetrics.tx = txMetrics;
@@ -235,8 +235,8 @@ screenControl.registerApiMethod({
             response.graphData = t2;
         }
         if (lastModemStats && lastModemStats.length) {
-            let {data: {ppp_status, signalbar}} = lastModemStats.pop();
-            response.net.on = ppp_status === 'ppp_connected';
+            let {data: {pppStatus, signalbar}} = lastModemStats.pop();
+            response.net.on = pppStatus === 'ppp_connected';
             response.net.bar = parseInt(signalbar);
         }
         if (lastVpnStats && lastVpnStats.length) {
