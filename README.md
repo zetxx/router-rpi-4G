@@ -1,8 +1,6 @@
-# 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux and some magic :)
+# 4G Raspbery pi router with usefull info displayed on oled display using: nodejs, docker, archlinux and some magic :). [isnpired by](https://esther.codes/post-pi_router_story/)
 
-![alt text](https://github.com/zetxx/router-rpi-4G/blob/master/app/docs/images/1.png?raw=true)
-
-- [isnpired by](https://esther.codes/post-pi_router_story/)
+![screen in action](https://github.com/zetxx/router-rpi-4G/blob/master/app/docs/images/1.png?raw=true)
 
 ## 4G modem
 - [zte unlock code](https://tools.texby.com/unlock-codes/zte/)
