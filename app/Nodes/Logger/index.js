@@ -1,7 +1,8 @@
 const rc = require('rc');
-const Factory = require('bridg-wrong-playground/factory.js');
-const Service = Factory({state: true, api: {type: 'udp'}, discovery: {type: 'dns'}});
 const pso = require('parse-strings-in-object');
+const Factory = require('bridg-wrong-playground/factory.js');
+const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
+const Service = Factory({state: true, api: {type: 'udp'}, discovery: {type: discovery}});
 
 const selfLog = false;
 
