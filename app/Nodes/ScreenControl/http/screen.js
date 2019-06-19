@@ -1,5 +1,5 @@
 function runAll() {
-    d3.json(['http://', window.location.hostname, ':9005', '/JSONRPC/stats'].join(''), {
+    d3.json(['http://', window.location.hostname, ':9000', '/JSONRPC/stats'].join(''), {
         crossOrigin: 'anonymous',
         method: 'POST',
         headers: {
