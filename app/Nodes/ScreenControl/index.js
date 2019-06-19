@@ -2,12 +2,13 @@ const path = require('path');
 const Hapi = require('@hapi/hapi');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
-const Ssd1351 = require('./lib');
 const jimp = require('jimp');
 const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
+const Ssd1351 = require('./lib');
 const Factory = require('bridg-wrong-playground/factory.js');
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'dummy'}});
+const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
+const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
 const fnThrowOrReturn = function({result, error}) {
     if (error) {
         throw error;
