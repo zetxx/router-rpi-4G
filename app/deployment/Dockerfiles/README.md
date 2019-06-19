@@ -3,7 +3,6 @@
 ```bash
 docker build -t nodejs-local -f deployment/Dockerfiles/main.docker . && \
 docker build -t app4g -f deployment/Dockerfiles/app.docker . && \
-docker build -t discovery4g -f deployment/Dockerfiles/discovery.docker . && \
 docker build -t chromium4g -f deployment/Dockerfiles/chromium.docker .
 ```
 
@@ -12,38 +11,7 @@ docker build -t chromium4g -f deployment/Dockerfiles/chromium.docker .
 docker network create 4gnet
 ```
 
-## discovery server
-```bash
-docker run -it -d \
---restart=unless-stopped \
---network 4gnet \
---name discovery4g \
--m=64m \
-discovery4g
-```
-
 # RUN
-
-## Logger
-```bash
-docker run -it -d \
---restart=unless-stopped \
---name 4g-logger \
---network 4gnet \
--m=128m \
---cpus=1 \
---log-opt max-size=20m \
---log-opt max-file=1 \
--v ${PWD}:/app \
-app4g \
-logger \
--- \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-logger" \
---api.port=9000 \
---log.level=trace
-```
 
 ## Storage, eg. postgresql
 ```bash
@@ -62,6 +30,25 @@ docker run -it -d \
 postgres:alpine
 ```
 
+## Logger
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--name 4g-logger \
+--network 4gnet \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+app4g \
+logger \
+-- \
+--discovery=false \
+--api.port=9000 \
+--log.level=trace
+```
+
 ## Storage
 ```bash
 docker run -it -d \
@@ -73,17 +60,15 @@ docker run -it -d \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
--p 9004:9004 \
+-p 9004:9000 \
 app4g \
 storage \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-storage" \
+--discovery=false \
+--resolve.globalPort=9000 \
 --discovery.loopback=false \
---discovery.resolveMap.logger=4g-logger \
---api.port=9004 \
+--resolve.map.logger=4g-logger \
+--api.port=9000 \
 --log.level=trace \
 --storage.host=postgres \
 --storage.user=rpi4g \
@@ -103,18 +88,15 @@ docker run -it -d \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
--p 9001:9001 \
+-p 9001:9000 \
 app4g \
 modem \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-modem" \
---discovery.resolveMap.logger=4g-logger \
---discovery.resolveMap.storage=4g-storage \
---discovery.loopback=false \
---api.port=9001 \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--resolve.map.storage=4g-storage \
+--api.port=9000 \
 --log.level=trace \
 --modem.uri="http://10.21.21.1" \
 --modem.triggerEventTimeout=60000 \
@@ -135,14 +117,11 @@ docker run -it -d \
 app4g \
 netProvider \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-net-provider" \
---discovery.resolveMap.logger=4g-logger \
---discovery.resolveMap.storage=4g-storage \
---discovery.loopback=false \
---api.port=9001 \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--resolve.map.storage=4g-storage \
+--api.port=9000 \
 --log.level=trace \
 --http.timeout=20000
 ```
@@ -161,15 +140,12 @@ docker run -it -d \
 app4g \
 onlineChecker \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-online-checker" \
---discovery.loopback=false \
---discovery.resolveMap.logger=4g-logger \
---discovery.resolveMap.storage=4g-storage \
---discovery.resolveMap.storage=4g-modem \
---api.port=9003 \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--resolve.map.storage=4g-storage \
+--resolve.map.storage=4g-modem \
+--api.port=9000 \
 --log.level=trace
 ```
 
@@ -202,14 +178,11 @@ docker run -it -d \
 app4g \
 screenControl \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-screen-control" \
---discovery.loopback=false \
---discovery.resolveMap.logger=4g-logger \
---discovery.resolveMap.storage=4g-storage \
---api.port=9005 \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--resolve.map.storage=4g-storage \
+--api.port=9000 \
 --log.level=trace \
 --screenControl.refreshInterval=30000
 ```
@@ -227,18 +200,15 @@ docker run -it -d \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
 -p 34523:34523 \
--p 9005:9005 \
+-p 9005:9000 \
 app4g \
 screenControl \
 -- \
---discovery.nameResolve=true \
---discovery.domain=borovica4g \
---discovery.server="discovery4g:59100" \
---discovery.nodeName="4g-screen-control" \
---discovery.loopback=false \
---discovery.resolveMap.logger=4g-logger \
---discovery.resolveMap.storage=4g-storage \
---api.port=9005 \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--resolve.map.storage=4g-storage \
+--api.port=9000 \
 --log.level=trace \
 --screenControl.screenshot.uri="http://10.8.0.1:34523/screen.html" \
 --screenControl.screenshot.host="10.8.0.1:61000" \
