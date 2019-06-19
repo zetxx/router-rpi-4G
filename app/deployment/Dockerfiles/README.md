@@ -184,6 +184,8 @@ screenControl \
 --resolve.map.storage=4g-storage \
 --api.port=9000 \
 --log.level=trace \
+--screenControl.screenshot.uri="http://4g-screen-control:34523/screen.html" \
+--screenControl.screenshot.host="4g-chromium:61000" \
 --screenControl.refreshInterval=30000
 ```
 
