@@ -2,7 +2,8 @@ const isReachable = require('is-reachable');
 const pso = require('parse-strings-in-object');
 const rc = require('rc');
 const Factory = require('bridg-wrong-playground/factory.js');
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'dummy'}});
+const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
+const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
 
 class OnlineChecker extends Service {
     constructor(args) {
