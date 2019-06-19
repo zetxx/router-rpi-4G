@@ -1,6 +1,9 @@
+const rc = require('rc');
+const pso = require('parse-strings-in-object');
 const joi = require('@hapi/joi');
 const Factory = require('bridg-wrong-playground/factory.js');
-const Storage = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: 'dns'}, logger: {type: 'udp'}, external: {type: 'storage/postgresql'}});
+const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
+const Storage = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'storage/postgresql'}});
 
 const throwOrRetrun = function({result, error}) {
     if (error) {
