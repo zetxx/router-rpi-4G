@@ -7,8 +7,8 @@
     "bridg-wrong-playground": "*",
     "mdns-resolver": "0.0.3",
     "parse-strings-in-object": "1.2.0",
-    "pino": "5.12.2",
-    "pino-pretty": "2.6.1",
+    "pino": "5.12.6",
+    "pino-pretty": "3.2.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "is-reachable": "3.1.0",
@@ -26,21 +26,21 @@
     "serialize-error": "*",
     "pg": "*",
     "puppeteer-core": "*",
-    "spi-device": "2.0.7",
-    "onoff": "4.1.1",
+    "spi-device": "2.0.8",
+    "onoff": "4.1.2",
     "jimp": "*",
-    "d3": "~5.9.2"
+    "d3": "~5.9.7"
   },
   "devDependencies": {
     "gpio-mock": "*"
   },
   "scripts": {
-    "logger": "node ./Nodes/Logger",
-    "modem": "node ./Nodes/Modem",
-    "netProvider": "node ./Nodes/NetProvider",
-    "onlineChecker": "node ./Nodes/OnlineChecker",
-    "storage": "node ./Nodes/Storage",
-    "screenControl": "node ./Nodes/ScreenControl"
+    "logger": "node ./microservices/Logger",
+    "modem": "node ./microservices/Modem",
+    "netProvider": "node ./microservices/NetProvider",
+    "onlineChecker": "node ./microservices/OnlineChecker",
+    "storage": "node ./microservices/Storage",
+    "screenControl": "node ./microservices/ScreenControl"
   },
   "author": "zetxx",
   "license": "MIT"
