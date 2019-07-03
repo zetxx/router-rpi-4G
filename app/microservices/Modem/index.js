@@ -35,21 +35,21 @@ class Modem extends Service {
     }
 
     initCron() {
-        let triggerEventTimeout = modem.getStore(['config', 'modem', 'triggerEventTimeout']);
+        let triggerEventTimeout = service.getStore(['config', 'modem', 'triggerEventTimeout']);
         this.triggerEvent('stats', {});
         setInterval(() => this.triggerEvent('stats', {}), triggerEventTimeout);
     }
 }
 
-var modem = new Modem({name: 'modem'});
+var service = new Modem({name: 'modem'});
 
-modem.registerExternalMethod({
+service.registerExternalMethod({
     method: 'event.stats',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
+            uri: `${service.getStore(['config', 'modem', 'uri'])}/goform/goform_get_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`
+                Referer: `${service.getStore(['config', 'modem', 'uri'])}`
             },
             qs: {
                 isTest: 'false',
@@ -61,7 +61,7 @@ modem.registerExternalMethod({
     }
 });
 
-modem.registerExternalMethod({
+service.registerExternalMethod({
     method: 'stats.response',
     fn: function({result, error: {error} = {}}) {
         (result && this.notification('storage.stats.insert', {type: 'modem', data: lodashToCamelCase(result)}));
@@ -70,14 +70,14 @@ modem.registerExternalMethod({
     }
 });
 
-modem.registerApiMethod({
+service.registerApiMethod({
     method: 'command.disconnect',
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
+            uri: `${service.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
+                Referer: `${service.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept-Encoding': 'gzip, deflate'
             },
@@ -88,25 +88,25 @@ modem.registerApiMethod({
     }
 });
 
-modem.registerApiMethod({
+service.registerApiMethod({
     method: 'command.disconnect',
     direction: 'out',
     fn: fnThrowOrReturn
 });
 
-modem.registerExternalMethod({
+service.registerExternalMethod({
     method: 'command.disconnect',
     fn: fnThrowOrReturn
 });
 
-modem.registerApiMethod({
+service.registerApiMethod({
     method: 'command.connect',
     direction: 'in',
     fn: function() {
         return {
-            uri: `${modem.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
+            uri: `${service.getStore(['config', 'modem', 'uri'])}/goform/goform_set_cmd_process`,
             headers: {
-                Referer: `${modem.getStore(['config', 'modem', 'uri'])}`,
+                Referer: `${service.getStore(['config', 'modem', 'uri'])}`,
                 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept-Encoding': 'gzip, deflate'
             },
@@ -117,16 +117,17 @@ modem.registerApiMethod({
     }
 });
 
-modem.registerApiMethod({
+service.registerApiMethod({
     method: 'command.connect',
     direction: 'out',
     fn: fnThrowOrReturn
 });
 
-modem.registerExternalMethod({
+service.registerExternalMethod({
     method: 'command.connect',
     fn: fnThrowOrReturn
 });
 
-modem.start()
-    .then(() => modem.initCron());
+service.start()
+    .then(() => service.initCron())
+    .catch((e) => service.log('error', {in: 'modem.ready', error: e}));

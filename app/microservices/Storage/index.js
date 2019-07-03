@@ -11,9 +11,9 @@ const throwOrRetrun = function({result, error}) {
     }
     return result;
 };
-var storage = new Storage({name: 'storage'});
+var service = new Storage({name: 'storage'});
 
-storage.registerApiMethod({
+service.registerApiMethod({
     method: 'stats.insert',
     direction: 'in',
     fn: function({data, type}) {
@@ -30,11 +30,11 @@ storage.registerApiMethod({
         })
     }
 });
-storage.registerExternalMethod({method: 'stats.insert', fn: throwOrRetrun});
-storage.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOrRetrun});
+service.registerExternalMethod({method: 'stats.insert', fn: throwOrRetrun});
+service.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOrRetrun});
 
 ['modem', 'provider', 'is.online', 'vpn', 'ping'].map((type) => {
-    storage.registerApiMethod({
+    service.registerApiMethod({
         method: `get.${type}.stats`,
         direction: 'in',
         fn: function({last}) {
@@ -47,8 +47,9 @@ storage.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOr
         }
     });
 
-    storage.registerExternalMethod({method: `get.${type}.stats`, fn: throwOrRetrun});
-    storage.registerApiMethod({method: `get.${type}.stats`, direction: 'out', fn: throwOrRetrun});
+    service.registerExternalMethod({method: `get.${type}.stats`, fn: throwOrRetrun});
+    service.registerApiMethod({method: `get.${type}.stats`, direction: 'out', fn: throwOrRetrun});
 });
 
-storage.start();
+service.start()
+    .catch((e) => service.log('error', {in: 'storage.ready', error: e}));

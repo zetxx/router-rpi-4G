@@ -39,13 +39,13 @@ class NetProvider extends Service {
     }
 }
 
-var netProvider = new NetProvider({name: 'netProvider'});
+var service = new NetProvider({name: 'netProvider'});
 
-netProvider.registerExternalMethod({
+service.registerExternalMethod({
     method: 'event.traffic',
     fn: function() {
         return {
-            uri: netProvider.getStore(['config', 'netProvider', 'uri']),
+            uri: service.getStore(['config', 'netProvider', 'uri']),
             headers: {
                 'Accept-Encoding': 'gzip'
             },
@@ -54,15 +54,16 @@ netProvider.registerExternalMethod({
     }
 });
 
-netProvider.registerExternalMethod({
+service.registerExternalMethod({
     method: 'traffic.response',
     fn: function({result}) {
         let trafficUsed = convertToBytes((result.match(/(percentage[^>]+>)([\d,\sa-z.]+)/ig)[1] || '').split('>').pop().trim());
-        netProvider.log('info', {trafficUsed});
+        service.log('info', {trafficUsed});
         this.notification('storage.stats.insert', {type: 'provider', data: {trafficUsed}});
         return undefined;
     }
 });
 
-netProvider.start()
-    .then(() => netProvider.initCron());
+service.start()
+    .then(() => service.initCron())
+    .catch((e) => service.log('error', {in: 'netProvider.ready', error: e}));

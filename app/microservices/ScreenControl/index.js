@@ -155,65 +155,65 @@ class ScreenControl extends Service {
     }
 
     initCron() {
-        let refreshInterval = screenControl.getStore(['config', 'screenControl', 'refreshInterval']);
+        let refreshInterval = service.getStore(['config', 'screenControl', 'refreshInterval']);
         this.triggerEvent('pullData', {});
         setInterval(() => this.triggerEvent('pullData', {}), refreshInterval);
     }
 }
 
-var screenControl = new ScreenControl({name: 'screenControl'});
+var service = new ScreenControl({name: 'screenControl'});
 
-screenControl.registerExternalMethod({
+service.registerExternalMethod({
     method: 'event.pullData',
     fn: async function() {
-        let {rst, dc} = screenControl.getStore(['config', 'screenControl', 'gpio']);
+        let {rst, dc} = service.getStore(['config', 'screenControl', 'gpio']);
         if (rst && dc) {
-            let {width, height, hw} = screenControl.getStore(['config', 'screenControl', 'screenDimensions']);
-            let {storeDir, host, uri, loadWait} = screenControl.getStore(['config', 'screenControl', 'screenshot']);
+            let {width, height, hw} = service.getStore(['config', 'screenControl', 'screenDimensions']);
+            let {storeDir, host, uri, loadWait} = service.getStore(['config', 'screenControl', 'screenshot']);
             let browserInfo = await request({uri: `http://${host}/json/version`, headers: {host: 'localhost'}, json: true});
-            screenControl.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
+            service.log('debug', {in: 'event.pullData', browserInfo, storeDir, host, uri, width, height, hw, loadWait});
             let browser = await puppeteer.connect({browserWSEndpoint: browserInfo.webSocketDebuggerUrl.split('ws://localhost').join(`ws://${host}`), width, height});
-            screenControl.log('debug', {in: 'event.pullData', browser: {connected: true}});
+            service.log('debug', {in: 'event.pullData', browser: {connected: true}});
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             try {
                 await page.goto(uri);
-                screenControl.log('debug', {in: 'event.pullData', browser: 'url opened'});
+                service.log('debug', {in: 'event.pullData', browser: 'url opened'});
                 await page.waitFor(loadWait);
                 await page.screenshot({path: path.join(storeDir, 'screenshot.png'), clip: {x: 0, y: 0, width, height}});
-                screenControl.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
+                service.log('debug', {in: 'event.pullData', browser: 'screenshot taken'});
             } catch (e) {
-                screenControl.log('error', {in: 'event.pullData', browser: 'error'});
+                service.log('error', {in: 'event.pullData', browser: 'error'});
                 throw e;
             } finally {
                 await context.close();
                 await browser.disconnect();
-                screenControl.log('debug', {in: 'event.pullData', browser: 'closed and diss'});
+                service.log('debug', {in: 'event.pullData', browser: 'closed and diss'});
             }
 
             let myImage = await jimp.read(path.join(storeDir, 'screenshot.png'));
-            screenControl.log('debug', {in: 'event.pullData', image: 'opened'});
+            service.log('debug', {in: 'event.pullData', image: 'opened'});
             await myImage.rgba(false);
             var scanStop = (hw - 1) * 4;
             await new Promise((resolve, reject) => {
                 myImage.scan(0, 0, height, width, function(x, y, idx) {
                     const bytes = Ssd1351.RGBToRGB565(this.bitmap.data[idx + 0], this.bitmap.data[idx + 1], this.bitmap.data[idx + 2], this.bitmap.data[idx + 3]);
-                    screenControl.pixelsBuffer[idx / 2] = bytes[0];
-                    screenControl.pixelsBuffer[idx / 2 + 1] = bytes[1];
+                    service.pixelsBuffer[idx / 2] = bytes[0];
+                    service.pixelsBuffer[idx / 2 + 1] = bytes[1];
                     if (scanStop === idx) {
                         resolve(1);
                     }
                 });
             });
-            screenControl.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
-            await screenControl.oled.deviceSendRaw(screenControl.pixelsBuffer);
-            screenControl.log('debug', {in: 'event.pullData', image: 'display ready'});
+            service.log('debug', {in: 'event.pullData', image: 'img byte array constructed'});
+            await service.oled.deviceSendRaw(service.pixelsBuffer);
+            service.log('debug', {in: 'event.pullData', image: 'display ready'});
         }
         return false;
     }
 });
 
-screenControl.registerApiMethod({
+service.registerApiMethod({
     method: 'stats',
     direction: 'in',
     fn: async function() {
@@ -246,7 +246,7 @@ screenControl.registerApiMethod({
         }
         if (lastProviderStats && lastProviderStats.length) {
             let {data} = lastProviderStats.pop();
-            response.provider = {trafficUsed: getTrafficUsedPercentage(data.trafficUsed, screenControl.getStore(['config', 'screenControl', 'monthlyTraffic']))};
+            response.provider = {trafficUsed: getTrafficUsedPercentage(data.trafficUsed, service.getStore(['config', 'screenControl', 'monthlyTraffic']))};
         }
 
         return response;
@@ -254,15 +254,16 @@ screenControl.registerApiMethod({
     meta: {cors: true}
 });
 
-screenControl.registerApiMethod({
+service.registerApiMethod({
     method: 'stats',
     direction: 'out',
     fn: fnThrowOrReturn
 });
 
-screenControl.registerExternalMethod({
+service.registerExternalMethod({
     method: 'stats',
     fn: fnThrowOrReturn
 });
 
-screenControl.start();
+service.start()
+    .catch((e) => service.log('error', {in: 'screenControl.ready', error: e}));

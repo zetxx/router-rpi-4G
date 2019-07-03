@@ -21,16 +21,16 @@ class OnlineChecker extends Service {
     }
 
     initCron() {
-        let checkInterval = onlineChecker.getStore(['config', 'onlineChecker', 'checkInterval']);
+        let checkInterval = service.getStore(['config', 'onlineChecker', 'checkInterval']);
         this.triggerEvent('isReachable', {});
         setInterval(() => this.triggerEvent('isReachable', {}), checkInterval);
     }
 }
 
-var onlineChecker = new OnlineChecker({name: 'onlineChecker'});
+var service = new OnlineChecker({name: 'onlineChecker'});
 var onlineStatus = [];
 
-onlineChecker.registerExternalMethod({
+service.registerExternalMethod({
     method: 'event.isReachable',
     fn: async function() {
         var io = await isReachable('google.com:80');
@@ -38,32 +38,33 @@ onlineChecker.registerExternalMethod({
     }
 });
 
-onlineChecker.registerExternalMethod({
+service.registerExternalMethod({
     method: 'isReachable.response',
     fn: async function({result, isReachable = result}) {
-        let resetCount = onlineChecker.getStore(['config', 'onlineChecker', 'resetCount']);
+        let resetCount = service.getStore(['config', 'onlineChecker', 'resetCount']);
 
         if (isReachable) {
             onlineStatus = [];
-            onlineChecker.log('info', {internetConnection: 'ok'});
+            service.log('info', {internetConnection: 'ok'});
             this.notification('storage.stats.insert', {type: 'is.online', data: {isReachable: true}});
         } else if (onlineStatus.length >= resetCount) {
-            onlineChecker.log('warn', {internetConnection: 'down', checks: onlineStatus.length, checkLimit: 'reached'});
+            service.log('warn', {internetConnection: 'down', checks: onlineStatus.length, checkLimit: 'reached'});
             this.notification('storage.stats.insert', {type: 'is.online', data: {isReachable: false}});
             onlineStatus = [];
             try {
                 await this.request('modem.command.disconnect');
                 return this.request('modem.command.connect');
             } catch (e) {
-                onlineChecker.log('error', e);
+                service.log('error', e);
             }
         } else {
-            onlineChecker.log('warn', {internetConnection: 'down', checks: onlineStatus.length + 1});
+            service.log('warn', {internetConnection: 'down', checks: onlineStatus.length + 1});
             onlineStatus.push(Date.now());
         }
         return undefined;
     }
 });
 
-onlineChecker.start()
-    .then(() => onlineChecker.initCron());
+service.start()
+    .then(() => service.initCron())
+    .catch((e) => service.log('error', {in: 'onlineChecker.ready', error: e}));
