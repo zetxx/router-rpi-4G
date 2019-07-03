@@ -66,7 +66,6 @@ storage \
 -- \
 --discovery=false \
 --resolve.globalPort=9000 \
---discovery.loopback=false \
 --resolve.map.logger=4g-logger \
 --api.port=9000 \
 --log.level=trace \

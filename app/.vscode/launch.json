@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Logger",
-            "program": "${workspaceFolder}/Nodes/Logger/index.js",
+            "program": "${workspaceFolder}/microservices/Logger/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -28,7 +28,7 @@
             "type": "node",
             "request": "launch",
             "name": "Modem",
-            "program": "${workspaceFolder}/Nodes/Modem/index.js",
+            "program": "${workspaceFolder}/microservices/Modem/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -53,7 +53,7 @@
             "type": "node",
             "request": "launch",
             "name": "NetProvider",
-            "program": "${workspaceFolder}/Nodes/NetProvider/index.js",
+            "program": "${workspaceFolder}/microservices/NetProvider/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -78,7 +78,7 @@
             "type": "node",
             "request": "launch",
             "name": "OnlineChecker",
-            "program": "${workspaceFolder}/Nodes/OnlineChecker/index.js",
+            "program": "${workspaceFolder}/microservices/OnlineChecker/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -100,7 +100,7 @@
             "type": "node",
             "request": "launch",
             "name": "Storage",
-            "program": "${workspaceFolder}/Nodes/Storage/index.js",
+            "program": "${workspaceFolder}/microservices/Storage/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
@@ -125,7 +125,7 @@
             "type": "node",
             "request": "launch",
             "name": "ScreenControl",
-            "program": "${workspaceFolder}/Nodes/ScreenControl/index.js",
+            "program": "${workspaceFolder}/microservices/ScreenControl/index.js",
             "outputCapture": "std",
             "protocol": "inspector",
             "runtimeArgs": [
