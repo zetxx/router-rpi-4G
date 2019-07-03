@@ -1,15 +1,10 @@
 const rc = require('rc');
 const pso = require('parse-strings-in-object');
 const Factory = require('bridg-wrong-playground/factory.js');
+const {fnThrowOrReturn} = require('../utils');
 const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
 const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'http'}});
 
-const fnThrowOrReturn = function({result, error}) {
-    if (error) {
-        throw error;
-    }
-    return result;
-};
 const lodashToCamelCase = (obj) => {
     return pso(Object.keys(obj).reduce((a, c) => {
         return {

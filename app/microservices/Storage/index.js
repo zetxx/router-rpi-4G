@@ -42,7 +42,7 @@ service.registerApiMethod({method: 'stats.insert', direction: 'out', fn: throwOr
         },
         meta: {
             validate: joi.object({
-                last: joi.number().positive().default(5)
+                last: joi.number().positive().example([5])
             })
         }
     });

@@ -104,7 +104,7 @@ class ScreenControl extends Service {
     }
 
     async httpInit() {
-        const server = Hapi.server({
+        this.frontendServer = Hapi.server({
             ...this.getStore(['config', 'screenControl', 'http']),
             routes: {
                 files: {
@@ -112,15 +112,15 @@ class ScreenControl extends Service {
                 }
             }
         });
-        await server.register(require('@hapi/inert'));
-        server.route({
+        await this.frontendServer.register(require('@hapi/inert'));
+        this.frontendServer.route({
             method: 'GET',
             path: '/screen.{ext}',
             handler: (request, h) => {
                 return h.file(['screen', request.params.ext].join('.'));
             }
         });
-        server.route({
+        this.frontendServer.route({
             method: 'GET',
             path: '/assets/d3/{params*}',
             handler: {
@@ -130,7 +130,7 @@ class ScreenControl extends Service {
                 }
             }
         });
-        server.route({
+        this.frontendServer.route({
             method: 'GET',
             path: '/icons/{params*}',
             handler: {
@@ -140,7 +140,7 @@ class ScreenControl extends Service {
                 }
             }
         });
-        server.route({
+        this.frontendServer.route({
             method: 'GET',
             path: '/fonts/{params*}',
             handler: {
@@ -150,14 +150,20 @@ class ScreenControl extends Service {
                 }
             }
         });
-        await server.start();
+        await this.frontendServer.start();
         this.log('debug', {in: 'start', staticServer: this.getStore(['config', 'screenControl', 'http'])});
+    }
+
+    stop() {
+        clearInterval(this.screenControlCronInterval);
+        this.frontendServer.stop({timeout: 2000});
+        return super.stop();
     }
 
     initCron() {
         let refreshInterval = service.getStore(['config', 'screenControl', 'refreshInterval']);
         this.triggerEvent('pullData', {});
-        setInterval(() => this.triggerEvent('pullData', {}), refreshInterval);
+        this.screenControlCronInterval = setInterval(() => this.triggerEvent('pullData', {}), refreshInterval);
     }
 }
 
@@ -219,7 +225,7 @@ service.registerApiMethod({
     fn: async function() {
         let recForGraph = 80;
         let lastModemStats = await this.request('storage.get.modem.stats', {last: 1});
-        let modemTraffic = (await this.request('storage.get.modem.stats', {last: recForGraph}));
+        let modemTraffic = await this.request('storage.get.modem.stats', {last: recForGraph});
         let lastVpnStats = await this.request('storage.get.vpn.stats', {last: 1});
         let lastPingStats = await this.request('storage.get.ping.stats', {last: recForGraph});
         let lastProviderStats = await this.request('storage.get.provider.stats', {last: 1});

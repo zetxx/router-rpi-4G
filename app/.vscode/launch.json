@@ -141,7 +141,7 @@
                 "--screenControl.gpio.rst=0",
                 "--screenControl.gpio.dc=0",
                 "--discovery.nodeName=4g-screen-control",
-                "--screenControl.screenshot.uri=http://10.8.0.90:34523/screen.html",
+                "--screenControl.screenshot.uri=http://localhost:34523/screen.html?port=9005",
                 "--screenControl.screenshot.storeDir=./"
             ],
             "env": {

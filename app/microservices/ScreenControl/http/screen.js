@@ -1,5 +1,8 @@
 function runAll() {
-    d3.json(['http://', window.location.hostname, ':9000', '/JSONRPC/stats'].join(''), {
+    var urlParams = new URLSearchParams(window.location.search);
+    var port = parseInt(urlParams.get('port') || 9000);
+
+    d3.json(['http://', window.location.hostname, ['', port].join(':'), '/JSONRPC/stats'].join(''), {
         crossOrigin: 'anonymous',
         method: 'POST',
         headers: {
@@ -15,11 +18,11 @@ function runAll() {
         })
     })
         .then((data) => {
-            d3.select('.fl.net').attr('class', (data.net.bar && ['fl net on bar'].concat([data.net.bar]).join('')) || 'fl net off');
-            d3.select('.fl.vpn').attr('class', (data.vpn.on && ['fl vpn'].concat([(data.vpn.on && 'on') || 'off']).join(' ')) || 'fl vpn off');
-            d3.select('.fl.traffic-used span').html((data.provider.trafficUsed && [data.provider.trafficUsed, '%'].join('')) || 'n/a');
+            d3.select('.fl.net').attr('class', (data.result.net.bar && ['fl net on bar'].concat([data.result.net.bar]).join('')) || 'fl net off');
+            d3.select('.fl.vpn').attr('class', (data.result.vpn.on && ['fl vpn'].concat([(data.result.vpn.on && 'on') || 'off']).join(' ')) || 'fl vpn off');
+            d3.select('.fl.traffic-used span').html((data.result.provider.trafficUsed && [data.result.provider.trafficUsed, '%'].join('')) || 'n/a');
 
-            var list = data.graphData.map(({date, ...rest}) => ({date: new Date(date), ...rest}));
+            var list = data.result.graphData.map(({date, ...rest}) => ({date: new Date(date), ...rest}));
             if (list && list.length) {
                 var svgWidth = (parseInt(d3.select('#plate').style('width').slice(0, -2)));
                 var svgHeight = (parseInt(d3.select('#plate').style('height').slice(0, -2)));
@@ -98,7 +101,7 @@ function runAll() {
                     .append('text')
                     .attr('y', -4)
                     .attr('x', 22)
-                    .html(data.trafficMetrics.tx + '&#8679;');
+                    .html(data.result.trafficMetrics.tx + '&#8679;');
 
                 // Add the Y1 Axis
                 svg.append('g')
@@ -108,7 +111,7 @@ function runAll() {
                     .append('text')
                     .attr('y', -4)
                     .attr('x', -95)
-                    .html(data.trafficMetrics.rx + '&#8681;');
+                    .html(data.result.trafficMetrics.rx + '&#8681;');
 
                 svg.select('.axis.download')
                     .append('text')
