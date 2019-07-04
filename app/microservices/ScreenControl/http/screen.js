@@ -18,6 +18,9 @@ function runAll() {
         })
     })
         .then((data) => {
+            if (data.error) {
+                return;
+            }
             d3.select('.fl.net').attr('class', (data.result.net.bar && ['fl net on bar'].concat([data.result.net.bar]).join('')) || 'fl net off');
             d3.select('.fl.vpn').attr('class', (data.result.vpn.on && ['fl vpn'].concat([(data.result.vpn.on && 'on') || 'off']).join(' ')) || 'fl vpn off');
             d3.select('.fl.traffic-used span').html((data.result.provider.trafficUsed && [data.result.provider.trafficUsed, '%'].join('')) || 'n/a');
