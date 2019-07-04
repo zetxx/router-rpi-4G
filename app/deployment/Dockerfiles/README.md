@@ -200,7 +200,6 @@ docker run -it -d \
 --log-opt max-size=20m \
 --log-opt max-file=1 \
 -v ${PWD}:/app \
--p 9004:9000 \
 app4g \
 storage \
 -- \
@@ -209,7 +208,7 @@ storage \
 --resolve.map.logger=4g-logger \
 --api.port=9000 \
 --log.level=trace \
---storage.host=postgres \
+--storage.host=10.8.0.99 \
 --storage.user=rpi4g \
 --storage.password=123 \
 --storage.database=rpi4g \
@@ -252,4 +251,12 @@ screenControl \
 docker run -it --rm --network 4gnet --privileged -v ${PWD}:/app -p 34523:34523  --entrypoint "" app4g /bin/ash
 docker run -it --rm --network 4gnet --entrypoint "" app4g /bin/ash
 docker run -it --rm  -v ${PWD}:/app --entrypoint "" mysnapshot /bin/ash
+
+docker run -it --rm \
+--network 4gnet \
+--name 4g-storage \
+-m=128m \
+--cpus=1 \
+-v ${PWD}:/app \
+--entrypoint "" app4g /bin/ash
 ```
