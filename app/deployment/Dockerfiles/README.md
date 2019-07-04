@@ -183,12 +183,39 @@ screenControl \
 --resolve.map.storage=4g-storage \
 --api.port=9000 \
 --log.level=trace \
---screenControl.screenshot.uri="http://4g-screen-control:34523/screen.html" \
+--screenControl.screenshot.uri="http://4g-screen-control:34523/screen.html?port=9000" \
 --screenControl.screenshot.host="4g-chromium:61000" \
 --screenControl.refreshInterval=30000
 ```
 
-## ScreenControl home rpi
+## Home rpi
+## Storage
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--network 4gnet \
+--name 4g-storage \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/app \
+-p 9004:9000 \
+app4g \
+storage \
+-- \
+--discovery=false \
+--resolve.globalPort=9000 \
+--resolve.map.logger=4g-logger \
+--api.port=9000 \
+--log.level=trace \
+--storage.host=postgres \
+--storage.user=rpi4g \
+--storage.password=123 \
+--storage.database=rpi4g \
+--storage.schema=rpi4g
+```
+### ScreenControl
 ```bash
 docker run -it -d \
 --privileged \
@@ -211,7 +238,7 @@ screenControl \
 --resolve.map.storage=4g-storage \
 --api.port=9000 \
 --log.level=trace \
---screenControl.screenshot.uri="http://10.8.0.1:34523/screen.html" \
+--screenControl.screenshot.uri="http://10.8.0.1:34523/screen.html?port=9005" \
 --screenControl.screenshot.host="10.8.0.1:61000" \
 --screenControl.refreshInterval=30000
 ```
