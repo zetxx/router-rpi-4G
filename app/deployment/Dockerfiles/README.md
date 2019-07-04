@@ -13,23 +13,6 @@ docker network create 4gnet
 
 # RUN
 
-## Storage, eg. postgresql
-```bash
-docker run -it -d \
---restart=unless-stopped \
---network 4gnet \
--m=128m \
---cpus=1 \
---log-opt max-size=20m \
---log-opt max-file=1 \
--v ${PWD}:/var/lib/postgresql/data \
---name postgres \
--e POSTGRES_PASSWORD=123 \
--e POSTGRES_USER=postgres \
--p 5432:5432 \
-postgres:alpine
-```
-
 ## Logger
 ```bash
 docker run -it -d \
@@ -47,6 +30,23 @@ logger \
 --discovery=false \
 --api.port=9000 \
 --log.level=trace
+```
+
+## Storage, eg. postgresql
+```bash
+docker run -it -d \
+--restart=unless-stopped \
+--network 4gnet \
+-m=128m \
+--cpus=1 \
+--log-opt max-size=20m \
+--log-opt max-file=1 \
+-v ${PWD}:/var/lib/postgresql/data \
+--name postgres \
+-e POSTGRES_PASSWORD=123 \
+-e POSTGRES_USER=postgres \
+-p 5432:5432 \
+postgres:alpine
 ```
 
 ## Storage
@@ -157,7 +157,6 @@ docker run -it -d \
 -m=256m \
 --cpus=1 \
 --name 4g-chromium \
--p 61000:9222 \
 --cap-add=SYS_ADMIN \
 chromium4g
 ```
@@ -184,7 +183,7 @@ screenControl \
 --api.port=9000 \
 --log.level=trace \
 --screenControl.screenshot.uri="http://4g-screen-control:34523/screen.html?port=9000" \
---screenControl.screenshot.host="4g-chromium:61000" \
+--screenControl.screenshot.host="4g-chromium:9222" \
 --screenControl.refreshInterval=30000
 ```
 
@@ -237,8 +236,8 @@ screenControl \
 --resolve.map.storage=4g-storage \
 --api.port=9000 \
 --log.level=trace \
---screenControl.screenshot.uri="http://10.8.0.1:34523/screen.html?port=9005" \
---screenControl.screenshot.host="10.8.0.1:61000" \
+--screenControl.screenshot.uri="http://4g-screen-control:34523/screen.html?port=9000" \
+--screenControl.screenshot.host="4g-chromium:9222" \
 --screenControl.refreshInterval=30000
 ```
 
