@@ -13,5 +13,7 @@ dtparam=gpu_mem=16
 #over_voltage=-1
 #arm_freq_min=400
 #arm_freq=1400
+#dtoverlay=disable-bt
+#dtoverlay=disable-wifi
 
 initramfs initramfs-linux.img followkernel
