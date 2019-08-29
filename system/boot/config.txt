@@ -8,4 +8,10 @@ dtparam=spi=on
 dtparam=max_usb_current=1
 dtparam=gpu_mem=16
 
+##rpi4
+#over_voltage_min=-2
+#over_voltage=-1
+#arm_freq_min=400
+#arm_freq=1400
+
 initramfs initramfs-linux.img followkernel
