@@ -15,5 +15,21 @@ needs to be done
 Adafruit Feather HUZZAH32 ESP32 - Wi-Fi, Bluetooth, CP2104 USB-UART, Li-Po charging port
 
 ## devices, libs
-    - https://www.espruino.com/ESP32
-    - https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
+- https://www.espruino.com/ESP32
+- https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
+
+# flash latest firmware
+
+```bash
+esptool.py    \
+        --chip esp32                                \
+        --port /dev/ttyUSB0                         \
+        --baud 921600                               \
+        --before default_reset                            \
+        --after hard_reset write_flash              \
+        -z                                          \
+        --flash_mode dio                            \
+        --flash_freq 40m                            \
+        --flash_size detect                         \
+        0x10000 espruino_esp32.bin
+```
