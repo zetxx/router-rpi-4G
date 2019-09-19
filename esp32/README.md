@@ -9,3 +9,5 @@ needs to be done
 - switching power sources when needed
     - battery
     - power line
+
+- [schematics](https://easyeda.com/zetxx/power-board)
