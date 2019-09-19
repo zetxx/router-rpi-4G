@@ -18,7 +18,7 @@ Adafruit Feather HUZZAH32 ESP32 - Wi-Fi, Bluetooth, CP2104 USB-UART, Li-Po charg
 - https://www.espruino.com/ESP32
 - https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
 
-# [flash latest firmware](https://www.espruino.com/binaries/travis/master/espruino_esp32.bin)
+# [flash latest espruino firmware](https://www.espruino.com/binaries/travis/master/espruino_esp32.bin)
 
 ```bash
 esptool.py    \
