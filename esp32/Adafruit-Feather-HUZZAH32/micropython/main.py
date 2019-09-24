@@ -59,6 +59,8 @@ async def checkRpi():
             else:
                 rpiChecks = []
                 print('=====================checkRpi=200==============================')
+    else:
+        netConn()
 
 print('=====================Init==============================')
 wlan = WLAN(STA_IF)
