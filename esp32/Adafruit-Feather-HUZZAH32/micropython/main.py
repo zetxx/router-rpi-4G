@@ -13,7 +13,7 @@ import ujson
 with open('config.json', 'r') as f:
     rawConfData = f.read()
 config = ujson.loads(rawConfData)
-rpiChecks = []
+endpointChecks = []
 
 def powerWatch(p):
     print('=====================powerWatch==============================')
@@ -37,28 +37,28 @@ def netConn():
     if not wlan.isconnected():
         wlan.connect(config['wifi']['ssid'], config['wifi']['passphrase'])
 
-async def checkRpi():
-    print('=====================checkRpi==============================')
+async def checkEndpoint():
+    print('=====================checkEndpoint==============================')
     if wlan.isconnected():
-        global rpiChecks
+        global endpointChecks
         statusCode = 0
         try:
-            r = requests.get(config['healtz']['rpi'])
+            r = requests.get(config['healtz']['endpoint'])
             statusCode = r.status_code
             r.close()
         except:
-            print('=====================checkRpi:request exeption==============================')
+            print('=====================checkEndpoint:request exeption==============================')
         finally:
             if statusCode != 200:
-                print('=====================checkRpi=!200==============================')
-                rpiChecks.append(1)
-                if len(rpiChecks) > 3:
-                    print('=====================checkRpi=rpiChecks>3==============================')
-                    rpiChecks = []
+                print('=====================checkEndpoint=!200==============================')
+                endpointChecks.append(1)
+                if len(endpointChecks) > config['healtz']['maxChecks']:
+                    print('=====================checkEndpoint=endpointChecks>3==============================')
+                    endpointChecks = []
                     resetLoad()
             else:
-                rpiChecks = []
-                print('=====================checkRpi=200==============================')
+                endpointChecks = []
+                print('=====================checkEndpoint=200==============================')
     else:
         netConn()
 
@@ -73,4 +73,4 @@ powerGridDetection = Pin(32, Pin.IN, Pin.PULL_DOWN)
 netConn()
 powerWatch(powerGridDetection)
 powerGridDetection.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=powerWatch)
-Timer(-1).init(period=30000, mode=Timer.PERIODIC, callback=lambda t: asyncio.get_event_loop().run_until_complete(checkRpi()))
+Timer(-1).init(period=config['healtz']['checkInterval'], mode=Timer.PERIODIC, callback=lambda t: asyncio.get_event_loop().run_until_complete(checkEndpoint()))
