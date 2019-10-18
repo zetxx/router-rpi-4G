@@ -1,20 +1,10 @@
-const path = require('path');
-const Hapi = require('@hapi/hapi');
-const pso = require('parse-strings-in-object');
-const rc = require('rc');
 const jimp = require('jimp');
 const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
 const Ssd1351 = require('./lib');
-const Factory = require('bridg-wrong-playground/factory.js');
-const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
-const fnThrowOrReturn = function({result, error}) {
-    if (error) {
-        throw error;
-    }
-    return result;
-};
+const {getConfig, throwOrReturn, factory} = require('bridg-wrong-playground/utils');
+const discovery = getConfig('', ['resolve'], {}).type || 'mdns';
+const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
 
 const getTrafficMetrics = (num) => {
     if (num <= 1024) {
@@ -60,25 +50,23 @@ class ScreenControl extends Service {
         super(args);
         this.setStore(
             ['config', 'screenControl'],
-            pso(rc(this.getNodeName() || 'buzzer', {
-                screenControl: {
-                    level: 'trace',
-                    refreshInterval: 60000,
-                    monthlyTraffic: 10485760000,
-                    gpio: {rst: 25, dc: 24},
-                    screenDimensions: {width: 128, height: 128},
-                    screenshot: {
-                        host: '4g-chromium:9222',
-                        uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
-                        storeDir: '/app_tmp/',
-                        loadWait: 8000
-                    },
-                    http: {
-                        port: 34523,
-                        host: '0.0.0.0'
-                    }
+            getConfig(this.getNodeName() || 'buzzer', ['screenControl'], {
+                level: 'trace',
+                refreshInterval: 60000,
+                monthlyTraffic: 10485760000,
+                gpio: {rst: 25, dc: 24},
+                screenDimensions: {width: 128, height: 128},
+                screenshot: {
+                    host: '4g-chromium:9222',
+                    uri: 'http://bl.ocks.org/interwebjill/raw/8122dd08da9facf8c6ef6676be7da03f/',
+                    storeDir: '/app_tmp/',
+                    loadWait: 8000
+                },
+                http: {
+                    port: 34523,
+                    host: '0.0.0.0'
                 }
-            }).screenControl)
+            })
         );
     }
 
@@ -263,12 +251,12 @@ service.registerApiMethod({
 service.registerApiMethod({
     method: 'stats',
     direction: 'out',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.registerExternalMethod({
     method: 'stats',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.start()

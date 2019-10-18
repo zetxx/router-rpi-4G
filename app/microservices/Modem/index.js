@@ -1,9 +1,7 @@
-const rc = require('rc');
 const pso = require('parse-strings-in-object');
-const Factory = require('bridg-wrong-playground/factory.js');
-const {fnThrowOrReturn} = require('../utils');
-const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'http'}});
+const {getConfig, factory, throwOrReturn} = require('bridg-wrong-playground/utils');
+const discovery = getConfig('', ['resolve'], {}).type || 'mdns';
+const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'http'}});
 
 const lodashToCamelCase = (obj) => {
     return pso(Object.keys(obj).reduce((a, c) => {
@@ -19,13 +17,11 @@ class Modem extends Service {
         super(args);
         this.setStore(
             ['config', 'modem'],
-            pso(rc(this.getNodeName() || 'buzzer', {
-                modem: {
-                    level: 'trace',
-                    uri: 'http://127.0.0.1',
-                    triggerEventTimeout: 30000 // 30 sec
-                }
-            }).modem)
+            getConfig(this.getNodeName() || 'buzzer', ['modem'], {
+                level: 'trace',
+                uri: 'http://127.0.0.1',
+                triggerEventTimeout: 30000 // 30 sec
+            })
         );
     }
 
@@ -86,12 +82,12 @@ service.registerApiMethod({
 service.registerApiMethod({
     method: 'command.disconnect',
     direction: 'out',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.registerExternalMethod({
     method: 'command.disconnect',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.registerApiMethod({
@@ -115,12 +111,12 @@ service.registerApiMethod({
 service.registerApiMethod({
     method: 'command.connect',
     direction: 'out',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.registerExternalMethod({
     method: 'command.connect',
-    fn: fnThrowOrReturn
+    fn: throwOrReturn
 });
 
 service.start()

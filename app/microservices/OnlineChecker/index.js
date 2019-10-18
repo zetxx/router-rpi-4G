@@ -1,22 +1,18 @@
 const isReachable = require('is-reachable');
-const pso = require('parse-strings-in-object');
-const rc = require('rc');
-const Factory = require('bridg-wrong-playground/factory.js');
-const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
+const {getConfig, factory} = require('bridg-wrong-playground/utils');
+const discovery = getConfig('', ['resolve'], {}).type || 'mdns';
+const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
 
 class OnlineChecker extends Service {
     constructor(args) {
         super(args);
         this.setStore(
             ['config', 'onlineChecker'],
-            pso(rc(this.getNodeName() || 'buzzer', {
-                onlineChecker: {
-                    level: 'trace',
-                    resetCount: 3,
-                    checkInterval: 60000
-                }
-            }).onlineChecker)
+            getConfig(this.getNodeName() || 'buzzer', ['onlineChecker'], {
+                level: 'trace',
+                resetCount: 3,
+                checkInterval: 60000
+            })
         );
     }
 

@@ -1,5 +1,5 @@
 module.exports = {
-    fnThrowOrReturn: function({result, error}) {
+    throwOrReturn: function({result, error}) {
         if (error) {
             throw error;
         }

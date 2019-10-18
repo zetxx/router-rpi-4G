@@ -1,8 +1,6 @@
-const rc = require('rc');
-const pso = require('parse-strings-in-object');
-const Factory = require('bridg-wrong-playground/factory.js');
-const discovery = (pso(rc('', {})).discovery === false && 'direct') || 'mdns';
-const Service = Factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'http'}});
+const {getConfig, factory} = require('bridg-wrong-playground/utils');
+const discovery = getConfig('', ['resolve'], {}).type || 'mdns';
+const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'http'}});
 
 const dataTypeList = ['b', 'kb', 'mb', 'gb', 'tb'];
 
@@ -22,13 +20,11 @@ class NetProvider extends Service {
         super(args);
         this.setStore(
             ['config', 'netProvider'],
-            pso(rc(this.getNodeName() || 'buzzer', {
-                netProvider: {
-                    level: 'trace',
-                    uri: 'http://data.vivacom.bg',
-                    triggerEventTimeout: 10800000 // 3 hour
-                }
-            }).netProvider)
+            getConfig(this.getNodeName() || 'buzzer', ['netProvider'], {
+                level: 'trace',
+                uri: 'http://data.vivacom.bg',
+                triggerEventTimeout: 10800000 // 3 hour
+            })
         );
     }
 

@@ -24,7 +24,7 @@ class Oled {
 
     async initSpi() {
         let spi = await new Promise((resolve, reject) => {
-            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, async(err) => (err && reject(err)) || (!err && resolve(spi)));
+            var spi = spiDevice.open(0, 0, {maxSpeedHz: 19660800}, (err) => (err && reject(err)) || (!err && resolve(spi)));
             // resolve({transfer: (collection, cb) => cb(null, collection)});
         });
         this.device.spi = spi;
