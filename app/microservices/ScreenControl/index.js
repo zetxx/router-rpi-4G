@@ -1,10 +1,14 @@
+const {parse} = require('url');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
 const jimp = require('jimp');
 const puppeteer = require('puppeteer-core');
 const request = require('request-promise-native');
 const Ssd1351 = require('./lib');
 const {getConfig, throwOrReturn, factory} = require('bridg-wrong-playground/utils');
 const discovery = getConfig('', ['resolve'], {}).type || 'mdns';
-const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'udp'}, external: {type: 'dummy'}});
+const Service = factory({state: true, service: true, api: {type: 'http'}, discovery: {type: discovery}, logger: {type: 'net'}, external: {type: 'dummy'}});
 
 const getTrafficMetrics = (num) => {
     if (num <= 1024) {
@@ -64,7 +68,8 @@ class ScreenControl extends Service {
                 },
                 http: {
                     port: 34523,
-                    host: '0.0.0.0'
+                    host: '0.0.0.0',
+                    workDir: path.join(__dirname, 'http')
                 }
             })
         );
@@ -92,59 +97,77 @@ class ScreenControl extends Service {
     }
 
     async httpInit() {
-        this.frontendServer = Hapi.server({
-            ...this.getStore(['config', 'screenControl', 'http']),
-            routes: {
-                files: {
-                    relativeTo: path.join(__dirname, 'http')
+        this.frontendServer = http.createServer((req, res) => {
+            let {method, url} = req;
+            let parsedUrl = parse(url);
+            url = parsedUrl.pathname;
+            if (method === 'GET' && url.startsWith('/') && !url.endsWith('/')) {
+                var resPath = path.join(this.getStore(['config', 'screenControl', 'http', 'workDir']), url);
+                if (url.startsWith('/assets/d3/')) {
+                    resPath = path.join(path.dirname(require.resolve('d3')), url.split('/assets/d3/').pop());
                 }
-            }
-        });
-        await this.frontendServer.register(require('@hapi/inert'));
-        this.frontendServer.route({
-            method: 'GET',
-            path: '/screen.{ext}',
-            handler: (request, h) => {
-                return h.file(['screen', request.params.ext].join('.'));
-            }
-        });
-        this.frontendServer.route({
-            method: 'GET',
-            path: '/assets/d3/{params*}',
-            handler: {
-                directory: {
-                    path: path.dirname(require.resolve('d3')),
-                    listing: true
+                if (fs.existsSync(resPath)) {
+                    res.writeHead(200);
+                    fs.createReadStream(resPath).pipe(res);
+                } else {
+                    res.writeHead(404);
+                    res.end(null);
                 }
+            } else {
+                res.writeHead(404);
+                res.end(null);
             }
         });
-        this.frontendServer.route({
-            method: 'GET',
-            path: '/icons/{params*}',
-            handler: {
-                directory: {
-                    path: path.join(__dirname, 'http/icons'),
-                    listing: true
-                }
-            }
+        return new Promise((resolve, reject) => {
+            this.log('debug', {in: 'start', staticServer: this.getStore(['config', 'screenControl', 'http'])});
+            this.frontendServer.listen({
+                host: this.getStore(['config', 'screenControl', 'http', 'host']),
+                port: this.getStore(['config', 'screenControl', 'http', 'port'])
+            }, () => resolve(this.getStore(['config', 'screenControl', 'http'])));
         });
-        this.frontendServer.route({
-            method: 'GET',
-            path: '/fonts/{params*}',
-            handler: {
-                directory: {
-                    path: path.join(__dirname, 'http/icons'),
-                    listing: true
-                }
-            }
-        });
-        await this.frontendServer.start();
-        this.log('debug', {in: 'start', staticServer: this.getStore(['config', 'screenControl', 'http'])});
+
+        // this.frontendServer.route({
+        //     method: 'GET',
+        //     path: '/screen.{ext}',
+        //     handler: (request, h) => {
+        //         return h.file(['screen', request.params.ext].join('.'));
+        //     }
+        // });
+        // this.frontendServer.route({
+        //     method: 'GET',
+        //     path: '/assets/d3/{params*}',
+        //     handler: {
+        //         directory: {
+        //             path: path.dirname(require.resolve('d3')),
+        //             listing: true
+        //         }
+        //     }
+        // });
+        // this.frontendServer.route({
+        //     method: 'GET',
+        //     path: '/icons/{params*}',
+        //     handler: {
+        //         directory: {
+        //             path: path.join(__dirname, 'http/icons'),
+        //             listing: true
+        //         }
+        //     }
+        // });
+        // this.frontendServer.route({
+        //     method: 'GET',
+        //     path: '/fonts/{params*}',
+        //     handler: {
+        //         directory: {
+        //             path: path.join(__dirname, 'http/icons'),
+        //             listing: true
+        //         }
+        //     }
+        // });
     }
 
-    stop() {
+    async stop() {
         clearInterval(this.screenControlCronInterval);
-        this.frontendServer.stop({timeout: 2000});
+        await this.httpApiServer.close({timeout: 2000});
         return super.stop();
     }
 

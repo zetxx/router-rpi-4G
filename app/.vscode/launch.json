@@ -16,9 +16,9 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9000",
-                "--discovery.loopback=false"
+                "--resolve.loopback=false"
             ],
             "env": {
                 "NODE_PATH": "./dev"
@@ -36,9 +36,9 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9001",
-                "--discovery.loopback=false",
+                "--resolve.loopback=false",
                 "--log.level=trace",
                 "--modem.uri=http://10.21.21.1",
                 // debug props
@@ -61,9 +61,9 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9002",
-                "--discovery.loopback=false",
+                "--resolve.loopback=false",
                 "--log.level=trace",
                 "--netProvider.uri=http://data.vivacom.bg",
                 // debug props
@@ -86,9 +86,9 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9003",
-                "--discovery.loopback=false",
+                "--resolve.loopback=false",
                 "--log.level=trace",
                 "--onlineChecker.checkInterval=5000"
             ],
@@ -108,9 +108,9 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9004",
-                "--discovery.loopback=false",
+                "--resolve.loopback=false",
                 "--log.level=trace",
                 "--storage.user=rpi4g",
                 "--storage.password=123",
@@ -133,14 +133,14 @@
                 "--nolazy"
             ],
             "args": [
-                "--discovery.domain=borovica4g",
+                "--resolve.domain=borovica4g",
                 "--api.port=9005",
-                "--discovery.loopback=false",
+                "--resolve.loopback=false",
                 "--log.level=trace",
                 "--screenControl.refreshInterval=60000",
                 "--screenControl.gpio.rst=0",
                 "--screenControl.gpio.dc=0",
-                "--discovery.nodeName=4g-screen-control",
+                "--resolve.nodeName=4g-screen-control",
                 "--screenControl.screenshot.uri=http://localhost:34523/screen.html?port=9005",
                 "--screenControl.screenshot.storeDir=./"
             ],

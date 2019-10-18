@@ -2,7 +2,7 @@ function runAll() {
     var urlParams = new URLSearchParams(window.location.search);
     var port = parseInt(urlParams.get('port') || 9000);
 
-    d3.json(['http://', window.location.hostname, ['', port].join(':'), '/JSONRPC/stats'].join(''), {
+    d3.json(['http://', window.location.hostname, ['', port].join(':'), '/stats'].join(''), {
         crossOrigin: 'anonymous',
         method: 'POST',
         headers: {
