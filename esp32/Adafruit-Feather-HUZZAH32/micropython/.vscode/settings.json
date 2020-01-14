@@ -7,15 +7,24 @@
             "text": "▶",
             "tooltip": "Run",
             "alignment": "left",
-            "command": "extension.execute",
-            "priority": 4
+            "command": "extension.executeFile",
+            "priority": 3.5
         }
     ],
     "python.autoComplete.extraPaths": [
-        "/home/zetxx/.vscode/extensions/rt-thread.rt-thread-micropython-0.2.7/microExamples/code-completion"
+        "/home/zetxx/.vscode/extensions/rt-thread.rt-thread-micropython-1.0.7/microExamples/code-completion"
     ],
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append('/home/zetxx/.vscode/extensions/rt-thread.rt-thread-micropython-0.2.7/microExamples/code-completion')"
+        "import sys; sys.path.append('/home/zetxx/.vscode/extensions/rt-thread.rt-thread-micropython-1.0.7/microExamples/code-completion')"
+    ],
+    "MicroPython.syncButton": [
+        {
+            "text": "$(sync)",
+            "tooltip": "sync",
+            "alignment": "left",
+            "command": "extension.execute",
+            "priority": 4
+        }
     ]
 }

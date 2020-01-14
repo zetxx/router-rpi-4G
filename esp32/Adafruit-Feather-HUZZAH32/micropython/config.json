@@ -1,7 +1,7 @@
 {
     "wifi": {
-        "ssid": "ssid?",
-        "passphrase": "passphrase?"
+        "ssid": "putin",
+        "passphrase": "putin"
     },
     "healtz": {
         "endpoint": "http://10.0.0.1:8080/healtz",
