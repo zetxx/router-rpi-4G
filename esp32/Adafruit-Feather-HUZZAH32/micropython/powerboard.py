@@ -6,6 +6,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("powerboard")
 
+endpointChecks = []
+
 def preconf():
     # if 'config.json' not in os.listdir():
     ap_if = network.WLAN(network.AP_IF)

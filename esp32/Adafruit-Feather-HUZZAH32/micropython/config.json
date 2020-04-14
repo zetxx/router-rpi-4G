@@ -1,4 +1,8 @@
 {
+	"wifi": {
+		"ssid": "test",
+		"passphrase": "test"
+	},
     "healtz": {
         "endpoint": "http://10.0.0.1:8080/healtz",
         "checkInterval": 30000,
