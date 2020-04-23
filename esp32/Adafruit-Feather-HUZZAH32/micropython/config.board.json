@@ -1,0 +1,15 @@
+{
+	"pins": {
+        "toBattery": 12,
+        "fromBattery": 27,
+        "mainLine": 33,
+        "powerLine": 32
+    },
+    "remote": {
+        "healtz": {
+            "endpoint": "http://10.0.0.1:8080/healtz",
+            "checkInterval": 30000,
+            "maxChecks": 3
+        }
+    }
+}
