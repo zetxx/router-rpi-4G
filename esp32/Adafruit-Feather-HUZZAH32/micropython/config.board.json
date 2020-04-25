@@ -3,7 +3,8 @@
         "toBattery": 12,
         "fromBattery": 27,
         "mainLine": 33,
-        "powerLine": 32
+        "powerLine": 32,
+        "led": 13
     },
     "remote": {
         "healtz": {

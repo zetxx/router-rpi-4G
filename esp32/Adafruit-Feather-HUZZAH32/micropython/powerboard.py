@@ -12,6 +12,7 @@ toBattery = None
 mainLine = None
 fromBattery = None
 powerLine = None
+led = None
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -49,13 +50,14 @@ def setupPins():
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
     powerLine = Pin(config['powerLine'], Pin.IN, Pin.PULL_DOWN)
 
-def powerState():
+def powerState(ledChanger):
     global toBattery, mainLine, fromBattery, powerLine
     log.info('=====================%s==============================', 'state init')
 
     def change(lineState):
         global toBattery, mainLine, fromBattery, powerLine
         log.info('=====================%s(%i)==============================', 'state change', lineState)
+        ledChanger(lineState)
         if lineState == 0:# if powerLine is down
             toBattery.off()
             mainLine.off()
@@ -115,8 +117,41 @@ def checkEndpoint(stateChanger):
 
     return checker
 
+def ledInit():
+    global led
+    log.info('=====================%s==============================', 'led init')
+    led = Pin(getConfig('config.board.json')['pins']['led'], Pin.OUT)
+    loop = None
+
+    async def toggle(sleepTime):
+        global led
+        while True:
+            log.info('=====================led toggle==============================')
+            await asyncio.sleep_ms(sleepTime)
+            led.on()
+            await asyncio.sleep_ms(sleepTime)
+            led.off()
+
+    def change(to, sleepTime = 1000):
+        log.info('=====================led change to: %i for: %i==============================', to, sleepTime)
+        global led
+        nonlocal loop
+        if (loop != None):
+            loop.close()
+        if (to == 0):
+            led.off()
+        else:
+            loop = asyncio.get_event_loop()
+            led.off()
+            loop.create_task(toggle(sleepTime))
+            loop.run_until_complete(asyncio.sleep(10))
+    
+    return change
+
 def main():
     setupPins()
-    stateChanger = powerState()
+    ledChange = ledInit()
+    ledChange(0)
+    stateChanger = powerState(ledChange)
     # checker = checkEndpoint(stateChanger)
     # asyncio.get_event_loop().run_until_complete(checker())
