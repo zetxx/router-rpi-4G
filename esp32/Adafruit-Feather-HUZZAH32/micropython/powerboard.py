@@ -8,9 +8,13 @@ from machine import Pin
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("powerboard")
 wifi = None
+toBattery = None
+mainLine = None
+fromBattery = None
+powerLine = None
 
 def getConfig(fn):
-    log.info('=====================%s==============================', 'read config')
+    log.info('=====================%s: %s==============================', 'read config', fn)
     with open(fn, 'r') as f:
         rawConfData = f.read()
     return ujson.loads(rawConfData)
@@ -36,22 +40,27 @@ def getWifi():
     global wifi
     return wifi
 
-def powerState():
-    log.info('=====================%s==============================', 'state init')
+def setupPins():
+    global toBattery, mainLine, fromBattery, powerLine
+    log.info('=====================%s==============================', 'setup pins')
     config = getConfig('config.board.json')['pins']
     toBattery = Pin(config['toBattery'], Pin.OUT, Pin.PULL_DOWN)
     fromBattery = Pin(config['fromBattery'], Pin.OUT, Pin.PULL_DOWN)
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
     powerLine = Pin(config['powerLine'], Pin.IN, Pin.PULL_DOWN)
 
+def powerState():
+    global toBattery, mainLine, fromBattery, powerLine
+    log.info('=====================%s==============================', 'state init')
+
     def change(lineState):
-        nonlocal toBattery, mainLine, fromBattery
+        global toBattery, mainLine, fromBattery, powerLine
         log.info('=====================%s(%i)==============================', 'state change', lineState)
-        if lineState == 0:# if line is down
+        if lineState == 0:# if powerLine is down
             toBattery.off()
             mainLine.off()
             fromBattery.on()
-        elif (lineState == 1):# if line is up
+        elif (lineState == 1):# if powerLine is up
             fromBattery.off()
             toBattery.on()
             mainLine.on()
@@ -68,14 +77,15 @@ def powerState():
 
     return change
 
-async def checkEndpoint(stateChanger):
+def checkEndpoint(stateChanger):
     global wifi
     log.info('=====================%s==============================', 'checkEndpoint init')
     config = getConfig('config.board.json')['remote']['healtz']
     endpointChecks = []
 
-    def checker():
+    async def checker():
         nonlocal endpointChecks
+        log.info('=====================%s==============================', 'checkEndpoint.check')
         if wifi.isconnected():
             statusCode = 0
             try:
@@ -92,14 +102,21 @@ async def checkEndpoint(stateChanger):
                         log.info('=====================%s==============================', 'checkEndpoint=endpointChecks>3')
                         endpointChecks = []
                         stateChanger(2)
+                        await asyncio.sleep(5)
+                        stateChanger(powerLine.value())
                 else:
                     endpointChecks = []
                     log.info('=====================%s==============================', 'checkEndpoint=200')
         else:
             wifiAsClient()
 
+        await asyncio.sleep(5)
+        return await checker()
+
     return checker
 
 def main():
+    setupPins()
     stateChanger = powerState()
-    asyncio.get_event_loop().run_until_complete(checkEndpoint(stateChanger))
+    # checker = checkEndpoint(stateChanger)
+    # asyncio.get_event_loop().run_until_complete(checker())
