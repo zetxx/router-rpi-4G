@@ -50,35 +50,6 @@ def setupPins():
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
     powerLine = Pin(config['powerLine'], Pin.IN, Pin.PULL_DOWN)
 
-def powerState(ledChanger):
-    global toBattery, mainLine, fromBattery, powerLine
-    log.info('=====================%s==============================', 'state init')
-
-    def change(lineState):
-        global toBattery, mainLine, fromBattery, powerLine
-        log.info('=====================%s(%i)==============================', 'state change', lineState)
-        ledChanger(lineState)
-        if lineState == 0:# if powerLine is down
-            toBattery.off()
-            mainLine.off()
-            fromBattery.on()
-        elif (lineState == 1):# if powerLine is up
-            fromBattery.off()
-            toBattery.on()
-            mainLine.on()
-        elif (lineState == 2):# cut power
-            fromBattery.off()
-            toBattery.off()
-            mainLine.off()
-
-    def powerGuard(p):
-        log.info('=====================%s==============================', 'power guard triggered')
-        change(p.value())
-
-    powerLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda p: powerGuard(p))
-
-    return change
-
 def checkEndpoint(stateChanger):
     global wifi
     log.info('=====================%s==============================', 'checkEndpoint init')
@@ -117,6 +88,34 @@ def checkEndpoint(stateChanger):
 
     return checker
 
+def powerState(ledChanger):
+    global toBattery, mainLine, fromBattery, powerLine
+    log.info('=====================%s==============================', 'state init')
+
+    def change(lineState):
+        global toBattery, mainLine, fromBattery, powerLine
+        log.info('=====================%s(%i)==============================', 'state change', lineState)
+        if lineState == 0:# if powerLine is down
+            toBattery.off()
+            mainLine.off()
+            fromBattery.on()
+        elif (lineState == 1):# if powerLine is up
+            fromBattery.off()
+            toBattery.on()
+            mainLine.on()
+        elif (lineState == 2):# cut power
+            fromBattery.off()
+            toBattery.off()
+            mainLine.off()
+
+    def powerGuard(p):
+        log.info('=====================%s==============================', 'power guard triggered')
+        change(p.value())
+
+    powerLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda p: powerGuard(p))
+
+    return change
+
 def ledInit():
     global led
     log.info('=====================%s==============================', 'led init')
@@ -132,7 +131,7 @@ def ledInit():
             await asyncio.sleep_ms(sleepTime)
             led.off()
 
-    def change(to, sleepTime = 1000):
+    def change(to, sleepTime = 300):
         log.info('=====================led change to: %i for: %i==============================', to, sleepTime)
         global led
         nonlocal loop
@@ -141,17 +140,15 @@ def ledInit():
         if (to == 0):
             led.off()
         else:
-            loop = asyncio.get_event_loop()
             led.off()
+            loop = asyncio.get_event_loop()
             loop.create_task(toggle(sleepTime))
-            loop.run_until_complete(asyncio.sleep(10))
+            loop.run_forever()
     
     return change
 
 def main():
     setupPins()
-    ledChange = ledInit()
-    ledChange(0)
-    stateChanger = powerState(ledChange)
+    stateChanger = powerState()
     # checker = checkEndpoint(stateChanger)
     # asyncio.get_event_loop().run_until_complete(checker())
