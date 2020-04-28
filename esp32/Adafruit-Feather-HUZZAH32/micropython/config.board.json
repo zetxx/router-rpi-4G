@@ -1,8 +1,8 @@
 {
 	"pins": {
         "toBattery": 12,
-        "fromBattery": 27,
-        "mainLine": 33,
+        "fromBattery": 33,
+        "mainLine": 27,
         "powerLine": 32,
         "led": 13
     },
