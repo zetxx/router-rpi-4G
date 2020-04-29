@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SDL_Pi_INA3221.py Python Driver Code
+# ina3221.py Python Driver Code
 # SwitchDoc Labs March 4, 2015	 
 # V 1.2
 
@@ -8,6 +8,7 @@
 #encoding: utf-8
  
 import usmbus
+from machine import Pin
 
 # constants
 
@@ -63,15 +64,15 @@ SHUNT_RESISTOR_VALUE         = (0.1)   # default shunt resistor value of 0.1 Ohm
 
 
 
-class SDL_Pi_INA3221():
+class ina3221():
 
 
 
     ###########################
     # INA3221 Code
     ###########################
-    def __init__(self, twi=1, addr=INA3221_ADDRESS, pins=('22','23'), shunt_resistor=SHUNT_RESISTOR_VALUE):
-        self._bus = usmbus.SMBus(twi, pins)
+    def __init__(self, twi=1, addr=INA3221_ADDRESS, scl=Pin(22), sda=Pin(23), shunt_resistor=SHUNT_RESISTOR_VALUE):
+        self._bus = usmbus.SMBus(twi, scl=scl, sda=sda, freq=400000)
         self._addr = addr
         config = INA3221_CONFIG_ENABLE_CHAN1 |		\
                     INA3221_CONFIG_ENABLE_CHAN2 |	\
@@ -118,6 +119,8 @@ class SDL_Pi_INA3221():
         lowbyte = data>>8
         highbyte = (data & 0x00FF)<<8
         switchdata = lowbyte + highbyte
+        print('_write_register_little_endian')
+        print(switchdata)
         self._bus.write_word_data(self._addr, register, switchdata)
         #print "Write  16 bit Word addr =0x%x register = 0x%x data = 0x%x " % (self._addr, register, data)
        

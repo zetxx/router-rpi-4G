@@ -1,8 +1,9 @@
 ## Install
 
 - `import upip`
+- `upip.install('pycopy-ulogging')`
+- `upip.install('picoweb')`
 - `upip.install('micropython-logging')`
-- `upip.install('micropython-smbus')`
 - `upip.install('micropython-uasyncio')`
 - `upip.install('micropython-uasyncio.synchro')`
 - `upip.install('micropython-uasyncio.queues')`

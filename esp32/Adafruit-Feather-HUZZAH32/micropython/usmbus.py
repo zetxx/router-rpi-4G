@@ -58,11 +58,8 @@ class SMBus(I2C):
         """ Not yet implemented """
         raise RuntimeError("Not yet implemented")
 
-    def read_word_data(self, *args, **kwargs):
-        """ Not yet implemented *"""
-        raise RuntimeError("Not yet implemented")
+    def read_word_data(self, addr, register):
+        raise self.readfrom_mem(addr, register, 2)
 
-    def write_word_data(self, *args, **kwargs):
-        """ Not yet implemented *"""
-        raise RuntimeError("Not yet implemented")
-        
+    def write_word_data(self, addr, register, data):
+        return self.writeto_mem(addr, register, data)
