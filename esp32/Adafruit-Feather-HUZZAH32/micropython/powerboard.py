@@ -4,6 +4,7 @@ import uasyncio as asyncio
 import logging
 import urequests as requests
 from machine import Pin
+import time
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("powerboard")
@@ -42,42 +43,58 @@ def getWifi():
     return wifi
 
 def setupPins():
-    global toBattery, mainLine, fromBattery, powerLine
+    global toBattery, mainLine, fromBattery, powerLine, led
     log.info('=====================%s==============================', 'setup pins')
     config = getConfig('config.board.json')['pins']
+    led = Pin(config['led'], Pin.OUT)
+    led.on()
     toBattery = Pin(config['toBattery'], Pin.OUT, Pin.PULL_DOWN)
     fromBattery = Pin(config['fromBattery'], Pin.OUT, Pin.PULL_DOWN)
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
     powerLine = Pin(config['powerLine'], Pin.IN, Pin.PULL_DOWN)
 
-def powerState():
-    global toBattery, mainLine, fromBattery, powerLine
-    log.info('=====================%s==============================', 'state init')
+    toBattery.off()
+    fromBattery.off()
+    mainLine.off()
 
+def powerState():
+    global toBattery, mainLine, fromBattery, powerLine, led
+    log.info('=====================%s==============================', 'state init')
+    switchState = -1
     def change(lineState):
         global toBattery, mainLine, fromBattery, powerLine
-        log.info('=====================%s(%i)==============================', 'state change', lineState)
+        nonlocal switchState
+        log.info('=====================%s(from=%i, to=%i)==============================', 'state change ask', switchState, lineState)
+        if (switchState == lineState):
+            log.info('=====================%s(from=%i, to=%i)==============================', 'state not change', switchState, lineState)
+            return
+        log.info('=====================%s(from=%i, to=%i)==============================', 'state change', switchState, lineState)
+        switchState = lineState
+        fromBattery.off()
+        toBattery.off()
+        mainLine.off()
         if lineState == 0:# if powerLine is down
-            toBattery.off()
-            mainLine.off()
+            time.sleep_ms(70)
             fromBattery.on()
+            time.sleep_ms(70)
         elif (lineState == 1):# if powerLine is up
-            fromBattery.off()
-            toBattery.on()
+            time.sleep_ms(70)
             mainLine.on()
-        elif (lineState == 2):# cut power
-            fromBattery.off()
-            toBattery.off()
-            mainLine.off()
+            time.sleep_ms(70)
+            toBattery.on()
+            time.sleep_ms(70)
+    led.off()
+    change(powerLine.value())
 
     def powerGuard(p):
+        print(p)
         log.info('=====================%s==============================', 'power guard triggered')
         change(p.value())
 
-    powerLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda p: powerGuard(p))
+    powerLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=powerGuard)
 
     return change
 
 def main():
     setupPins()
-    # stateChanger = powerState()
+    stateChanger = powerState()
