@@ -50,7 +50,7 @@ def setupPins():
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
     powerLine = Pin(config['powerLine'], Pin.IN, Pin.PULL_DOWN)
 
-def powerState(ledChanger):
+def powerState():
     global toBattery, mainLine, fromBattery, powerLine
     log.info('=====================%s==============================', 'state init')
 
@@ -80,4 +80,4 @@ def powerState(ledChanger):
 
 def main():
     setupPins()
-    stateChanger = powerState()
+    # stateChanger = powerState()
