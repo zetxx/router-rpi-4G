@@ -11,4 +11,4 @@ needs to be done
     - power line
 
 - [schematics](https://easyeda.com/zetxx/power-board)
-- [logo]: https://photos.app.goo.gl/yxkKp1nXDG4eWBiA8 "work in progress"
+- [logo]: https://github.com/zetxx/router-rpi-4G/edit/master/esp32/progress/1.jpg "work in progress"
