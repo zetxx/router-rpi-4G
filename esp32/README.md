@@ -11,3 +11,4 @@ needs to be done
     - power line
 
 - [schematics](https://easyeda.com/zetxx/power-board)
+- ![alt text](https://photos.app.goo.gl/yxkKp1nXDG4eWBiA8 "work in progress")
