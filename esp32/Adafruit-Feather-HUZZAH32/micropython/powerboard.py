@@ -15,6 +15,7 @@ fromBattery = None
 watchMainLine = None
 watchBatteryLine = None
 mainTimer = 0
+stats = {}
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -44,27 +45,27 @@ def dummy(p = None):
 
 def decide(p = None):
     log.info('=====================%s==============================', 'decide')
-    udpMulticast('decission')
+    multicast('decission')
     toBattery.off()
     fromBattery.off()
     mainLine.off()
     time.sleep_ms(20)
     log.info('=====================%s==============================', 'decide wake up')
     if watchMainLine.value() == 1:
-        udpMulticast('mainLineUp')
+        multicast('mainLineUp')
         toBattery.on()
         mainLine.on()
     elif watchMainLine.value() == 0 and watchBatteryLine.value() == 1:
-        udpMulticast('mainLineDownBatteryUp')
+        multicast('mainLineDownBatteryUp')
         fromBattery.on()
     else:
-        udpMulticast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
+        multicast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
     log.info('=====================%s==============================', 'decision got')
 
 def initPins():
     global toBattery, mainLine, fromBattery, watchMainLine, watchBatteryLine
     log.info('=====================%s==============================', 'setup pins')
-    udpMulticast('setup pins')
+    multicast('setup pins')
     config = getConfig('config.board.json')['pins']
     toBattery = Pin(config['toBattery'], Pin.OUT, Pin.PULL_DOWN)
     fromBattery = Pin(config['fromBattery'], Pin.OUT, Pin.PULL_DOWN)
@@ -83,7 +84,7 @@ def initUdp():
     udpSock.bind(('', 1900))
     time.sleep_ms(100)
 
-def udpMulticast(text):
+def multicast(text):
     global udpSock
     if wifi.isconnected() and udpSock and wifi and wifi.ifconfig and len(wifi.ifconfig()) > 2:
         addr = '.'.join(wifi.ifconfig()[0].split('.')[:-1] + ['255'])
@@ -107,3 +108,4 @@ def init():
     initPins()
     watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
     watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
+    Timer(2).init(mode=Timer.PERIODIC, period=30000, callback=lambda x: multicast(ujson.dumps(stats)))
