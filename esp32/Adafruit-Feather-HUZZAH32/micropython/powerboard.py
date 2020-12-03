@@ -2,7 +2,7 @@ from network import WLAN, AP_IF, STA_IF
 import ujson
 import logging
 import socket
-from machine import Pin
+from machine import Pin, Timer
 import time
 
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +14,7 @@ mainLine = None
 fromBattery = None
 watchMainLine = None
 watchBatteryLine = None
+mainTimer = 0
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -38,13 +39,17 @@ def wifiAsClient():
     log.info(client_if.ifconfig())
     wifi = client_if
 
-def decide():
-    log.info('=====================%s==============================', 'decission')
+def dummy(p = None):
+    log.info('=====================%s==============================', 'dummy trigger')
+
+def decide(p = None):
+    log.info('=====================%s==============================', 'decide')
     udpMulticast('decission')
     toBattery.off()
     fromBattery.off()
     mainLine.off()
-    time.sleep_ms(10)
+    time.sleep_ms(20)
+    log.info('=====================%s==============================', 'decide wake up')
     if watchMainLine.value() == 1:
         udpMulticast('mainLineUp')
         toBattery.on()
@@ -54,6 +59,7 @@ def decide():
         fromBattery.on()
     else:
         udpMulticast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
+    log.info('=====================%s==============================', 'decision got')
 
 def initPins():
     global toBattery, mainLine, fromBattery, watchMainLine, watchBatteryLine
@@ -78,14 +84,26 @@ def initUdp():
     time.sleep_ms(100)
 
 def udpMulticast(text):
-    log.info('=====================%s===============%s===============', 'multicats', text)
     global udpSock
     if wifi.isconnected() and udpSock and wifi and wifi.ifconfig and len(wifi.ifconfig()) > 2:
         addr = '.'.join(wifi.ifconfig()[0].split('.')[:-1] + ['255'])
         udpSock.sendto(bytearray(text), (addr, 1900))
 
+def prepareDelay(p = None):
+    global mainTimer
+    log.info('=====================%s==============================', 'prepareDelay')
+    if mainTimer == 0:
+        mainTimer = 1
+        Timer(3).init(mode=Timer.ONE_SHOT, period=50, callback=delayedDecision)
+
+def delayedDecision(p = None):
+    global mainTimer
+    log.info('=====================%s==============================', 'delayedDecision')
+    mainTimer = 0
+    decide()
+
 def init():
     initUdp()
     initPins()
-    watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda t: decide())
-    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda t: decide())
+    watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
+    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
