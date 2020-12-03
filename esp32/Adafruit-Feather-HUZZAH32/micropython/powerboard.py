@@ -1,20 +1,19 @@
 from network import WLAN, AP_IF, STA_IF
 import ujson
-# import uasyncio as asyncio
 import logging
-# import urequests as requests
+import socket
 from machine import Pin
 import time
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("powerboard")
 wifi = None
+udpSock = None
 toBattery = None
 mainLine = None
 fromBattery = None
 watchMainLine = None
 watchBatteryLine = None
-led = None
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -39,12 +38,28 @@ def wifiAsClient():
     log.info(client_if.ifconfig())
     wifi = client_if
 
+def decide():
+    log.info('=====================%s==============================', 'decission')
+    udpMulticast('decission')
+    toBattery.off()
+    fromBattery.off()
+    mainLine.off()
+    time.sleep_ms(10)
+    if watchMainLine.value() == 1:
+        udpMulticast('mainLineUp')
+        toBattery.on()
+        mainLine.on()
+    elif watchMainLine.value() == 0 and watchBatteryLine.value() == 1:
+        udpMulticast('mainLineDownBatteryUp')
+        fromBattery.on()
+    else:
+        udpMulticast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
+
 def initPins():
-    global toBattery, mainLine, fromBattery, watchMainLine, led
+    global toBattery, mainLine, fromBattery, watchMainLine, watchBatteryLine
     log.info('=====================%s==============================', 'setup pins')
+    udpMulticast('setup pins')
     config = getConfig('config.board.json')['pins']
-    led = Pin(config['led'], Pin.OUT)
-    led.on()
     toBattery = Pin(config['toBattery'], Pin.OUT, Pin.PULL_DOWN)
     fromBattery = Pin(config['fromBattery'], Pin.OUT, Pin.PULL_DOWN)
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
@@ -52,6 +67,25 @@ def initPins():
     watchMainLine = Pin(config['watchMainLine'], Pin.IN, Pin.PULL_DOWN)
     watchBatteryLine = Pin(config['watchBatteryLine'], Pin.IN, Pin.PULL_DOWN)
 
-    toBattery.off()
-    fromBattery.off()
-    mainLine.off()
+    decide()
+
+def initUdp():
+    global udpSock
+    log.info('=====================%s==============================', 'init udp')
+    udpSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udpSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    udpSock.bind(('', 1900))
+    time.sleep_ms(100)
+
+def udpMulticast(text):
+    log.info('=====================%s===============%s===============', 'multicats', text)
+    global udpSock
+    if wifi.isconnected() and udpSock and wifi and wifi.ifconfig and len(wifi.ifconfig()) > 2:
+        addr = '.'.join(wifi.ifconfig()[0].split('.')[:-1] + ['255'])
+        udpSock.sendto(bytearray(text), (addr, 1900))
+
+def init():
+    initUdp()
+    initPins()
+    watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda t: decide())
+    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda t: decide())

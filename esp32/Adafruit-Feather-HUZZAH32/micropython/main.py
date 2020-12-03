@@ -14,6 +14,6 @@ try:
 	else:
 		log.info('=====================%s==============================', 'Init')
 		powerboard.wifiAsClient()
-		powerboard.main()
+		powerboard.init()
 except OSError as e:
 	log.error('=====================%s==============================', e)
