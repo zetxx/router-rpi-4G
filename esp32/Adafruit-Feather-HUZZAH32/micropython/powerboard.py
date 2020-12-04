@@ -4,6 +4,7 @@ import logging
 import socket
 from machine import Pin, Timer
 import time
+import utime
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("powerboard")
@@ -15,7 +16,18 @@ fromBattery = None
 watchMainLine = None
 watchBatteryLine = None
 mainTimer = 0
-stats = {}
+stats = {
+    "ids": []
+}
+
+def setStats(key, value):
+    global stats
+    if key not in stats:
+        stats[key] = []
+    stats[key].append(value)
+    stats[key] = stats[key][-100:]
+    stats['ids'].append(utime.time())
+    stats['ids'] = stats['ids'][-100:]
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -55,11 +67,14 @@ def decide(p = None):
         multicast('mainLineUp')
         toBattery.on()
         mainLine.on()
+        setStats('mainLineUp', utime.time())
     elif watchMainLine.value() == 0 and watchBatteryLine.value() == 1:
         multicast('mainLineDownBatteryUp')
         fromBattery.on()
+        setStats('mainLineDownBatteryUp', utime.time())
     else:
         multicast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
+        setStats('mainLineDownBatteryDown', utime.time())
     log.info('=====================%s==============================', 'decision got')
 
 def initPins():

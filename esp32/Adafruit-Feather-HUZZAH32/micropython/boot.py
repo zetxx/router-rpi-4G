@@ -28,4 +28,5 @@ def blink(n = None):
         led.off()
     else:
         led.on()
-Timer(1).init(mode=Timer.PERIODIC, period=400, callback=blink)
+        Timer(4).init(mode=Timer.ONE_SHOT, period=100, callback=blink)
+Timer(1).init(mode=Timer.PERIODIC, period=2000, callback=blink)
