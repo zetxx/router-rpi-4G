@@ -122,5 +122,6 @@ def init():
     initUdp()
     initPins()
     watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
-    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
+    # watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
+    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda p: log.info('=====================%s=======%s=======================', str(utime.time()), str(p.value())))
     Timer(2).init(mode=Timer.PERIODIC, period=30000, callback=lambda x: multicast(ujson.dumps(stats)))
