@@ -3,8 +3,8 @@
         "toBattery": 12,
         "fromBattery": 33,
         "mainLine": 27,
-        "watchMainLine": 34,
-        "watchBatteryLine": 39,
+        "watchMainLine": 15,
+        "watchBatteryLine": 32,
         "led": 13
     },
     "remote": {
