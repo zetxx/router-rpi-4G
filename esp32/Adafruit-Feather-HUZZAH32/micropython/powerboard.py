@@ -17,6 +17,7 @@ watchMainLine = None
 watchBatteryLine = None
 mainTimer = 0
 stats = {
+    "id": 0,
     "ids": []
 }
 
@@ -26,8 +27,10 @@ def setStats(key, value):
         stats[key] = []
     stats[key].append(value)
     stats[key] = stats[key][-100:]
-    stats['ids'].append(utime.time())
+    ct = utime.time()
+    stats['ids'].append(ct)
     stats['ids'] = stats['ids'][-100:]
+    stats['id'] = ct
 
 def getConfig(fn):
     log.info('=====================%s: %s==============================', 'read config', fn)
@@ -122,6 +125,5 @@ def init():
     initUdp()
     initPins()
     watchMainLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
-    # watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
-    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=lambda p: log.info('=====================%s=======%s=======================', str(utime.time()), str(p.value())))
+    watchBatteryLine.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=prepareDelay)
     Timer(2).init(mode=Timer.PERIODIC, period=30000, callback=lambda x: multicast(ujson.dumps(stats)))
