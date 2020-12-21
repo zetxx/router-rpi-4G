@@ -66,17 +66,17 @@ def decide(p = None):
     mainLine.off()
     time.sleep_ms(20)
     log.info('=====================%s==============================', 'decide wake up')
-    if watchMainLine.value() == 1:
+    if mainline() == 1:
         multicast('mainLineUp')
         toBattery.on()
         mainLine.on()
         setStats('mainLineUp', utime.time())
-    elif watchMainLine.value() == 0 and watchBatteryLine.value() == 1:
+    elif mainline() == 0 and battery() == 1:
         multicast('mainLineDownBatteryUp')
         fromBattery.on()
         setStats('mainLineDownBatteryUp', utime.time())
     else:
-        multicast('M:' + str(watchMainLine.value()) + '; B:' + str(watchBatteryLine.value()))
+        multicast('M:' + str(mainline()) + '; B:' + str(battery()))
         setStats('mainLineDownBatteryDown', utime.time())
     log.info('=====================%s==============================', 'decision got')
 
@@ -120,6 +120,13 @@ def delayedDecision(p = None):
     log.info('=====================%s==============================', 'delayedDecision')
     mainTimer = 0
     decide()
+
+def battery():
+    return 1
+    # return watchBatteryLine.value()
+
+def mainline():
+    return watchMainLine.value()
 
 def init():
     initUdp()
