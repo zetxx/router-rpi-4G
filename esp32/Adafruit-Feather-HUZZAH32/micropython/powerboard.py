@@ -55,6 +55,11 @@ def wifiAsClient():
     log.info(client_if.ifconfig())
     wifi = client_if
 
+def wifiAsClientInit(ssid, passp):
+    client_if = WLAN(STA_IF)
+    client_if.active(True)
+    client_if.connect(ssid, passp)
+
 def dummy(p = None):
     log.info('=====================%s==============================', 'dummy trigger')
 
