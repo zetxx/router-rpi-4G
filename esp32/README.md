@@ -12,3 +12,6 @@ needs to be done
 
 - [schematics](https://easyeda.com/zetxx/power-board)
 - ![alt text](https://github.com/zetxx/router-rpi-4G/raw/master/esp32/1.jpg "work in progress")
+- http://docs.micropython.org/en/latest/esp32/tutorial/intro.html#getting-the-firmware
+
+## [flash latest firmware](https://micropython.org/download#esp32)
