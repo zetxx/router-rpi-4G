@@ -5,7 +5,7 @@
         "mainLine": 27,
         "watchMainLine": 15,
         "watchBatteryLine": 32,
-        "led": 19
+        "led": 13
     },
     "remote": {
         "healtz": {
