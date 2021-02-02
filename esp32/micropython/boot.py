@@ -5,7 +5,8 @@ import logging
 import powerboard
 import gc
 
-led = Pin(13, Pin.OUT)
+pins = powerboard.getConfig('config.board.json')['pins']
+led = Pin(pins['led'], Pin.OUT)
 
 gc.collect()
 led.on()
