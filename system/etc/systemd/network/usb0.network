@@ -3,11 +3,14 @@ Name=usb0
 
 [Network]
 DHCP=no
-#DHCP=yes
 IPForward=1
-Address=10.21.21.2/30
-Gateway=10.21.21.1
+Address=10.21.21.2/24
 DNS=1.1.1.1
 DNS=8.8.8.8
 DNS=8.8.4.4
 DNSSEC=no
+
+[Route]
+Gateway=10.21.21.1
+GatewayOnlink=yes
+Metric=1
