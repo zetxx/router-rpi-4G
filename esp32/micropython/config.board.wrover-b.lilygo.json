@@ -1,10 +1,10 @@
 {
 	"pins": {
-        "toBattery": 12,
-        "fromBattery": 33,
-        "mainLine": 27,
-        "watchMainLine": 15,
-        "watchBatteryLine": 32,
+        "toBattery": 34,
+        "fromBattery": 25,
+        "mainLine": 26,
+        "watchMainLine": 27,
+        "watchBatteryLine": 18,
         "led": 19
     },
     "remote": {
