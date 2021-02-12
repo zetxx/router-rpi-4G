@@ -1,9 +1,9 @@
 {
 	"pins": {
-        "toBattery": 34,
+        "toBattery": 27,
         "fromBattery": 25,
         "mainLine": 26,
-        "watchMainLine": 27,
+        "watchMainLine": 34,
         "watchBatteryLine": 18,
         "led": 19
     },

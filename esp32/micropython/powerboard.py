@@ -90,11 +90,16 @@ def initPins():
     log.info('=====================%s==============================', 'setup pins')
     multicast('setup pins')
     config = getConfig('config.board.json')['pins']
+    log.info('=====================%s==============================', 'setup toBattery pin')
     toBattery = Pin(config['toBattery'], Pin.OUT, Pin.PULL_DOWN)
+    log.info('=====================%s==============================', 'setup fromBattery pin')
     fromBattery = Pin(config['fromBattery'], Pin.OUT, Pin.PULL_DOWN)
+    log.info('=====================%s==============================', 'setup mainLine pin')
     mainLine = Pin(config['mainLine'], Pin.OUT, Pin.PULL_DOWN)
 
+    log.info('=====================%s==============================', 'setup watchMainLine pin')
     watchMainLine = Pin(config['watchMainLine'], Pin.IN, Pin.PULL_DOWN)
+    log.info('=====================%s==============================', 'setup watchBatteryLine pin')
     watchBatteryLine = Pin(config['watchBatteryLine'], Pin.IN, Pin.PULL_DOWN)
 
     decide()
