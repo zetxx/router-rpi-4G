@@ -1,5 +1,5 @@
 {
-	"pins": {
+    "pins": {
         "toBattery": 27,
         "fromBattery": 25,
         "mainLine": 26,
