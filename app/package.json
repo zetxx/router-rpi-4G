@@ -16,7 +16,7 @@
     "bridg-wrong": "3.1.0",
     "immutable": "*",
     "dns-discovery": "6.2.3",
-    "uuid": "3.3.2",
+    "uuid": "14.0.0",
     "serialize-error": "4.1.0",
     "pg": "7.11.0",
     "puppeteer-core": "1.18.1",
